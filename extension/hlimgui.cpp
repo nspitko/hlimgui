@@ -130,7 +130,6 @@ HL_PRIM vdynamic* HL_NAME(initialize)(vclosure* render_fn)
 	hl_dyn_seti(font_info, hl_hash_utf8("width"), &hlt_i32, width);
 	hl_dyn_seti(font_info, hl_hash_utf8("height"), &hlt_i32, height);
 
-	io.Fonts->ClearInputData();
 	io.Fonts->ClearTexData();
 
 	for (int key = 0; key < ImGuiKey_COUNT; key++)
