@@ -502,7 +502,7 @@ class ImGui
     public static function destroyContext(ctx : hl.Bytes = null) {}
     public static function getCurrentContext() : hl.Bytes {return null;}
 	public static function setCurrentContext(ctx : hl.Bytes) {}
-	
+
 	// Main
 	public static function getStyle() : ExtDynamic<ImGuiStyle> {return null;}
 	public static function setStyle(style : ExtDynamic<ImGuiStyle>) {}
@@ -536,7 +536,7 @@ class ImGui
     public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
     public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChild() {}
-	
+
 	// Windows utilities
 	public static function isWindowAppearing() : Bool {return false;}
     public static function isWindowCollapsed() : Bool {return false;}
@@ -546,7 +546,7 @@ class ImGui
     public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
     public static function getWindowWidth() : Single {return 0;}
 	public static function getWindowHeight(): Single {return 0;}
-	
+
     public static function setNextWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0, pivot : ExtDynamic<ImVec2> = null) {}
     public static function setNextWindowSize(size: ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
     public static function setNextWindowSizeConstraints(size_min : ExtDynamic<ImVec2>, size_max : ExtDynamic<ImVec2>) {}
@@ -565,14 +565,14 @@ class ImGui
 	public static function setWindowFocus2(name : String) {}
 
 	public static function dockSpace(id : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
-	
+
 	// Content region
 	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
     public static function getContentRegionAvail() : ExtDynamic<ImVec2> {return null;}
     public static function getWindowContentRegionMin() : ExtDynamic<ImVec2> {return null;}
     public static function getWindowContentRegionMax() : ExtDynamic<ImVec2> {return null;}
 	public static function getWindowContentRegionWidth() : Single {return 0;}
-	
+
 	// Windows Scrolling
 	public static function getScrollX() : Single {return 0;}
     public static function getScrollY() : Single {return 0;}
@@ -583,8 +583,8 @@ class ImGui
     public static function setScrollHereX(center_x_ratio : Single = 0.5) {}
     public static function setScrollHereY(center_y_ratio : Single = 0.5) {}
     public static function setScrollFromPosX(local_x : Single, center_x_ratio : Single = 0.5) {}
-	public static function setScrollFromPosY(local_y : Single, center_y_ratio : Single = 0.5) {}	
-	
+	public static function setScrollFromPosY(local_y : Single, center_y_ratio : Single = 0.5) {}
+
 	// Parameters stacks
     public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
     public static function pushStyleColor2(idx : ImGuiCol, col : ExtDynamic<ImVec4>) {}
@@ -651,9 +651,9 @@ class ImGui
     public static function bulletText(text : String) {}
 
 	// Widgets: Main
-	public static function button(name : String, size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function button(name : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
 	public static function smallButton(label : String) : Bool {return false;}
-    public static function invisibleButton(str_id : String, size : ExtDynamic<ImVec2>) : Bool {return false;}
+    public static function invisibleButton(str_id : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
     public static function arrowButton(str_id : String, dir : ImGuiDir) : Bool {return false;}
     public static function image(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null, uv1 : ExtDynamic<ImVec2> = null, tint_col : ExtDynamic<ImVec4> = null, border_col : ExtDynamic<ImVec4> = null) {}
     public static function imageButton(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null,  uv1 : ExtDynamic<ImVec2> = null, frame_padding : Int = -1, bg_col : ExtDynamic<ImVec4> = null, tint_col : ExtDynamic<ImVec4> = null) : Bool {return false;}
@@ -669,20 +669,20 @@ class ImGui
     public static function endCombo() {}
     public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
-	
+
     // Widgets: Drags
     public static function dragFloat(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
     public static function dragFloatRange2(label : String, v_current_min : hl.Ref<Single>, v_current_max : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null, power : Single = 1.0) : Bool {return false;}
     public static function dragInt(label : String, v : hl.NativeArray<Int>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f") : Bool {return false;}
 	public static function dragIntRange2(label : String, v_current_min : hl.Ref<Int>, v_current_max : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null) : Bool {return false;}
-	
+
 	// Widgets: Sliders
     public static function sliderFloat(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
     public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg") : Bool {return false;}
     public static function sliderInt(label : String, v : hl.NativeArray<Int>, v_min : Int, v_max : Int, format : String = "%d") : Bool {return false;}
     public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
 	public static function vSliderInt(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d") : Bool {return false;}
-	
+
     // Widgets: Input with Keyboard
     public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
     public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
@@ -696,7 +696,7 @@ class ImGui
     public static function inputInt3(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
     public static function inputInt4(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-	
+
 	// Widgets: Color Editor/Picker
     public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
@@ -704,7 +704,7 @@ class ImGui
     public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : hl.Ref<Single> = null) : Bool {return false;}
     public static function colorButton(desc_id : String, col : ExtDynamic<ImVec4> = null, flags : ImGuiColorEditFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
 	public static function setColorEditOptions(flags : ImGuiColorEditFlags) {}
-	
+
 	// Widgets: Trees
 	public static function treeNode(label : String) : Bool {return false;}
     public static function treeNode2(str_id : String, label : String) : Bool {return false;}
@@ -716,26 +716,26 @@ class ImGui
     public static function collapsingHeader(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
     public static function collapsingHeader2(label : String, p_open : hl.Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
 	public static function setNextItemOpen(is_open : Bool, cond : ImGuiCond = 0) {}
-	
+
 	// Widgets: Selectables
     public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
 	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
-	
+
     // Widgets: List Boxes
     public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
     public static function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
     public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
 	public static function listBoxFooter() {}
-	
+
 	// Widgets: Data Plotting
     public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
 	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
-	
+
     // Widgets: Value() Helpers.
     public static function valueBool(prefix : String, b : Bool) {}
     public static function valueInt(prefix : String, v : Int) {}
 	public static function valueSingle(prefix : String, v : Single, float_format : String = null) {}
-	
+
     // Widgets: Menus
     public static function beginMenuBar() : Bool {return false;}
     public static function endMenuBar() {}
@@ -745,12 +745,12 @@ class ImGui
     public static function endMenu() {}
     public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
     public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
-	
+
 	// ToolTips
     public static function beginTooltip() {}
     public static function endTooltip() {}
 	public static function setTooltip(fmt : String) {}
-	
+
 	// Popups
 	public static function openPopup(str_id : String) {}
     public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
@@ -762,7 +762,7 @@ class ImGui
     public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
     public static function isPopupOpen(str_id : String) : Bool {return false;}
 	public static function closeCurrentPopup() {}
-	
+
     // Columns
     public static function columns(count : Int = 1, id : String = null, border : Bool = true) {}
     public static function nextColumn() {}
@@ -772,14 +772,14 @@ class ImGui
     public static function getColumnOffset(column_index : Int = -1) : Single {return 0;}
     public static function setColumnOffset(column_index : Int, offset_x : Single) {}
 	public static function getColumnsCount() : Int {return 0;}
-	
+
 	// Tab Bars, Tabs
 	public static function beginTabBar(str_id : String, flags : ImGuiTabBarFlags = 0) : Bool {return false;}
 	public static function endTabBar() {}
 	public static function beginTabItem(label : String, p_open : hl.Ref<Bool> = null, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function endTabItem() {}
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
-	
+
 	// Logging/Capture
 	public static function logToTTY(auto_open_depth : Int = -1) {}
 	public static function logToFile(auto_open_depth : Int = -1, filename : String = null) {}
@@ -787,7 +787,7 @@ class ImGui
 	public static function logFinish() {}
 	public static function logButtons() {}
 	public static function logText(text : String) {}
-	
+
     // Clipping
     public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}
     public static function popClipRect() {}
@@ -795,7 +795,7 @@ class ImGui
     // Focus, Activation
     public static function setItemDefaultFocus() {}
 	public static function setKeyboardFocusHere(offset : Int = 0) {}
-	
+
 	// Item/Widgets Utilities
     public static function isItemHovered(flags : ImGuiHoveredFlags = 0) : Bool {return false;}
     public static function isItemActive() : Bool {return false;}
@@ -827,7 +827,7 @@ class ImGui
     public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
     public static function beginChildFrame(id : ImGuiID, size : ExtDynamic<ImVec2>, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChildFrame() {}
-	
+
 	// Text Utilities
 	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
 
