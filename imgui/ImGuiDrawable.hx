@@ -177,7 +177,7 @@ class ImGuiDrawable extends h2d.Drawable {
 
 		var scene = getScene();
 		ImGui.setDisplaySize(scene.width, scene.height);
-		this.scene_size = {width: scene.width, height:scene.width};
+		this.scene_size = {width: scene.width, height:scene.height};
 
 		this.keycode_map = [
 			Key.TAB => ImGuiKey.Tab,
