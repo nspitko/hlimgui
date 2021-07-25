@@ -5,9 +5,15 @@
 #include "utils.h"
 
 
-HL_PRIM ImFont *HL_NAME(imgui_add_font_from_file_ttf)(vstring* filename, float size)
+HL_PRIM ImFont *HL_NAME(imgui_add_font_from_file_ttf)(vstring* filename, float size, vdynamic* config, varray* ranges )
 {
-    return ImGui::GetIO().Fonts->AddFontFromFileTTF( convertString( filename ), size );
+	ImFontConfig cfg = ImFontConfig();
+	if( config != nullptr )
+		getImGuiFontConfigFromHL( &cfg, config );
+
+	ImWchar *glyph_ranges = ranges != nullptr ? hl_aptr(ranges,ImWchar) : nullptr;
+
+    return ImGui::GetIO().Fonts->AddFontFromFileTTF( convertString( filename ), size, &cfg, glyph_ranges );
 }
 
 HL_PRIM vdynamic *HL_NAME(get_tex_data_as_rgba32)(vstring* filename, float size)
@@ -42,9 +48,16 @@ HL_PRIM void HL_NAME(pop_font)()
     ImGui::PopFont();
 }
 
+
+HL_PRIM void HL_NAME(build_font)()
+{
+    ImGui::GetIO().Fonts->Build();
+}
+
 #define _TFONT _ABSTRACT(imfont)
 
-DEFINE_PRIM(_TFONT, imgui_add_font_from_file_ttf, _STRING _F32);
+DEFINE_PRIM(_TFONT, imgui_add_font_from_file_ttf, _STRING _F32 _DYN _ARR );
 DEFINE_PRIM(_DYN, get_tex_data_as_rgba32, _NO_ARG);
 DEFINE_PRIM(_VOID, imgui_push_font, _TFONT);
 DEFINE_PRIM(_VOID, pop_font, _NO_ARG );
+DEFINE_PRIM(_VOID, build_font, _NO_ARG );
