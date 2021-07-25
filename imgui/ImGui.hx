@@ -26,6 +26,7 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var NoNavInputs : Int = 262144;
 	var NoNavFocus : Int = 524288;
 	var UnsavedDocument : Int = 1048576;
+	var NoDocking : Int = 2097152;
 	var NoNav : Int = 786432;
 	var NoDecoration : Int = 43;
 	var NoInputs : Int = 786944;
