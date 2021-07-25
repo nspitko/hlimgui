@@ -491,8 +491,31 @@ typedef ImGuiStyle = {
     Colors : hl.NativeArray<ImVec4>
 };
 
-private typedef ImFontPtr = hl.Abstract<"imfont">;
+/**
+ * ImFontConfig
+ * Currently we don't support passing this struct back into haxe on creation; so it's current definition
+ * and use cases are limited to configuring a font you're about to create.
+ *
+ * As a technical note, glypgRanges will currently leak memory, so avoid paths which use this feature per frame.
+ */
+ @:structInit
+class ImFontConfig
+{
+	var OversampleH: Int = 3;						// Rasterize at higher quality for sub-pixel positioning. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.
+	var OversampleV: Int = 1;						// Rasterize at higher quality for sub-pixel positioning. We don't use sub-pixel positions on the Y axis.// Rasterize at higher quality for sub-pixel positioning. We don't use sub-pixel positions on the Y axis.
+	var PixelSnapH: Bool = false;					// Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.
+	var GlyphExtraSpacing: ImVec2 = {x: 0, y:0};	// Extra spacing (in pixels) between glyphs. Only X axis is supported for now.
+	var GlyphOffset: ImVec2 =  {x: 0, y:0};			// Offset all glyphs from this font input.
+	var GlyphRanges: hl.NativeArray<hl.UI16> = null;// Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE, currently this will just leak.
+	var GlyphMinAdvanceX: Single = 0;				// Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font
+	var GlyphMaxAdvanceX: Single = 3.402823E+38;	// FLT_MAX  // Maximum AdvanceX for glyphs
+	var MergeMode: Bool = false;					// Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.
+	var RasterizerFlags: Int = 0;					// Settings for custom font rasterizer (e.g. ImGuiFreeType). Leave as zero if you aren't using one.
+	var RasterizerMultiply: Single = 1;				// Brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable.
+	var EllipsisChar: Int = -1;						// Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.
+}
 
+private typedef ImFontPtr = hl.Abstract<"imfont">;
 
 @:hlNative("hlimgui")
 class ImFont
@@ -896,11 +919,12 @@ class ImGui
 
 	// Fonts
 
-	public static inline function addFontFromFileTtf( filename: String, size: Single) : ImFont { return new ImFont(imguiAddFontFromFileTtf(filename, size)); }
-	public static function imguiAddFontFromFileTtf( filename: String, size: Single) : ImFontPtr { return null; }
+	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig = null, ?glyphRanges: hl.NativeArray<hl.UI16> = null ) : ImFont { return new ImFont(imguiAddFontFromFileTtf(filename, size, config, glyphRanges)); }
+	public static function imguiAddFontFromFileTtf( filename: String, size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
 	public static inline function pushFont( font: ImFont ) { imguiPushFont( @:privateAccess font.ptr );	}
 	static function imguiPushFont( font: ImFontPtr ) {}
 	public static function popFont() {}
+	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
 	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
 
 	// internal functions

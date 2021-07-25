@@ -7,3 +7,4 @@ Release/
 /imgui.ini
 /extension/build/
 .DS_Store
+.vscode/

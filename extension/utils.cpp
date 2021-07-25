@@ -20,12 +20,12 @@ std::string unicodeToUTF8(vstring* hl_string)
 		{
 			result += char(code);
 		}
-		else if (code <= 0x7FF) 
+		else if (code <= 0x7FF)
 		{
 			result += char(0xC0 | (code >> 6));            /* 110xxxxx */
 			result += char(0x80 | (code & 0x3F));          /* 10xxxxxx */
 		}
-		else 
+		else
 		{
 			result += char(0xE0 | (code >> 12));           /* 1110xxxx */
 			result += char(0x80 | ((code >> 6) & 0x3F));   /* 10xxxxxx */
@@ -201,6 +201,28 @@ vdynamic* getHLFromImGuiStyle(const ImGuiStyle& imgui_style)
 	setStructArrayImVec4(style, "Colors", imgui_style.Colors, ImGuiCol_COUNT);
 
 	return style;
+}
+
+void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config)
+{
+
+	getStructInt(config, "OversampleH", imgui_font_config->OversampleH);
+	getStructInt(config, "OversampleV", imgui_font_config->OversampleV);
+	getStructBool(config, "PixelSnapH", imgui_font_config->PixelSnapH);
+	getStructImVec2(config, "GlyphExtraSpacing", imgui_font_config->GlyphExtraSpacing);
+	getStructImVec2(config, "GlyphOffset", imgui_font_config->GlyphOffset);
+
+	getStructFloat(config, "GlyphMinAdvanceX", imgui_font_config->GlyphMinAdvanceX);
+	getStructFloat(config, "GlyphMaxAdvanceX", imgui_font_config->GlyphMaxAdvanceX);
+	getStructBool(config, "MergeMode", imgui_font_config->MergeMode);
+	getStructInt(config, "RasterizerFlags", (int&)imgui_font_config->RasterizerFlags);
+	getStructFloat(config, "RasterizerMultiply", imgui_font_config->RasterizerMultiply);
+	getStructInt(config, "EllipsisChar", (int&)imgui_font_config->EllipsisChar);
+
+	varray* ranges = (varray*)hl_dyn_getp(config, hl_hash_utf8("GlyphRanges"), &hlt_array);
+	ImWchar *glyph_ranges = ranges != nullptr ? hl_aptr(ranges,ImWchar) : nullptr;
+
+	imgui_font_config->GlyphRanges = glyph_ranges;
 }
 
 ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value)
