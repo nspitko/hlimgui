@@ -694,9 +694,9 @@ class ImGui
     public static function bulletText(text : String) {}
 
 	// Widgets: Main
-	public static function button(name : String, size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function button(name : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
 	public static function smallButton(label : String) : Bool {return false;}
-    public static function invisibleButton(str_id : String, size : ExtDynamic<ImVec2>) : Bool {return false;}
+    public static function invisibleButton(str_id : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
     public static function arrowButton(str_id : String, dir : ImGuiDir) : Bool {return false;}
     public static function image(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null, uv1 : ExtDynamic<ImVec2> = null, tint_col : ExtDynamic<ImVec4> = null, border_col : ExtDynamic<ImVec4> = null) {}
     public static function imageButton(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null,  uv1 : ExtDynamic<ImVec2> = null, frame_padding : Int = -1, bg_col : ExtDynamic<ImVec4> = null, tint_col : ExtDynamic<ImVec4> = null) : Bool {return false;}
