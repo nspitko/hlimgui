@@ -13,12 +13,12 @@ HL_PRIM bool HL_NAME(want_capture_mouse)()
 
 HL_PRIM bool HL_NAME(want_capture_keyboard)()
 {
-    return ImGui::GetIO().WantCaptureMouse;
+    return ImGui::GetIO().WantCaptureKeyboard;
 }
 
 HL_PRIM void HL_NAME(set_ini_filename)(vstring* filename)
 {
-    if (filename == nullptr) 
+    if (filename == nullptr)
     {
         ImGui::GetIO().IniFilename = NULL;
     }
