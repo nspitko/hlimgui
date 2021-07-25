@@ -1,5 +1,7 @@
 package imgui;
 
+import haxe.io.Bytes;
+
 abstract ExtDynamic<T>(Dynamic) from T to T {}
 
 @:enum abstract ImGuiWindowFlags(Int) from Int to Int {
@@ -897,6 +899,38 @@ class ImGui
     public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
     public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}
     public static function captureMouseFromApp(want_capture_mouse_value : Bool = true) {}
+
+	// Drag and drop
+	public static function beginDragDropTarget(): Bool { return false; }
+	public static function endDragDropTarget() {}
+	public static function beginDragDropSource( flags: ImGuiDragDropFlags = 0 ): Bool { return false; }
+	public static function endDragDropSource() {}
+	public static function setDragDropPayload(type: String, payload: hl.Bytes, length: Int, cond: ImGuiCond = 0 ) : Bool { return false; }
+	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : hl.Bytes { return null; }
+
+	// Payload helpers
+	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ) : Bool {
+		var b = Bytes.ofString( payload );
+		return setDragDropPayload(type, b, b.length, cond);
+	 }
+	public static inline function acceptDragDropPayloadString(type: String, cond: ImGuiCond = 0 ) : String {
+		var bytes = ImGui.acceptDragDropPayload(type);
+		if( bytes != null )
+			return @:privateAccess String.fromUTF8( bytes );
+		return null;
+	}
+	public static inline function setDragDropPayloadInt(type: String, payload: Int, cond: ImGuiCond = 0 ) : Bool {
+		var b = Bytes.alloc( 4 );
+		b.setInt32( payload, 0 );
+		return setDragDropPayload(type, b, b.length, cond);
+	 }
+	public static inline function acceptDragDropPayloadInt(type: String, cond: ImGuiCond = 0 ) : Int {
+		var bytes = ImGui.acceptDragDropPayload(type);
+		if( bytes != null )
+			return bytes.getI32(0);
+		return 0;
+	}
+
 
     // Clipboard Utilities
 	static function get_clipboard_text() : hl.Bytes {return null;}
