@@ -603,7 +603,11 @@ class ImGui
     public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus2(name : String) {}
 
+	// Docking
 	public static function dockSpace(id : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
+	public static function setNextWindowDockId(id : Int, cond : ImGuiCond = 0) {}
+	public static function getWindowDockId() : Int { return 0; }
+	public static function isWindowDocked() : Bool { return false; }
 
 	// Content region
 	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
