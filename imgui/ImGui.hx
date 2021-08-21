@@ -41,6 +41,9 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var NoResize : Int = 16;
 	var PassthruCentralNode : Int = 32;
 	var AutoHideTabBar : Int = 64;
+	// Private/experimental flags
+	var NoDocking : Int = 65536;
+	var NoDockingSplitMe : Int = 131072;
 }
 
 @:enum abstract ImGuiTreeNodeFlags(Int) from Int to Int {
@@ -531,6 +534,8 @@ class ImFont
 	}
 }
 
+private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
+
 @:hlNative("hlimgui")
 class ImGui
 {
@@ -604,10 +609,24 @@ class ImGui
 	public static function setWindowFocus2(name : String) {}
 
 	// Docking
-	public static function dockSpace(id : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
-	public static function setNextWindowDockId(id : Int, cond : ImGuiCond = 0) {}
-	public static function getWindowDockId() : Int { return 0; }
+	public static function dockSpace(id : ImGuiID, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
+	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
+	public static function getWindowDockId() : ImGuiID { return 0; }
 	public static function isWindowDocked() : Bool { return false; }
+
+	// Dock Builder
+	public static function dockBuilderDockWindow(window_name: String, node_id : ImGuiID) {}
+	public static function dockBuilderGetNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
+	public static function dockBuilderGetCentralNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
+	public static function dockBuilderAddNode(node_id : ImGuiID, flags: ImGuiDockNodeFlags) : ImGuiID { return 0; }
+	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
+	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
+	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
+	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
+	public static function dockBuilderCopyWindowSettings(src_name: String, dst_name: String) {}
+	public static function dockBuilderFinish(node_id : ImGuiID) {}
 
 	// Content region
 	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
