@@ -441,7 +441,9 @@ typedef ImEvents = {
 	alt : Bool
 }
 
-typedef ImTextureID = Int;
+// In reality it's h3d.mat.Texture, but HL really dislike passing instances
+// directly for some reason.
+typedef ImTextureID = Dynamic;
 typedef ImU32 = Int;
 typedef ImGuiID = Int;
 
@@ -987,7 +989,7 @@ class ImGui
 
 	// internal functions
 	public static function initialize(render_fn:Dynamic->Void) : Dynamic {return null;}
-	public static function setFontTexture(texture_id : Int) {}
+	public static function setFontTexture(texture_id : ImTextureID) {}
 	public static function setKeyState(key : Int, down : Bool) {}
 	public static function setSpecialKeyState(shift : Bool, ctrl : Bool, alt : Bool, super : Bool) {}
 	public static function addKeyChar(c : Int) {}

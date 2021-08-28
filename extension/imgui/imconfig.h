@@ -108,4 +108,3 @@ namespace ImGui
 }
 */
 
-#define ImTextureID int

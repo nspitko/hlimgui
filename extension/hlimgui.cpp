@@ -74,7 +74,11 @@ void renderDrawLists(ImDrawData* draw_data)
 			hl_cmd_buffers_ptr[cmd_i] = hl_cmd_buffer;
 
 			// store the texture id
-			hl_dyn_seti((vdynamic*)hl_cmd_buffer, hl_hash_utf8("texture_id"), &hlt_i32, pcmd->TextureId);
+			vobj* tex_id = (vobj*)pcmd->TextureId;
+			if (tex_id == NULL)
+				hl_dyn_setp((vdynamic*)hl_cmd_buffer, hl_hash_utf8("texture_id"), &hlt_dyn, NULL);
+			else
+				hl_dyn_setp((vdynamic*)hl_cmd_buffer, hl_hash_utf8("texture_id"), tex_id->t, pcmd->TextureId);
 
 			// create the index buffer
 			int index_buffer_size = sizeof(ImDrawIdx) * pcmd->ElemCount;
@@ -140,7 +144,7 @@ HL_PRIM vdynamic* HL_NAME(initialize)(vclosure* render_fn)
 	return font_info;
 }
 
-HL_PRIM void HL_NAME(set_font_texture)(int texture_id)
+HL_PRIM void HL_NAME(set_font_texture)(ImTextureID texture_id)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->SetTexID(texture_id);
@@ -214,7 +218,7 @@ HL_PRIM void HL_NAME(render)()
 }
 
 DEFINE_PRIM(_DYN, initialize, _FUN(_VOID, _DYN));
-DEFINE_PRIM(_VOID, set_font_texture, _I32);
+DEFINE_PRIM(_VOID, set_font_texture, _DYN);
 DEFINE_PRIM(_VOID, set_key_state, _I32 _BOOL);
 DEFINE_PRIM(_VOID, add_key_char, _I32);
 DEFINE_PRIM(_VOID, set_events, _F32 _F32 _F32 _F32 _BOOL _BOOL);
