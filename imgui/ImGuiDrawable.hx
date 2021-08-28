@@ -7,10 +7,10 @@ import hxd.Key;
 class ImGuiDrawableBuffers {
 
 	public static final instance = new ImGuiDrawableBuffers();
-
+	
 	public var vertex_buffers(default, null) : Array<h3d.Buffer> = [];
 	public var index_buffers(default, null) : Array<{
-		texture_id:Int,
+		texture_id:ImTextureID,
 		vertex_buffer_id:Int,
 		clip_rect:{x:Int, y:Int, width:Int, height:Int},
 		buffer:h3d.Indexes}> = [];
@@ -28,12 +28,13 @@ class ImGuiDrawableBuffers {
 
 		// create font texture
 		var texture_size = font_info.width * font_info.height * 4;
-		var font_texture_id = registerTexture(Texture.fromPixels(new hxd.Pixels(
+		font_texture = Texture.fromPixels(new hxd.Pixels(
 			font_info.width,
 			font_info.height,
 			font_info.buffer.toBytes(texture_size),
-			hxd.PixelFormat.RGBA)));
-		ImGui.setFontTexture(font_texture_id);
+			hxd.PixelFormat.RGBA
+		));
+		ImGui.setFontTexture(font_texture);
 
 		this.initialized = true;
 	}
@@ -55,16 +56,6 @@ class ImGuiDrawableBuffers {
 		this.textures = [];
 
 		this.initialized = false;
-	}
-
-	public function registerTexture(texture : Texture) : Int {
-		var texture_id = this.textures.length;
-		this.textures.push(texture);
-		return texture_id + 1;
-	}
-
-	public function getTexture(texture_id) : Texture {
-		return this.textures[texture_id-1];
 	}
 
 	private function new() {
@@ -289,7 +280,7 @@ class ImGuiDrawable extends h2d.Drawable {
 
 		for (i in 0...index_buffers.length) {
 			var index_buffer = index_buffers[i];
-			if (ctx.beginDrawObject(this,  index_buffer.texture_id == 0 ? this.empty_tile.getTexture() : ImGuiDrawableBuffers.instance.getTexture(index_buffer.texture_id))) {
+			if (ctx.beginDrawObject(this,  index_buffer.texture_id == null ? this.empty_tile.getTexture() : index_buffer.texture_id)) {
 				var clip_rect = index_buffer.clip_rect;
 				ctx.engine.setRenderZone(clip_rect.x, clip_rect.y, clip_rect.width, clip_rect.height);
 				ctx.engine.renderIndexed(vertex_buffers[index_buffer.vertex_buffer_id], index_buffer.buffer);
