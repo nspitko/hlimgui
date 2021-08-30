@@ -24,9 +24,9 @@ HL_PRIM bool HL_NAME(slider_float)(vstring* label, varray* v, float v_min, float
     }
 }
 
-HL_PRIM bool HL_NAME(slider_angle)(vstring* label, float* v_rad, float* v_degrees_minf, float* v_degrees_max, vstring* format)
+HL_PRIM bool HL_NAME(slider_angle)(vstring* label, float* v_rad, float* v_degrees_minf, float* v_degrees_max, vstring* format, ImGuiSliderFlags* flags)
 {
-    return ImGui::SliderAngle(convertString(label), v_rad, convertPtr(v_degrees_minf, -360.0f), convertPtr(v_degrees_max, +360.0f), convertString(format));
+    return ImGui::SliderAngle(convertString(label), v_rad, convertPtr(v_degrees_minf, -360.0f), convertPtr(v_degrees_max, +360.0f), convertString(format), convertPtr(flags, 0));
 }
 
 HL_PRIM bool HL_NAME(slider_int)(vstring* label, varray* v, int v_min, int v_max, vstring* format)
@@ -49,9 +49,9 @@ HL_PRIM bool HL_NAME(slider_int)(vstring* label, varray* v, int v_min, int v_max
     }
 }
 
-HL_PRIM bool HL_NAME(v_slider_float)(vstring* label, vdynamic* size, float* v, float v_min, float v_max, vstring* format, float* power)
+HL_PRIM bool HL_NAME(v_slider_float)(vstring* label, vdynamic* size, float* v, float v_min, float v_max, vstring* format, ImGuiSliderFlags* flags)
 {
-    return ImGui::VSliderFloat(convertString(label), getImVec2(size), v, v_min, v_max, convertString(format), convertPtr(power, 1.0f));
+    return ImGui::VSliderFloat(convertString(label), getImVec2(size), v, v_min, v_max, convertString(format), convertPtr(flags, 0));
 }
 
 HL_PRIM bool HL_NAME(v_slider_int)(vstring* label, vdynamic* size, int* v, int v_min, int v_max, vstring* format)
@@ -60,7 +60,7 @@ HL_PRIM bool HL_NAME(v_slider_int)(vstring* label, vdynamic* size, int* v, int v
 }
 
 DEFINE_PRIM(_BOOL, slider_float, _STRING _ARR _F32 _F32 _STRING _REF(_F32));
-DEFINE_PRIM(_BOOL, slider_angle, _STRING _REF(_F32) _REF(_F32) _REF(_F32) _STRING);
+DEFINE_PRIM(_BOOL, slider_angle, _STRING _REF(_F32) _REF(_F32) _REF(_F32) _STRING _REF(_I32) );
 DEFINE_PRIM(_BOOL, slider_int, _STRING _ARR _I32 _I32 _STRING);
-DEFINE_PRIM(_BOOL, v_slider_float, _STRING _DYN _REF(_F32) _F32 _F32 _STRING _REF(_F32));
+DEFINE_PRIM(_BOOL, v_slider_float, _STRING _DYN _REF(_F32) _F32 _F32 _STRING _REF(_I32) );
 DEFINE_PRIM(_BOOL, v_slider_int, _STRING _DYN _REF(_I32) _I32 _I32 _STRING);

@@ -416,6 +416,14 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var AllowVtxOffset : Int = 4;
 }
 
+@:enum abstract ImGuiSliderFlags(Int) from Int to Int {
+	var None : Int = 0;
+	var AlwaysClamp : Int = 16;
+	var Logarithmic : Int = 32;
+	var NoRoundToFormat : Int = 64;
+	var NoInput : Int = 128;
+}
+
 @:enum abstract ImDrawCornerFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var TopLeft : Int = 1;
@@ -742,9 +750,9 @@ class ImGui
 
 	// Widgets: Sliders
     public static function sliderFloat(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
-    public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg") : Bool {return false;}
+    public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
     public static function sliderInt(label : String, v : hl.NativeArray<Int>, v_min : Int, v_max : Int, format : String = "%d") : Bool {return false;}
-    public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
+    public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function vSliderInt(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d") : Bool {return false;}
 
     // Widgets: Input with Keyboard
