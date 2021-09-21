@@ -944,7 +944,7 @@ class ImGui
 
 	// Payload helpers
 	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ) : Bool {
-		var b = Bytes.ofString( payload );
+		var b = Bytes.ofString( payload + '\x00' );
 		return setDragDropPayload(type, b, b.length, cond);
 	 }
 	public static inline function acceptDragDropPayloadString(type: String, cond: ImGuiCond = 0 ) : String {
