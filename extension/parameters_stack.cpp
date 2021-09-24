@@ -34,7 +34,7 @@ HL_PRIM void HL_NAME(pop_style_var)(int* count)
 	ImGui::PopStyleVar(count != nullptr ? *count : 1);
 }
 
-IMGUI_API vdynamic* HL_NAME(get_style_color_vec4)(ImGuiCol idx)
+HL_PRIM vdynamic* HL_NAME(get_style_color_vec4)(ImGuiCol idx)
 {
 	return getHLFromImVec4(ImGui::GetStyleColorVec4(idx));
 }
