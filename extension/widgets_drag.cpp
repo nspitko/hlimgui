@@ -24,9 +24,9 @@ HL_PRIM bool HL_NAME(drag_float)(vstring* label, varray* v, float* v_speed, floa
     }
 }
 
-HL_PRIM bool HL_NAME(drag_float_range2)(vstring* label, float* v_current_min, float* v_current_max, float* v_speed, float* v_min, float* v_max, vstring* format, vstring* format_max, float* power)
+HL_PRIM bool HL_NAME(drag_float_range2)(vstring* label, float* v_current_min, float* v_current_max, float* v_speed, float* v_min, float* v_max, vstring* format, vstring* format_max, ImGuiSliderFlags* flags)
 {
-    return ImGui::DragFloatRange2(convertString(label), v_current_min, v_current_max, convertPtr(v_speed, 1.0f), convertPtr(v_min, 0.0f), convertPtr(v_max, 0.0f), convertString(format), convertString(format_max), convertPtr(power, 1.0f));
+    return ImGui::DragFloatRange2(convertString(label), v_current_min, v_current_max, convertPtr(v_speed, 1.0f), convertPtr(v_min, 0.0f), convertPtr(v_max, 0.0f), convertString(format), convertString(format_max), convertPtr(flags, 0));
 }
 
 HL_PRIM bool HL_NAME(drag_int)(vstring* label, varray* v, float* v_speed, int* v_min, int* v_max, vstring* format)
