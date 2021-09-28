@@ -532,19 +532,59 @@ class ImFontConfig
 }
 
 private typedef ImFontPtr = hl.Abstract<"imfont">;
+private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
+private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
+
+@:hlNative("hlimgui")
+class ImDrawList
+{
+	var ptr: ImDrawListPtr;
+
+	public function new(ptr: ImDrawListPtr) { this.ptr = ptr; }
+
+	public function addLine( p1: ImVec2, p2: ImVec2, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_line( ptr, p1, p2, col, thickness ); }
+	public function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawCornerFlags = ImDrawCornerFlags.All, thickness: Single = 1.0 ) { drawlist_add_rect( ptr, pMin, pMax, col, rounding, roundingCorners, thickness ); }
+	public function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawCornerFlags = ImDrawCornerFlags.All ) { drawlist_add_rect_filled( ptr, pMin, pMax, col, rounding, roundingCorners); }
+	public function addRectFilledMultiColor( pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) { drawlist_add_rect_filled_multicolor( ptr, pMin, pMax, col_upr_left, col_upr_right, col_bot_right, col_bot_left ); }
+	public function addQuad( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_quad(ptr, p1, p2, p3, p4, col, thickness ); }
+	public function addQuadFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_quad_filled( ptr, p1, p2, p3, p4, col ); }
+	public function addTriangle( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_triangle(ptr, p1, p2, p3, col, thickness ); }
+	public function addTriangleFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_triangle_filled(ptr, p1, p2, p3, col ); }
+	public function addCircle( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0, thickness: Single = 1.0 ) { drawlist_add_circle( ptr, center, radius, col, num_segments, thickness ); }
+	public function addCircleFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_circle_filled(ptr, center, radius, col, num_segments ); }
+	public function addNgon( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single = 1.0 ) { drawlist_add_ngon(ptr, center, radius, col, num_segments, thickness ); }
+	public function addNgonFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_ngon_filled(ptr, center, radius, col, num_segments ); }
+	//public function addPolyLine( points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { drawlist_add_poly_line(ptr, points, col, closed, thickness ); }
+	//public function addConvexPolyFilled( points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) { drawlist_add_convex_poly_filled(ptr, points, col ); }
+	public function addBezierCurve( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { drawlist_add_bezier_curve(ptr, p1, p2, p3, p4, col, thickness, num_segments ); }
+
+	static function drawlist_add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
+	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawCornerFlags, thickness ) {}
+	static function drawlist_add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawCornerFlags ) {}
+	static function drawlist_add_rect_filled_multicolor( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) {}
+	static function drawlist_add_quad( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
+	static function drawlist_add_quad_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) {}
+	static function drawlist_add_triangle( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
+	static function drawlist_add_triangle_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) {}
+	static function drawlist_add_circle( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
+	static function drawlist_add_circle_filled( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int) {}
+	static function drawlist_add_ngon( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
+	static function drawlist_add_ngon_filled( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int) {}
+	static function drawlist_add_poly_line( drawlist: ImDrawListPtr, points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single ) {}
+	static function drawlist_add_convex_poly_filled( drawlist: ImDrawListPtr, points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) {}
+	static function drawlist_add_bezier_curve( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single, num_segments: Int ) {}
+}
+
 
 @:hlNative("hlimgui")
 class ImFont
 {
 	var ptr: ImFontPtr;
 
-	public function new(ptr: ImFontPtr)
-	{
-		this.ptr = ptr;
-	}
+	public function new(ptr: ImFontPtr) { this.ptr = ptr; }
 }
 
-private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
+
 
 @:hlNative("hlimgui")
 class ImGui
@@ -1006,4 +1046,13 @@ class ImGui
 	public static function wantCaptureMouse() : Bool {return false;}
 	public static function wantCaptureKeyboard() : Bool {return false;}
 	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {}
+
+	// Draw Lists
+	public static inline function getWindowDrawList() : ImDrawList { return new ImDrawList( drawlist_get_window_draw_list() ); }
+	public static inline function getForegroundDrawList() : ImDrawList { return new ImDrawList( drawlist_get_foreground_draw_list() ); }
+	public static inline function getBackgroundDrawList() : ImDrawList { return new ImDrawList( drawlist_get_background_draw_list() ); }
+
+	static function drawlist_get_window_draw_list() : ImDrawListPtr { return null; }
+	static function drawlist_get_foreground_draw_list() : ImDrawListPtr { return null; }
+	static function drawlist_get_background_draw_list() : ImDrawListPtr { return null; }
 }
