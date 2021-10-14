@@ -37,9 +37,9 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var KeepAliveOnly : Int = 1;
 	var NoCentralNode : Int = 2;
 	var NoDockingInCentralNode : Int = 4;
-	var NoSplit : Int = 8;
-	var NoResize : Int = 16;
-	var PassthruCentralNode : Int = 32;
+	var PassthruCentralNode : Int = 8;
+	var NoSplit : Int = 16;
+	var NoResize : Int = 32;
 	var AutoHideTabBar : Int = 64;
 	// Private/experimental flags
 	var NoDocking : Int = 65536;
