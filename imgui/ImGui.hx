@@ -538,6 +538,7 @@ class ImFontConfig
 
 private typedef ImFontPtr = hl.Abstract<"imfont">;
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
+private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
 
 @:hlNative("hlimgui")
@@ -587,6 +588,28 @@ class ImFont
 	var ptr: ImFontPtr;
 
 	public function new(ptr: ImFontPtr) { this.ptr = ptr; }
+}
+
+@:hlNative("hlimgui")
+class ImStateStorage
+{
+	var ptr: ImStateStoragePtr;
+	
+	public inline function new(ptr: ImStateStoragePtr) { this.ptr = ptr; }
+	
+	static function state_storage_get_int(storage: ImStateStoragePtr, id: ImGuiID, default_val: Int): Int { return 0; }
+	static function state_storage_set_int(storage: ImStateStoragePtr, id: ImGuiID, val: Int): Void {}
+	static function state_storage_get_bool(storage: ImStateStoragePtr, id: ImGuiID, default_val: Bool): Bool { return false; }
+	static function state_storage_set_bool(storage: ImStateStoragePtr, id: ImGuiID, val: Bool): Void {}
+	static function state_storage_get_float(storage: ImStateStoragePtr, id: ImGuiID, default_val: Float): Float { return 0; }
+	static function state_storage_set_float(storage: ImStateStoragePtr, id: ImGuiID, val: Float): Void {}
+	
+	public inline function setInt(id: ImGuiID, val: Int):Void state_storage_set_int(ptr, id, val);
+	public inline function getInt(id: ImGuiID, default_val: Int = 0):Int return state_storage_get_int(ptr, id, default_val);
+	public inline function setBool(id: ImGuiID, val: Bool):Void state_storage_set_bool(ptr, id, val);
+	public inline function getBool(id: ImGuiID, default_val: Bool = false):Bool return state_storage_get_bool(ptr, id, default_val);
+	public inline function setFloat(id: ImGuiID, val: Float):Void state_storage_set_float(ptr, id, val);
+	public inline function getFloat(id: ImGuiID, default_val: Float = 0.0):Float return state_storage_get_float(ptr, id, default_val);
 }
 
 
@@ -1123,4 +1146,10 @@ class ImGui
 	static function drawlist_get_window_draw_list() : ImDrawListPtr { return null; }
 	static function drawlist_get_foreground_draw_list() : ImDrawListPtr { return null; }
 	static function drawlist_get_background_draw_list() : ImDrawListPtr { return null; }
+	
+	// State storage
+	public static inline function getStateStorage() : ImStateStorage { return new ImStateStorage( get_state_storage() ); }
+	
+	static function get_state_storage() : ImStateStoragePtr { return null; }
+	
 }
