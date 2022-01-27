@@ -225,45 +225,45 @@ void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config)
 	imgui_font_config->GlyphRanges = glyph_ranges;
 }
 
-ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value)
-{
-	ImVec2 result = default_value;
-	if (vec2 != nullptr) {
-		getStructFloat(vec2, "x", result.x);
-		getStructFloat(vec2, "y", result.y);
-	}
-	return result;
-}
+// ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value)
+// {
+// 	ImVec2 result = default_value;
+// 	if (vec2 != nullptr) {
+// 		getStructFloat(vec2, "x", result.x);
+// 		getStructFloat(vec2, "y", result.y);
+// 	}
+// 	return result;
+// }
 
-ImVec4 getImVec4(vdynamic* vec4, const ImVec4& default_value)
-{
-	ImVec4 result = default_value;
-	if (vec4 != nullptr) {
-		getStructFloat(vec4, "x", result.x);
-		getStructFloat(vec4, "y", result.y);
-		getStructFloat(vec4, "z", result.z);
-		getStructFloat(vec4, "w", result.w);
-	}
-	return result;
-}
+// ImVec4 getImVec4(vdynamic* vec4, const ImVec4& default_value)
+// {
+// 	ImVec4 result = default_value;
+// 	if (vec4 != nullptr) {
+// 		getStructFloat(vec4, "x", result.x);
+// 		getStructFloat(vec4, "y", result.y);
+// 		getStructFloat(vec4, "z", result.z);
+// 		getStructFloat(vec4, "w", result.w);
+// 	}
+// 	return result;
+// }
 
-vdynamic* getHLFromImVec2(ImVec2 value)
-{
-	vdynamic* vec2 = (vdynamic*)hl_alloc_dynobj();
-	setStructFloat(vec2, "x", value.x);
-	setStructFloat(vec2, "y", value.y);
-	return vec2;
-}
+// vdynamic* getHLFromImVec2(ImVec2 value)
+// {
+// 	vdynamic* vec2 = (vdynamic*)hl_alloc_dynobj();
+// 	setStructFloat(vec2, "x", value.x);
+// 	setStructFloat(vec2, "y", value.y);
+// 	return vec2;
+// }
 
-vdynamic* getHLFromImVec4(ImVec4 value)
-{
-	vdynamic* vec4 = (vdynamic*)hl_alloc_dynobj();
-	setStructFloat(vec4, "x", value.x);
-	setStructFloat(vec4, "y", value.y);
-	setStructFloat(vec4, "z", value.z);
-	setStructFloat(vec4, "w", value.w);
-	return vec4;
-}
+// vdynamic* getHLFromImVec4(ImVec4 value)
+// {
+// 	vdynamic* vec4 = (vdynamic*)hl_alloc_dynobj();
+// 	setStructFloat(vec4, "x", value.x);
+// 	setStructFloat(vec4, "y", value.y);
+// 	setStructFloat(vec4, "z", value.z);
+// 	setStructFloat(vec4, "w", value.w);
+// 	return vec4;
+// }
 
 vbyte* getVByteFromCStr(const char* str)
 {
