@@ -2,6 +2,7 @@ package imgui;
 
 import haxe.io.Bytes;
 
+@:forward
 abstract ExtDynamic<T>(Dynamic) from T to T {}
 
 @:enum abstract ImGuiWindowFlags(Int) from Int to Int {
@@ -418,10 +419,10 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 
 @:enum abstract ImGuiSliderFlags(Int) from Int to Int {
 	var None : Int = 0;
-	var AlwaysClamp : Int = 16;
-	var Logarithmic : Int = 32;
-	var NoRoundToFormat : Int = 64;
-	var NoInput : Int = 128;
+	var AlwaysClamp : Int = 16; // Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.
+	var Logarithmic : Int = 32; // Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
+	var NoRoundToFormat : Int = 64; // Disable rounding underlying value to match precision of the display format string (e.g. %.3f values are rounded to those 3 digits)
+	var NoInput : Int = 128; // Disable CTRL+Click or Enter key allowing to input text directly into the widget
 }
 
 @:enum abstract ImDrawCornerFlags(Int) from Int to Int {
@@ -451,7 +452,11 @@ typedef ImEvents = {
 
 // In reality it's h3d.mat.Texture, but HL really dislike passing instances
 // directly for some reason.
+#if heaps
+abstract ImTextureID(Dynamic) from h3d.mat.Texture to h3d.mat.Texture {}
+#else
 typedef ImTextureID = Dynamic;
+#end
 typedef ImU32 = Int;
 typedef ImGuiID = Int;
 
@@ -533,6 +538,7 @@ class ImFontConfig
 
 private typedef ImFontPtr = hl.Abstract<"imfont">;
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
+private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
 
 @:hlNative("hlimgui")
@@ -582,6 +588,28 @@ class ImFont
 	var ptr: ImFontPtr;
 
 	public function new(ptr: ImFontPtr) { this.ptr = ptr; }
+}
+
+@:hlNative("hlimgui")
+class ImStateStorage
+{
+	var ptr: ImStateStoragePtr;
+	
+	public inline function new(ptr: ImStateStoragePtr) { this.ptr = ptr; }
+	
+	static function state_storage_get_int(storage: ImStateStoragePtr, id: ImGuiID, default_val: Int): Int { return 0; }
+	static function state_storage_set_int(storage: ImStateStoragePtr, id: ImGuiID, val: Int): Void {}
+	static function state_storage_get_bool(storage: ImStateStoragePtr, id: ImGuiID, default_val: Bool): Bool { return false; }
+	static function state_storage_set_bool(storage: ImStateStoragePtr, id: ImGuiID, val: Bool): Void {}
+	static function state_storage_get_float(storage: ImStateStoragePtr, id: ImGuiID, default_val: Single): Single { return 0; }
+	static function state_storage_set_float(storage: ImStateStoragePtr, id: ImGuiID, val: Single): Void {}
+	
+	public inline function setInt(id: ImGuiID, val: Int):Void state_storage_set_int(ptr, id, val);
+	public inline function getInt(id: ImGuiID, default_val: Int = 0):Int return state_storage_get_int(ptr, id, default_val);
+	public inline function setBool(id: ImGuiID, val: Bool):Void state_storage_set_bool(ptr, id, val);
+	public inline function getBool(id: ImGuiID, default_val: Bool = false):Bool return state_storage_get_bool(ptr, id, default_val);
+	public inline function setFloat(id: ImGuiID, val: Single):Void state_storage_set_float(ptr, id, val);
+	public inline function getFloat(id: ImGuiID, default_val: Single = 0.0):Single return state_storage_get_float(ptr, id, default_val);
 }
 
 
@@ -782,33 +810,89 @@ class ImGui
     public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
 
-    // Widgets: Drags
-    public static function dragFloat(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
-    public static function dragFloatRange2(label : String, v_current_min : hl.Ref<Single>, v_current_max : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null, power : Single = 1.0) : Bool {return false;}
-    public static function dragInt(label : String, v : hl.NativeArray<Int>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f") : Bool {return false;}
-	public static function dragIntRange2(label : String, v_current_min : hl.Ref<Int>, v_current_max : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null) : Bool {return false;}
+	// Widgets: Drags
+	public static function dragFloat(label : String, v : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragInt(label : String, v : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragDouble(label : String, v : hl.Ref<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
+	public static function dragFloatRange2(label : String, v_current_min : hl.Ref<Single>, v_current_max : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragIntRange2(label : String, v_current_min : hl.Ref<Int>, v_current_max : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
+
+	public static inline function dragFloatN(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
+		return drag_scalar_n(label, ImGuiDataType.Float, v, v_speed, v_min, v_max, format, flags);
+	}
+	public static inline function dragIntN(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", flags : ImGuiSliderFlags = 0) : Bool {
+		return drag_scalar_n(label, ImGuiDataType.S32, v, v_speed, v_min, v_max, format, flags);
+	}
+	public static inline function dragDoubleN(label : String, v : hl.NativeArray<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {
+		return drag_scalar_n(label, ImGuiDataType.Double, v, v_speed, v_min, v_max, format, flags);
+	}
+	static function drag_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, v_speed : Single, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
+	
 	// Widgets: Sliders
-    public static function sliderFloat(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", power : Single = 1.0) : Bool {return false;}
-    public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-    public static function sliderInt(label : String, v : hl.NativeArray<Int>, v_min : Int, v_max : Int, format : String = "%d") : Bool {return false;}
-    public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function vSliderInt(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d") : Bool {return false;}
-
-    // Widgets: Input with Keyboard
-    public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputTextWithHint(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputFloat2(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputFloat3(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputFloat4(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputInt2(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputInt3(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-    public static function inputInt4(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function sliderFloat(label : String, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	
+	public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderInt(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	
+	public static inline function sliderFloatN(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
+		return slider_scalar_n(label, ImGuiDataType.Float, v, v_min, v_max, format, flags);
+	}
+	public static inline function sliderIntN(label : String, v : hl.NativeArray<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {
+		return slider_scalar_n(label, ImGuiDataType.S32, v, v_min, v_max, format, flags);
+	}
+	public static inline function sliderDoubleN(label : String, v : hl.NativeArray<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {
+		return slider_scalar_n(label, ImGuiDataType.Double, v, v_min, v_max, format, flags);
+	}
+	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<Dynamic>, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
+	
+	// Widgets: Input with Keyboard
+	public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputTextWithHint(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	
+	public static inline function inputFloatN(label : String, v : hl.NativeArray<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return input_scalar_n(label, ImGuiDataType.Float, v, step, step_fast, format, flags);
+	}
+	public static inline function inputIntN(label : String, v : hl.NativeArray<Int>, step : Int = 0, step_fast : Int = 0, flags : ImGuiInputTextFlags = 0): Bool {
+		return input_scalar_n(label, ImGuiDataType.S32, v, step, step_fast, "%d", flags);
+	}
+	public static inline function inputDoubleN(label : String, v : hl.NativeArray<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return input_scalar_n(label, ImGuiDataType.Double, v, step, step_fast, format, flags);
+	}
+	@:deprecated("Use inputFloatN")
+	public static inline function inputFloat2(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputFloatN(label, v, format, flags);
+	}
+	@:deprecated("Use inputFloatN")
+	public static function inputFloat3(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputFloatN(label, v, format, flags);
+	}
+	@:deprecated("Use inputFloatN")
+	public static function inputFloat4(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputFloatN(label, v, format, flags);
+	}
+	@:deprecated("Use inputIntN")
+	public static function inputInt2(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputIntN(label, v, flags);
+	}
+	@:deprecated("Use inputIntN")
+	public static function inputInt3(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputIntN(label, v, flags);
+	}
+	@:deprecated("Use inputIntN")
+	public static function inputInt4(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputIntN(label, v, flags);
+	}
 
+	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, step : Dynamic, step_fast : Dynamic, format : String, flags : Int) : Bool {return false;}
+	
 	// Widgets: Color Editor/Picker
     public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
@@ -994,9 +1078,9 @@ class ImGui
 		return null;
 	}
 	public static inline function setDragDropPayloadInt(type: String, payload: Int, cond: ImGuiCond = 0 ) : Bool {
-		var b = Bytes.alloc( 4 );
-		b.setInt32( payload, 0 );
-		return setDragDropPayload(type, b, b.length, cond);
+		var b = new hl.Bytes(4);
+		b.setI32(0, payload);
+		return setDragDropPayload(type, b, 4, cond);
 	 }
 	public static inline function acceptDragDropPayloadInt(type: String, cond: ImGuiCond = 0 ) : Int {
 		var bytes = ImGui.acceptDragDropPayload(type);
@@ -1027,10 +1111,14 @@ class ImGui
 
 	// Fonts
 
-	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig = null, ?glyphRanges: hl.NativeArray<hl.UI16> = null ) : ImFont { return new ImFont(imguiAddFontFromFileTtf(filename, size, config, glyphRanges)); }
-	public static function imguiAddFontFromFileTtf( filename: String, size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
-	public static inline function pushFont( font: ImFont ) { imguiPushFont( @:privateAccess font.ptr );	}
-	static function imguiPushFont( font: ImFontPtr ) {}
+	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return new ImFont(add_font_default(config)); }
+	static function add_font_default(config:ExtDynamic<ImFontConfig>) : ImFontPtr { return null; }
+	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig = null, ?glyphRanges: hl.NativeArray<hl.UI16> = null ) : ImFont { return new ImFont(add_font_from_file_ttf(filename, size, config, glyphRanges)); }
+	public static function add_font_from_file_ttf( filename: String, size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
+	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return new ImFont(add_font_from_memory_ttf(bytes, size, font_size, config, glyphRanges)); }
+	public static function add_font_from_memory_ttf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
+	public static inline function pushFont( font: ImFont ) { push_font( @:privateAccess font.ptr );	}
+	static function push_font( font: ImFontPtr ) {}
 	public static function popFont() {}
 	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
 	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
@@ -1046,6 +1134,9 @@ class ImGui
 	public static function wantCaptureMouse() : Bool {return false;}
 	public static function wantCaptureKeyboard() : Bool {return false;}
 	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {}
+	public static function getConfigFlags() : ImGuiConfigFlags {return 0;}
+	public static function setUserData(data : Dynamic) {}
+	public static function getUserData() : Dynamic {return null;}
 
 	// Draw Lists
 	public static inline function getWindowDrawList() : ImDrawList { return new ImDrawList( drawlist_get_window_draw_list() ); }
@@ -1055,4 +1146,10 @@ class ImGui
 	static function drawlist_get_window_draw_list() : ImDrawListPtr { return null; }
 	static function drawlist_get_foreground_draw_list() : ImDrawListPtr { return null; }
 	static function drawlist_get_background_draw_list() : ImDrawListPtr { return null; }
+	
+	// State storage
+	public static inline function getStateStorage() : ImStateStorage { return new ImStateStorage( get_state_storage() ); }
+	
+	static function get_state_storage() : ImStateStoragePtr { return null; }
+	
 }
