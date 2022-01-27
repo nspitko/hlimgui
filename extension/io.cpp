@@ -39,7 +39,7 @@ HL_PRIM int HL_NAME(get_config_flags)()
     return ImGui::GetIO().ConfigFlags;
 }
 
-HL_PRIM void set_user_data(vdynamic* data) {
+HL_PRIM void HL_NAME(set_user_data)(vdynamic* data) {
     ImGuiIO& io = ImGui::GetIO();
     // Remove previous user-data from GC root
     if (io.UserData != NULL) hl_remove_root(&io.UserData);
@@ -49,8 +49,15 @@ HL_PRIM void set_user_data(vdynamic* data) {
     io.UserData = &data;
 }
 
+HL_PRIM vdynamic* HL_NAME(get_user_data)() {
+    ImGuiIO& io = ImGui::GetIO();
+    return (vdynamic*)&io.UserData;
+}
+
 DEFINE_PRIM(_BOOL, want_capture_mouse, _NO_ARG);
 DEFINE_PRIM(_BOOL, want_capture_keyboard, _NO_ARG);
 DEFINE_PRIM(_VOID, set_ini_filename, _STRING);
+DEFINE_PRIM(_VOID, set_user_data, _DYN);
+DEFINE_PRIM(_DYN, get_user_data, _NO_ARG);
 
 DEFINE_PRIM_PROP(_I32,config_flags,_REF(_I32));
