@@ -3,10 +3,10 @@
 
 void convertColor(ImU32 color, float& r, float& g, float& b, float& a)
 {
-	r = (color & 0xFF) / 255.0f;
-	g = ((color >> 8) & 0xFF) / 255.0f;
-	b = ((color >> 16) & 0xFF) / 255.0f;
-	a = (color >> 24) / 255.0f;
+	r = ((color >> IM_COL32_R_SHIFT) & 0xFF) / 255.0f;
+	g = ((color >> IM_COL32_G_SHIFT) & 0xFF) / 255.0f;
+	b = ((color >> IM_COL32_B_SHIFT) & 0xFF) / 255.0f;
+	a = ((color >> IM_COL32_A_SHIFT) & 0xFF) / 255.0f;
 }
 
 std::string unicodeToUTF8(vstring* hl_string)
