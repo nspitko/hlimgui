@@ -6,7 +6,7 @@ set(TARGET_EXT .hdll)
 project(${TARGET_NAME})
 
 file(GLOB SOURCES "*.cpp")
-file(GLOB IMGUI_SOURCES "imgui/*.cpp")
+file(GLOB IMGUI_SOURCES "lib/imgui/*.cpp")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,7 +21,7 @@ set_target_properties(${TARGET_NAME}${TARGET_EXT}
 )
 
 IF (WIN32)
-target_include_directories(${TARGET_NAME}${TARGET_EXT} PUBLIC $ENV{HASHLINKPATH}/include)
+target_include_directories(${TARGET_NAME}${TARGET_EXT} PUBLIC $ENV{HASHLINKPATH}/include lib/imgui/ )
 target_link_libraries(${TARGET_NAME}${TARGET_EXT} $ENV{HASHLINKPATH}/libhl.lib)
 ELSEIF (APPLE)
 find_library(APPLICATION_SERVICES_FRAMEWORK ApplicationServices REQUIRED)

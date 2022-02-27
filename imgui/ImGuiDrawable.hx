@@ -7,7 +7,7 @@ import hxd.Key;
 class ImGuiDrawableBuffers {
 
 	public static final instance = new ImGuiDrawableBuffers();
-	
+
 	public var vertex_buffers(default, null) : Array<h3d.Buffer> = [];
 	public var index_buffers(default, null) : Array<{
 		texture_id:ImTextureID,
@@ -187,12 +187,12 @@ class ImGuiDrawable extends h2d.Drawable {
 			Key.ENTER => ImGuiKey.Enter,
 			Key.ESCAPE => ImGuiKey.Escape,
 			Key.NUMPAD_ENTER => ImGuiKey.KeyPadEnter,
-			Key.A => ImGuiKey.A,
-			Key.C => ImGuiKey.C,
-			Key.V => ImGuiKey.V,
-			Key.X => ImGuiKey.X,
-			Key.Y => ImGuiKey.Y,
-			Key.Z => ImGuiKey.Z,
+			Key.LSHIFT => ImGuiKey.LeftShift,
+			Key.RSHIFT => ImGuiKey.RightShift,
+			Key.LALT => ImGuiKey.LeftAlt,
+			Key.RALT => ImGuiKey.RightAlt,
+			Key.LCTRL => ImGuiKey.LeftCtrl,
+			Key.RCTRL => ImGuiKey.RightCtrl,
 		];
 
 		this.empty_tile = h2d.Tile.fromColor(0xFFFFFF);
@@ -210,11 +210,6 @@ class ImGuiDrawable extends h2d.Drawable {
 
 	public function update(dt:Float) {
 		ImGui.setEvents(dt, this.mouse_x, this.mouse_y, this.mouse_delta, mouse_down[0], mouse_down[1]);
-		ImGui.setSpecialKeyState(
-			Key.isDown(Key.LSHIFT) || Key.isDown(Key.RSHIFT),
-			Key.isDown(Key.LCTRL) || Key.isDown(Key.RCTRL),
-			Key.isDown(Key.LALT) || Key.isDown(Key.RALT),
-			Key.isDown(Key.LEFT_WINDOW_KEY) || Key.isDown(Key.RIGHT_WINDOW_KEY));
 		this.mouse_delta = 0;
 
 		var scene = getScene();
@@ -253,14 +248,14 @@ class ImGuiDrawable extends h2d.Drawable {
 				}
 			case EKeyDown:
 				if (this.keycode_map.exists(event.keyCode)) {
-					ImGui.setKeyState(this.keycode_map[event.keyCode], true);
+					ImGui.addKeyEvent(this.keycode_map[event.keyCode], true);
 					if (ImGui.wantCaptureKeyboard()) {
 						event.propagate = false;
 					}
 				}
 			case EKeyUp:
 				if (this.keycode_map.exists(event.keyCode)) {
-					ImGui.setKeyState(this.keycode_map[event.keyCode], false);
+					ImGui.addKeyEvent(this.keycode_map[event.keyCode], false);
 					if (ImGui.wantCaptureKeyboard()) {
 						event.propagate = false;
 					}

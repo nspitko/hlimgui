@@ -1,7 +1,7 @@
 #define HL_NAME(n) hlimgui_##n
 
 #include <hl.h>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 
 HL_PRIM vbyte* HL_NAME(create_context)()
 {
