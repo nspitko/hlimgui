@@ -2,7 +2,7 @@
 
 #include <hl.h>
 #include <vector>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM vdynamic* HL_NAME(color_convert_u32_to_float4)(ImU32 in)

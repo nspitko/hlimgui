@@ -172,29 +172,31 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 }
 
 @:enum abstract ImGuiKey(Int) from Int to Int {
-	var Tab : Int = 0;
-	var LeftArrow : Int = 1;
-	var RightArrow : Int = 2;
-	var UpArrow : Int = 3;
-	var DownArrow : Int = 4;
-	var PageUp : Int = 5;
-	var PageDown : Int = 6;
-	var Home : Int = 7;
-	var End : Int = 8;
-	var Insert : Int = 9;
-	var Delete : Int = 10;
-	var Backspace : Int = 11;
-	var Space : Int = 12;
-	var Enter : Int = 13;
-	var Escape : Int = 14;
-	var KeyPadEnter : Int = 15;
-	var A : Int = 16;
-	var C : Int = 17;
-	var V : Int = 18;
-	var X : Int = 19;
-	var Y : Int = 20;
-	var Z : Int = 21;
-	var COUNT : Int = 22;
+	var Tab : Int = 512;
+	var LeftArrow : Int = 513;
+	var RightArrow : Int = 514;
+	var UpArrow : Int = 515;
+	var DownArrow : Int = 516;
+	var PageUp : Int = 517;
+	var PageDown : Int = 518;
+	var Home : Int = 519;
+	var End : Int = 520;
+	var Insert : Int = 521;
+	var Delete : Int = 522;
+	var Backspace : Int = 523;
+	var Space : Int = 524;
+	var Enter : Int = 525;
+	var Escape : Int = 526;
+	var LeftCtrl : Int = 527;
+	var LeftShift : Int = 528;
+	var LeftAlt : Int = 529;
+	var LeftSuper : Int = 530;
+	var RightCtrl : Int = 531;
+	var RightShift : Int = 532;
+	var RightAlt : Int = 533;
+	var RightSuper : Int = 534;
+	//
+	var KeyPadEnter : Int = 615;
 }
 
 @:enum abstract ImGuiInputTextFlags(Int) from Int to Int {
@@ -438,6 +440,93 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var All : Int = 15;
 }
 
+@:enum abstract ImGuiTableFlags(Int) from Int to Int {
+	var None                       = 0;
+    var Resizable                  = 1 << 0;   // Enable resizing columns.
+    var Reorderable                = 1 << 1;   // Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)
+    var Hideable                   = 1 << 2;   // Enable hiding/disabling columns in context menu.
+    var Sortable                   = 1 << 3;   // Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see var SortMulti and var SortTristate.
+    var NoSavedSettings            = 1 << 4;   // Disable persisting columns order; width and sort settings in the .ini file.
+    var ContextMenuInBody          = 1 << 5;   // Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().
+    // Decorations
+    var RowBg                      = 1 << 6;   // Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)
+    var BordersInnerH              = 1 << 7;   // Draw horizontal borders between rows.
+    var BordersOuterH              = 1 << 8;   // Draw horizontal borders at the top and bottom.
+    var BordersInnerV              = 1 << 9;   // Draw vertical borders between columns.
+    var BordersOuterV              = 1 << 10;  // Draw vertical borders on the left and right sides.
+    var BordersH                   = BordersInnerH | BordersOuterH; // Draw horizontal borders.
+    var BordersV                   = BordersInnerV | BordersOuterV; // Draw vertical borders.
+    var BordersInner               = BordersInnerV | BordersInnerH; // Draw inner borders.
+    var BordersOuter               = BordersOuterV | BordersOuterH; // Draw outer borders.
+    var Borders                    = BordersInner | BordersOuter;   // Draw all borders.
+    var NoBordersInBody            = 1 << 11;  // [ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style
+    var NoBordersInBodyUntilResize = 1 << 12;  // [ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style
+    // Sizing Policy (read above for defaults)
+    var SizingFixedFit             = 1 << 13;  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable); matching contents width.
+    var SizingFixedSame            = 2 << 13;  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable); matching the maximum contents width of all columns. Implicitly enable var NoKeepColumnsVisible.
+    var SizingStretchProp          = 3 << 13;  // Columns default to _WidthStretch with default weights proportional to each columns contents widths.
+    var SizingStretchSame          = 4 << 13;  // Columns default to _WidthStretch with default weights all equal; unless overridden by TableSetupColumn().
+    // Sizing Extra Options
+    var NoHostExtendX              = 1 << 16;  // Make outer width auto-fit to columns; overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.
+    var NoHostExtendY              = 1 << 17;  // Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.
+    var NoKeepColumnsVisible       = 1 << 18;  // Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.
+    var PreciseWidths              = 1 << 19;  // Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33;33;34. With this flag: 33;33;33). With larger number of columns; resizing will appear to be less smooth.
+    // Clipping
+    var NoClip                     = 1 << 20;  // Disable clipping rectangle for every individual columns (reduce draw command count; items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().
+    // Padding
+    var PadOuterX                  = 1 << 21;  // Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.
+    var NoPadOuterX                = 1 << 22;  // Default if BordersOuterV is off. Disable outer-most padding.
+    var NoPadInnerX                = 1 << 23;  // Disable inner padding between columns (double inner padding if BordersOuterV is on; single inner padding if BordersOuterV is off).
+    // Scrolling
+    var ScrollX                    = 1 << 24;  // Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window; ScrollY is currently generally recommended when using ScrollX.
+    var ScrollY                    = 1 << 25;  // Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.
+    // Sorting
+    var SortMulti                  = 1 << 26;  // Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).
+    var SortTristate               = 1 << 27;  // Allow no sorting; disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).
+}
+
+@:enum abstract ImGuiTableRowFlags(Int) from Int to Int {
+    var None                         = 0;
+    var Headers                      = 1 << 0;    // Identify header row (set default background color + width of its contents accounted differently for auto column width)
+}
+
+@:enum abstract ImGuiTableBgTarget(Int) from Int to Int {
+    var None                         = 0;
+    var RowBg0                       = 1;        // Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)
+    var RowBg1                       = 2;        // Set row background color 1 (generally used for selection marking)
+    var CellBg                       = 3;        // Set cell background color (top-most color)
+}
+
+@:enum abstract ImGuiTableColumnFlags(Int) from Int to Int {
+    // Input configuration flags
+    var None                  = 0;
+    var Disabled              = 1 << 0;   // Overriding/master disable flag: hide column; won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)
+    var DefaultHide           = 1 << 1;   // Default as a hidden/disabled column.
+    var DefaultSort           = 1 << 2;   // Default as a sorting column.
+    var WidthStretch          = 1 << 3;   // Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).
+    var WidthFixed            = 1 << 4;   // Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).
+    var NoResize              = 1 << 5;   // Disable manual resizing.
+    var NoReorder             = 1 << 6;   // Disable manual reordering this column; this will also prevent other columns from crossing over this column.
+    var NoHide                = 1 << 7;   // Disable ability to hide/disable this column.
+    var NoClip                = 1 << 8;   // Disable clipping for this column (all NoClip columns will render in a same draw command).
+    var NoSort                = 1 << 9;   // Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).
+    var NoSortAscending       = 1 << 10;  // Disable ability to sort in the ascending direction.
+    var NoSortDescending      = 1 << 11;  // Disable ability to sort in the descending direction.
+    var NoHeaderLabel         = 1 << 12;  // TableHeadersRow() will not submit label for this column. Convenient for some small columns. Name will still appear in context menu.
+    var NoHeaderWidth         = 1 << 13;  // Disable header text width contribution to automatic column width.
+    var PreferSortAscending   = 1 << 14;  // Make the initial sort direction Ascending when first sorting on this column (default).
+    var PreferSortDescending  = 1 << 15;  // Make the initial sort direction Descending when first sorting on this column.
+    var IndentEnable          = 1 << 16;  // Use current Indent value when entering cell (default for column 0).
+    var IndentDisable         = 1 << 17;  // Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.
+
+    // Output status flags; read-only via TableGetColumnFlags()
+    var IsEnabled             = 1 << 24;  // Status: is enabled == not hidden by user/api (referred to as "Hide" in _DefaultHide and _NoHide) flags.
+    var IsVisible             = 1 << 25;  // Status: is visible == is enabled AND not clipped by scrolling.
+    var IsSorted              = 1 << 26;  // Status: is currently part of the sort specs
+    var IsHovered             = 1 << 27;  // Status: is hovered by mouse
+
+}
+
 typedef ImEvents = {
 	dt : Single,
 	mouse_x : Single,
@@ -594,16 +683,16 @@ class ImFont
 class ImStateStorage
 {
 	var ptr: ImStateStoragePtr;
-	
+
 	public inline function new(ptr: ImStateStoragePtr) { this.ptr = ptr; }
-	
+
 	static function state_storage_get_int(storage: ImStateStoragePtr, id: ImGuiID, default_val: Int): Int { return 0; }
 	static function state_storage_set_int(storage: ImStateStoragePtr, id: ImGuiID, val: Int): Void {}
 	static function state_storage_get_bool(storage: ImStateStoragePtr, id: ImGuiID, default_val: Bool): Bool { return false; }
 	static function state_storage_set_bool(storage: ImStateStoragePtr, id: ImGuiID, val: Bool): Void {}
 	static function state_storage_get_float(storage: ImStateStoragePtr, id: ImGuiID, default_val: Single): Single { return 0; }
 	static function state_storage_set_float(storage: ImStateStoragePtr, id: ImGuiID, val: Single): Void {}
-	
+
 	public inline function setInt(id: ImGuiID, val: Int):Void state_storage_set_int(ptr, id, val);
 	public inline function getInt(id: ImGuiID, default_val: Int = 0):Int return state_storage_get_int(ptr, id, default_val);
 	public inline function setBool(id: ImGuiID, val: Bool):Void state_storage_set_bool(ptr, id, val);
@@ -828,16 +917,16 @@ class ImGui
 		return drag_scalar_n(label, ImGuiDataType.Double, v, v_speed, v_min, v_max, format, flags);
 	}
 	static function drag_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, v_speed : Single, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
-	
+
 	// Widgets: Sliders
 	public static function sliderFloat(label : String, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	
+
 	public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function vSliderInt(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	
+
 	public static inline function sliderFloatN(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
 		return slider_scalar_n(label, ImGuiDataType.Float, v, v_min, v_max, format, flags);
 	}
@@ -848,7 +937,7 @@ class ImGui
 		return slider_scalar_n(label, ImGuiDataType.Double, v, v_min, v_max, format, flags);
 	}
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<Dynamic>, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
-	
+
 	// Widgets: Input with Keyboard
 	public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
@@ -856,7 +945,7 @@ class ImGui
 	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-	
+
 	public static inline function inputFloatN(label : String, v : hl.NativeArray<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
 		return input_scalar_n(label, ImGuiDataType.Float, v, step, step_fast, format, flags);
 	}
@@ -892,7 +981,7 @@ class ImGui
 	}
 
 	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, step : Dynamic, step_fast : Dynamic, format : String, flags : Int) : Bool {return false;}
-	
+
 	// Widgets: Color Editor/Picker
     public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
@@ -968,6 +1057,26 @@ class ImGui
     public static function getColumnOffset(column_index : Int = -1) : Single {return 0;}
     public static function setColumnOffset(column_index : Int, offset_x : Single) {}
 	public static function getColumnsCount() : Int {return 0;}
+
+	// Tables
+	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, outer_size: ExtDynamic<ImVec2> = null, inner_width = 0 ) {}
+	public static function endTable() {}
+	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
+	public static function tableNextColumn() {}
+	public static function tableSetColumnIndex( columnIndex: Int ) {}
+	public static function tableSetupColumn( id: String, flags: ImGuiTableColumnFlags = ImGuiTableColumnFlags.None, initWidthOrHeight: Single = 0, userId: ImGuiID = 0) {}
+	public static function tableSetupScrollFreeze( cols: Int, rows: Int ) {}
+	public static function tableHeadersRow() {}
+	public static function tableHeader( id: String ) {}
+	//public static function tableGetSortSpecs( id: String ): ImGUiTableSortSpecs { return null } // @todo
+	public static function tableGetColumnCount(): Int { return 0; }
+	public static function tableGetColumnIndex(): Int { return 0; }
+	public static function tableGetRowIndex(): Int { return 0; }
+	public static function tableGetColumnName(): String { return null; }
+	public static function tableGetColumnFlags(): ImGuiTableColumnFlags { return 0; }
+	public static function tableSetColumnEnabled( column_n: Int, enabled: Bool ): Void {}
+	public static function tableSetBGColor( target: ImGuiTableBgTarget, color: Int, column_n: Int = -1 ): Void { }
+
 
 	// Tab Bars, Tabs
 	public static function beginTabBar(str_id : String, flags : ImGuiTabBarFlags = 0) : Bool {return false;}
@@ -1126,9 +1235,8 @@ class ImGui
 	// internal functions
 	public static function initialize(render_fn:Dynamic->Void) : Dynamic {return null;}
 	public static function setFontTexture(texture_id : ImTextureID) {}
-	public static function setKeyState(key : Int, down : Bool) {}
-	public static function setSpecialKeyState(shift : Bool, ctrl : Bool, alt : Bool, super : Bool) {}
 	public static function addKeyChar(c : Int) {}
+	public static function addKeyEvent(c : Int, down: Bool) {}
 	public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
 	public static function setDisplaySize(display_width:Int, display_height:Int) {}
 	public static function wantCaptureMouse() : Bool {return false;}
@@ -1146,10 +1254,10 @@ class ImGui
 	static function drawlist_get_window_draw_list() : ImDrawListPtr { return null; }
 	static function drawlist_get_foreground_draw_list() : ImDrawListPtr { return null; }
 	static function drawlist_get_background_draw_list() : ImDrawListPtr { return null; }
-	
+
 	// State storage
 	public static inline function getStateStorage() : ImStateStorage { return new ImStateStorage( get_state_storage() ); }
-	
+
 	static function get_state_storage() : ImStateStoragePtr { return null; }
-	
+
 }

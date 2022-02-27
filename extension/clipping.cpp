@@ -1,7 +1,7 @@
 #define HL_NAME(n) hlimgui_##n
 
 #include <hl.h>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM void HL_NAME(push_clip_rect)(vdynamic* clip_rect_min, vdynamic* clip_rect_max, bool intersect_with_current_clip_rect)

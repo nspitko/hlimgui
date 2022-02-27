@@ -152,7 +152,7 @@ ImGuiStyle getImGuiStyleFromHL(vdynamic* style)
 	getStructBool(style, "AntiAliasedLines", imgui_style.AntiAliasedLines);
 	getStructBool(style, "AntiAliasedFill", imgui_style.AntiAliasedFill);
 	getStructFloat(style, "CurveTessellationTol", imgui_style.CurveTessellationTol);
-	getStructFloat(style, "CircleSegmentMaxError", imgui_style.CircleSegmentMaxError);
+	getStructFloat(style, "CircleTessellationMaxError", imgui_style.CircleTessellationMaxError);
 	getStructArrayImVec4(style, "Colors", imgui_style.Colors, ImGuiCol_COUNT);
 
 	return imgui_style;
@@ -197,7 +197,7 @@ vdynamic* getHLFromImGuiStyle(const ImGuiStyle& imgui_style)
 	setStructBool(style, "AntiAliasedLines", imgui_style.AntiAliasedLines);
 	setStructBool(style, "AntiAliasedFill", imgui_style.AntiAliasedFill);
 	setStructFloat(style, "CurveTessellationTol", imgui_style.CurveTessellationTol);
-	setStructFloat(style, "CircleSegmentMaxError", imgui_style.CircleSegmentMaxError);
+	setStructFloat(style, "CircleTessellationMaxError", imgui_style.CircleTessellationMaxError);
 	setStructArrayImVec4(style, "Colors", imgui_style.Colors, ImGuiCol_COUNT);
 
 	return style;
@@ -215,7 +215,7 @@ void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config)
 	getStructFloat(config, "GlyphMinAdvanceX", imgui_font_config->GlyphMinAdvanceX);
 	getStructFloat(config, "GlyphMaxAdvanceX", imgui_font_config->GlyphMaxAdvanceX);
 	getStructBool(config, "MergeMode", imgui_font_config->MergeMode);
-	getStructInt(config, "RasterizerFlags", (int&)imgui_font_config->RasterizerFlags);
+	getStructInt(config, "FontBuilderFlags", (int&)imgui_font_config->FontBuilderFlags);
 	getStructFloat(config, "RasterizerMultiply", imgui_font_config->RasterizerMultiply);
 	getStructInt(config, "EllipsisChar", (int&)imgui_font_config->EllipsisChar);
 

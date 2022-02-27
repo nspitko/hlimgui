@@ -2,7 +2,7 @@
 
 #include <string>
 #include <hl.h>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 
 #define convertString(st) st != nullptr ? unicodeToUTF8(st).c_str() : NULL
 #define convertStringNullAsEmpty(st) st != nullptr ? unicodeToUTF8(st).c_str() : ""
