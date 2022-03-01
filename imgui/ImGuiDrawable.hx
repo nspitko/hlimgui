@@ -92,6 +92,11 @@ class ImGuiDrawableBuffers {
 
 				var ext_index_buffer:hl.Bytes = draw_object.index_buffer;
 				var nb_indices = Std.int(draw_object.index_buffer_size/2);
+
+				// Some plugins generate empty buffers. Skip these.
+				if( nb_indices == 0 )
+					continue;
+
 				var clip_rect = {
 					x: draw_object.clip_left,
 					y: draw_object.clip_top,
@@ -122,6 +127,7 @@ class ImGuiDrawableBuffers {
 				}
 
 				// update index buffer data
+
 				this.index_buffers[index_buffer_index].buffer.uploadBytes(ext_index_buffer.toBytes(draw_object.index_buffer_size), 0, nb_indices);
 
 				index_buffer_index++;
