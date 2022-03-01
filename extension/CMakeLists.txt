@@ -7,11 +7,12 @@ project(${TARGET_NAME})
 
 file(GLOB SOURCES "*.cpp")
 file(GLOB IMGUI_SOURCES "lib/imgui/*.cpp")
+file(GLOB IMGUI_NODE_EDITOR_SOURCES "lib/imgui-node-editor/*.cpp")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(${TARGET_NAME}${TARGET_EXT} SHARED ${SOURCES} ${IMGUI_SOURCES})
+add_library(${TARGET_NAME}${TARGET_EXT} SHARED ${SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES})
 
 set_target_properties(${TARGET_NAME}${TARGET_EXT}
     PROPERTIES
