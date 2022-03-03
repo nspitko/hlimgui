@@ -197,6 +197,11 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var RightSuper : Int = 534;
 	//
 	var KeyPadEnter : Int = 615;
+	//
+	var ModCtrl : Int = 641;
+	var ModShift : Int = 642;
+	var ModAlt : Int = 643;
+	var ModSuper : Int = 644;
 }
 
 @:enum abstract ImGuiInputTextFlags(Int) from Int to Int {

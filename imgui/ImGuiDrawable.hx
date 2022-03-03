@@ -92,6 +92,11 @@ class ImGuiDrawableBuffers {
 
 				var ext_index_buffer:hl.Bytes = draw_object.index_buffer;
 				var nb_indices = Std.int(draw_object.index_buffer_size/2);
+
+				// Some plugins generate empty buffers. Skip these.
+				if( nb_indices == 0 )
+					continue;
+
 				var clip_rect = {
 					x: draw_object.clip_left,
 					y: draw_object.clip_top,
@@ -122,6 +127,7 @@ class ImGuiDrawableBuffers {
 				}
 
 				// update index buffer data
+
 				this.index_buffers[index_buffer_index].buffer.uploadBytes(ext_index_buffer.toBytes(draw_object.index_buffer_size), 0, nb_indices);
 
 				index_buffer_index++;
@@ -187,12 +193,12 @@ class ImGuiDrawable extends h2d.Drawable {
 			Key.ENTER => ImGuiKey.Enter,
 			Key.ESCAPE => ImGuiKey.Escape,
 			Key.NUMPAD_ENTER => ImGuiKey.KeyPadEnter,
-			Key.LSHIFT => ImGuiKey.LeftShift,
-			Key.RSHIFT => ImGuiKey.RightShift,
-			Key.LALT => ImGuiKey.LeftAlt,
-			Key.RALT => ImGuiKey.RightAlt,
-			Key.LCTRL => ImGuiKey.LeftCtrl,
-			Key.RCTRL => ImGuiKey.RightCtrl,
+			Key.LSHIFT => ImGuiKey.ModShift,
+			Key.RSHIFT => ImGuiKey.ModShift,
+			Key.LALT => ImGuiKey.ModAlt,
+			Key.RALT => ImGuiKey.ModAlt,
+			Key.LCTRL => ImGuiKey.ModCtrl,
+			Key.RCTRL => ImGuiKey.ModCtrl,
 		];
 
 		this.empty_tile = h2d.Tile.fromColor(0xFFFFFF);
