@@ -427,19 +427,6 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var NoInput : Int = 128; // Disable CTRL+Click or Enter key allowing to input text directly into the widget
 }
 
-@:enum abstract ImDrawCornerFlags(Int) from Int to Int {
-	var None : Int = 0;
-	var TopLeft : Int = 1;
-	var TopRight : Int = 2;
-	var BotLeft : Int = 4;
-	var BotRight : Int = 8;
-	var Top : Int = 3;
-	var Bot : Int = 12;
-	var Left : Int = 5;
-	var Right : Int = 10;
-	var All : Int = 15;
-}
-
 @:enum abstract ImGuiTableFlags(Int) from Int to Int {
 	var None                       = 0;
     var Resizable                  = 1 << 0;   // Enable resizing columns.
@@ -525,6 +512,25 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
     var IsSorted              = 1 << 26;  // Status: is currently part of the sort specs
     var IsHovered             = 1 << 27;  // Status: is hovered by mouse
 
+}
+
+// Flags for ImDrawList functions
+// (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)
+@:enum abstract ImDrawFlags(Int) from Int to Int {
+    var None                        = 0;
+    var Closed                      = 1 << 0; // PathStroke(); AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)
+    var RoundCornersTopLeft         = 1 << 4; // AddRect(); AddRectFilled(); PathRect(): enable rounding top-left corner only (when rounding > 0.0f; we default to all corners). Was 0x01.
+    var RoundCornersTopRight        = 1 << 5; // AddRect(); AddRectFilled(); PathRect(): enable rounding top-right corner only (when rounding > 0.0f; we default to all corners). Was 0x02.
+    var RoundCornersBottomLeft      = 1 << 6; // AddRect(); AddRectFilled(); PathRect(): enable rounding bottom-left corner only (when rounding > 0.0f; we default to all corners). Was 0x04.
+    var RoundCornersBottomRight     = 1 << 7; // AddRect(); AddRectFilled(); PathRect(): enable rounding bottom-right corner only (when rounding > 0.0f; we default to all corners). Wax 0x08.
+    var RoundCornersNone            = 1 << 8; // AddRect(); AddRectFilled(); PathRect(): disable rounding on all corners (when rounding > 0.0f). This is NOT zero; NOT an implicit flag!
+    var RoundCornersTop             = RoundCornersTopLeft | RoundCornersTopRight;
+    var RoundCornersBottom          = RoundCornersBottomLeft | RoundCornersBottomRight;
+    var RoundCornersLeft            = RoundCornersBottomLeft | RoundCornersTopLeft;
+    var RoundCornersRight           = RoundCornersBottomRight | RoundCornersTopRight;
+    var RoundCornersAll             = RoundCornersTopLeft | RoundCornersTopRight | RoundCornersBottomLeft | RoundCornersBottomRight;
+    var RoundCornersDefault_        = RoundCornersAll; // Default to ALL corners if none of the _RoundCornersXX flags are specified.
+    var RoundCornersMask_           = RoundCornersAll | RoundCornersNone;
 }
 
 typedef ImEvents = {
@@ -638,8 +644,8 @@ class ImDrawList
 	public function new(ptr: ImDrawListPtr) { this.ptr = ptr; }
 
 	public function addLine( p1: ImVec2, p2: ImVec2, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_line( ptr, p1, p2, col, thickness ); }
-	public function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawCornerFlags = ImDrawCornerFlags.All, thickness: Single = 1.0 ) { drawlist_add_rect( ptr, pMin, pMax, col, rounding, roundingCorners, thickness ); }
-	public function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawCornerFlags = ImDrawCornerFlags.All ) { drawlist_add_rect_filled( ptr, pMin, pMax, col, rounding, roundingCorners); }
+	public function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None, thickness: Single = 1.0 ) { drawlist_add_rect( ptr, pMin, pMax, col, rounding, roundingCorners, thickness ); }
+	public function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None ) { drawlist_add_rect_filled( ptr, pMin, pMax, col, rounding, roundingCorners); }
 	public function addRectFilledMultiColor( pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) { drawlist_add_rect_filled_multicolor( ptr, pMin, pMax, col_upr_left, col_upr_right, col_bot_right, col_bot_left ); }
 	public function addQuad( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_quad(ptr, p1, p2, p3, p4, col, thickness ); }
 	public function addQuadFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_quad_filled( ptr, p1, p2, p3, p4, col ); }
@@ -652,10 +658,14 @@ class ImDrawList
 	//public function addPolyLine( points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { drawlist_add_poly_line(ptr, points, col, closed, thickness ); }
 	//public function addConvexPolyFilled( points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) { drawlist_add_convex_poly_filled(ptr, points, col ); }
 	public function addBezierCurve( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { drawlist_add_bezier_curve(ptr, p1, p2, p3, p4, col, thickness, num_segments ); }
+	//
+	public function addImage( user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2> = null, uv_max: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) { drawlist_add_image( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col ); }
+	public function addImageQuad( user_texture_id : ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2> = null, uv2: ExtDynamic<ImVec2> = null, uv3: ExtDynamic<ImVec2> = null, uv4: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) { drawlist_add_image_quad( ptr, user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
+	public function addImageRounded(  user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2>, uv_max: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, flags: ImDrawFlags = ImDrawFlags.None) { drawlist_add_image_rounded( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col, flags); }
 
 	static function drawlist_add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawCornerFlags, thickness ) {}
-	static function drawlist_add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawCornerFlags ) {}
+	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
+	static function drawlist_add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
 	static function drawlist_add_rect_filled_multicolor( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) {}
 	static function drawlist_add_quad( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
 	static function drawlist_add_quad_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) {}
@@ -668,6 +678,10 @@ class ImDrawList
 	static function drawlist_add_poly_line( drawlist: ImDrawListPtr, points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single ) {}
 	static function drawlist_add_convex_poly_filled( drawlist: ImDrawListPtr, points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) {}
 	static function drawlist_add_bezier_curve( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single, num_segments: Int ) {}
+	//
+	static function drawlist_add_image( drawlist: ImDrawListPtr, user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2> = null, uv_max: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) {}
+	static function drawlist_add_image_quad( drawlist: ImDrawListPtr, user_texture_id : ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2> = null, uv2: ExtDynamic<ImVec2> = null, uv3: ExtDynamic<ImVec2> = null, uv4: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) {}
+	static function drawlist_add_image_rounded( drawlist: ImDrawListPtr, user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2>, uv_max: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, flags: ImDrawFlags = ImDrawFlags.None) {}
 }
 
 
