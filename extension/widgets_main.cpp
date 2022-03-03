@@ -1,7 +1,7 @@
 #define HL_NAME(n) hlimgui_##n
 
 #include <hl.h>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM bool HL_NAME(button)(vstring* label, vdynamic* size)
@@ -38,12 +38,12 @@ HL_PRIM void HL_NAME(image)(ImTextureID user_texture_id, vdynamic* size, vdynami
 HL_PRIM bool HL_NAME(image_button)(ImTextureID user_texture_id, vdynamic* size, vdynamic* uv0, vdynamic* uv1, int* frame_padding, vdynamic* bg_col, vdynamic* tint_col)
 {
 	return ImGui::ImageButton(
-		user_texture_id, 
-		getImVec2(size), 
-		getImVec2(uv0), 
-		getImVec2(uv1, ImVec2(1, 1)), 
-		frame_padding != nullptr ? *frame_padding : -1, 
-		getImVec4(bg_col), 
+		user_texture_id,
+		getImVec2(size),
+		getImVec2(uv0),
+		getImVec2(uv1, ImVec2(1, 1)),
+		frame_padding != nullptr ? *frame_padding : -1,
+		getImVec4(bg_col),
 		getImVec4(tint_col, ImVec4(1, 1, 1, 1)));
 }
 

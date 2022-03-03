@@ -1,7 +1,7 @@
 #define HL_NAME(n) hlimgui_##n
 
 #include <hl.h>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM void HL_NAME(open_popup)(vstring* str_id)
@@ -36,7 +36,7 @@ HL_PRIM bool HL_NAME(begin_popup_modal)(vstring* name, bool* p_open, ImGuiWindow
 
 HL_PRIM void HL_NAME(end_popup)()
 {
-    ImGui::EndPopup();                                                                                             
+    ImGui::EndPopup();
 }
 
 HL_PRIM void HL_NAME(open_popup_on_item_click)(vstring* str_id, ImGuiMouseButton* mouse_button)

@@ -2,7 +2,7 @@
 
 #include <hl.h>
 #include <vector>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM bool HL_NAME(list_box)(vstring* label, int* current_item, varray* items, int* height_in_items)

@@ -2,7 +2,7 @@
 
 #include <hl.h>
 #include <vector>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM void HL_NAME(plot_lines)(vstring* label, varray* values, int* values_offset, vstring* overlay_text, float* scale_min, float* scale_max, vdynamic* graph_size)

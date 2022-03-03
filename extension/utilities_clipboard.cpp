@@ -2,7 +2,7 @@
 
 #include <hl.h>
 #include <vector>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM vbyte* HL_NAME(get_clipboard_text)()

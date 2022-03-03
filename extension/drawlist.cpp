@@ -2,7 +2,7 @@
 
 #include <hl.h>
 #include <vector>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 
@@ -109,7 +109,21 @@ HL_PRIM void HL_NAME(drawlist_add_bezier_curve)(ImDrawList *drawlist, vdynamic* 
 	drawlist->AddBezierCurve( getImVec2(p1), getImVec2(p2), getImVec2(p3), getImVec2(p4), col, thickness, num_segments );
 }
 
+// Image functions
+HL_PRIM void HL_NAME(drawlist_add_image)(ImDrawList *drawlist, ImTextureID user_texture_id, vdynamic *p_min, vdynamic *p_max, vdynamic *uv_min, vdynamic *uv_max, ImU32 *col )
+{
+	drawlist->AddImage(user_texture_id, getImVec2( p_min ), getImVec2( p_max ), getImVec2( uv_min ), getImVec2(uv_max, ImVec2(1, 1) ), convertPtr( col, IM_COL32_WHITE ) );
+}
 
+HL_PRIM void HL_NAME(drawlist_add_image_quad)(ImDrawList *drawlist, ImTextureID user_texture_id, vdynamic *p1, vdynamic *p2, vdynamic *p3, vdynamic *p4, vdynamic *uv1, vdynamic *uv2, vdynamic *uv3, vdynamic *uv4, ImU32 *col )
+{
+	drawlist->AddImageQuad(user_texture_id, getImVec2( p1 ), getImVec2( p2 ), getImVec2( p3 ), getImVec2( p4 ), getImVec2(uv1, ImVec2(0, 0) ), getImVec2(uv2, ImVec2(1, 0) ), getImVec2(uv3, ImVec2(1, 1) ), getImVec2(uv4, ImVec2(0, 1) ), convertPtr( col, IM_COL32_WHITE ) );
+}
+
+HL_PRIM void HL_NAME(drawlist_add_image_rounded)(ImDrawList *drawlist, ImTextureID user_texture_id, vdynamic *p_min, vdynamic *p_max, vdynamic *uv_min, vdynamic *uv_max, ImU32 col, float rounding, ImDrawFlags *flags )
+{
+	drawlist->AddImageRounded(user_texture_id, getImVec2( p_min ), getImVec2( p_max ), getImVec2( uv_min ), getImVec2(uv_max, ImVec2(1, 1) ), col, rounding, convertPtr( flags, ImDrawFlags_None ) );
+}
 
 #define _TDRAWLIST _ABSTRACT(imdrawlist)
 
@@ -131,6 +145,10 @@ DEFINE_PRIM(_VOID, drawlist_add_ngon_filled, _TDRAWLIST _DYN _F32 _I32 _I32 );
 DEFINE_PRIM(_VOID, drawlist_add_poly_line, _TDRAWLIST _ARR _I32 _BOOL _F32 );
 DEFINE_PRIM(_VOID, drawlist_add_convex_poly_filled, _TDRAWLIST _ARR _I32  );
 DEFINE_PRIM(_VOID, drawlist_add_bezier_curve, _TDRAWLIST _DYN _DYN _DYN _DYN _I32 _F32 _I32 );
+//
+DEFINE_PRIM(_VOID, drawlist_add_image, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _REF(_I32) );
+DEFINE_PRIM(_VOID, drawlist_add_image_quad, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _DYN _DYN _DYN _DYN _REF(_I32) );
+DEFINE_PRIM(_VOID, drawlist_add_image_rounded, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _I32 _F32 _REF(_I32) );
 
 
 
