@@ -661,7 +661,7 @@ class ImDrawList
 	//
 	public function addImage( user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2> = null, uv_max: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) { drawlist_add_image( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col ); }
 	public function addImageQuad( user_texture_id : ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2> = null, uv2: ExtDynamic<ImVec2> = null, uv3: ExtDynamic<ImVec2> = null, uv4: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) { drawlist_add_image_quad( ptr, user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
-	public function addImageRounded(  user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2>, uv_max: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, flags: ImDrawFlags = ImDrawFlags.None) { drawlist_add_image_rounded( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col, flags); }
+	public function addImageRounded(  user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2>, uv_max: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, flags: ImDrawFlags = ImDrawFlags.None) { drawlist_add_image_rounded( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col, rounding, flags); }
 
 	static function drawlist_add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
 	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
