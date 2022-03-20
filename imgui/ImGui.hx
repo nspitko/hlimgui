@@ -90,29 +90,31 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 
 @:enum abstract ImGuiStyleVar(Int) from Int to Int {
 	var Alpha : Int = 0;
-	var WindowPadding : Int = 1;
-	var WindowRounding : Int = 2;
-	var WindowBorderSize : Int = 3;
-	var WindowMinSize : Int = 4;
-	var WindowTitleAlign : Int = 5;
-	var ChildRounding : Int = 6;
-	var ChildBorderSize : Int = 7;
-	var PopupRounding : Int = 8;
-	var PopupBorderSize : Int = 9;
-	var FramePadding : Int = 10;
-	var FrameRounding : Int = 11;
-	var FrameBorderSize : Int = 12;
-	var ItemSpacing : Int = 13;
-	var ItemInnerSpacing : Int = 14;
-	var IndentSpacing : Int = 15;
-	var ScrollbarSize : Int = 16;
-	var ScrollbarRounding : Int = 17;
-	var GrabMinSize : Int = 18;
-	var GrabRounding : Int = 19;
-	var TabRounding : Int = 20;
-	var ButtonTextAlign : Int = 21;
-	var SelectableTextAlign : Int = 22;
-	var COUNT : Int = 23;
+	var DisabledAlpha : Int = 1;
+	var WindowPadding : Int = 2;
+	var WindowRounding : Int = 3;
+	var WindowBorderSize : Int = 4;
+	var WindowMinSize : Int = 5;
+	var WindowTitleAlign : Int = 6;
+	var ChildRounding : Int = 7;
+	var ChildBorderSize : Int = 8;
+	var PopupRounding : Int = 9;
+	var PopupBorderSize : Int = 10;
+	var FramePadding : Int = 11;
+	var FrameRounding : Int = 12;
+	var FrameBorderSize : Int = 13;
+	var ItemSpacing : Int = 14;
+	var ItemInnerSpacing : Int = 15;
+	var IndentSpacing : Int = 16;
+	var CellPadding : Int = 17;
+	var ScrollbarSize : Int = 18;
+	var ScrollbarRounding : Int = 19;
+	var GrabMinSize : Int = 20;
+	var GrabRounding : Int = 21;
+	var TabRounding : Int = 22;
+	var ButtonTextAlign : Int = 23;
+	var SelectableTextAlign : Int = 24;
+	var COUNT : Int = 25;
 }
 
 @:enum abstract ImGuiSelectableFlags(Int) from Int to Int {
