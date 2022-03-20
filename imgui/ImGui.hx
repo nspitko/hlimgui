@@ -1078,7 +1078,7 @@ class ImGui
 	public static function getColumnsCount() : Int {return 0;}
 
 	// Tables
-	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, outer_size: ExtDynamic<ImVec2> = null, inner_width = 0 ) {}
+	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, outer_size: ExtDynamic<ImVec2> = null, inner_width = 0 ): Bool { return false; }
 	public static function endTable() {}
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
 	public static function tableNextColumn() {}
