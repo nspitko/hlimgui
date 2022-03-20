@@ -38,5 +38,19 @@ vdynamic* getHLFromImVec4(ImVec4 value);
 
 vbyte* getVByteFromCStr(const char* str);
 
+// Structs
+void getStructFloat(vdynamic* dyn, const char* name, float& value);
+void setStructFloat(vdynamic* dyn, const char* name, float value);
+void getStructInt(vdynamic* dyn, const char* name, int& value);
+void setStructInt(vdynamic* dyn, const char* name, int value);
+void getStructBool(vdynamic* dyn, const char* name, bool& value);
+void setStructBool(vdynamic* dyn, const char* name, bool value);
+void getStructImVec2(vdynamic* dyn, const char* name, ImVec2& value);
+void setStructImVec2(vdynamic* dyn, const char* name, const ImVec2& value);
+void getStructImVec4(vdynamic* dyn, const char* name, ImVec4& values);
+void setStructImVec4(vdynamic* dyn, const char* name, const ImVec4& values);
+void getStructArrayImVec4(vdynamic* dyn, const char* name, ImVec4* values, int size);
+void setStructArrayImVec4(vdynamic* dyn, const char* name, const ImVec4* values, int size);
+
 inline void assertArraySize(varray* arr, int size) {if (arr->size != size) throw_error("Invalid array size");}
 inline void assertArraySizeRange(varray* arr, int size_min, int size_max) {if (arr->size < size_min && arr->size > size_max) throw_error("Invalid array size");}

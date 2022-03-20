@@ -1,14 +1,149 @@
 package imgui;
-
+#if hlimgui
 import imgui.ImGui.ExtDynamic;
 import imgui.ImGui.ImVec2;
 import imgui.ImGui.ImVec4;
 import imgui.ImGui.ImDrawList;
+#end
 
+typedef NodeId = Int;
+typedef PinId = Int;
+typedef LinkId = Int;
+
+#if hlimgui
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 
 typedef EditorContext = hl.Abstract<"imnecontext">;
 
+@:enum abstract StyleColor(Int) from Int to Int {
+    var Bg = 0;
+    var Grid = 1;
+    var NodeBg = 2;
+    var NodeBorder = 3;
+    var HovNodeBorder = 4;
+    var SelNodeBorder = 5;
+    var NodeSelRect = 6;
+    var NodeSelRectBorder = 7;
+    var HovLinkBorder = 8;
+    var SelLinkBorder = 9;
+    var LinkSelRect = 10;
+    var LinkSelRectBorder = 11;
+    var PinRect = 12;
+    var PinRectBorder = 13;
+    var Flow = 14;
+    var FlowMarker = 15;
+    var GroupBg = 16;
+    var GroupBorder = 17;
+
+    var Count = 18;
+}
+
+@:enum abstract StyleVar(Int) from Int to Int {
+    var NodePadding = 0;
+    var NodeRounding = 1;
+    var NodeBorderWidth = 2;
+    var HoveredNodeBorderWidth = 3;
+    var SelectedNodeBorderWidth = 4;
+    var PinRounding = 5;
+    var PinBorderWidth = 6;
+    var LinkStrength = 7;
+    var SourceDirection = 8;
+    var TargetDirection = 9;
+    var ScrollDuration = 10;
+    var FlowMarkerDistance = 11;
+    var FlowSpeed = 12;
+    var FlowDuration = 13;
+    var PivotAlignment = 14;
+    var PivotSize = 15;
+    var PivotScale = 16;
+    var PinCorners = 17;
+    var PinRadius = 18;
+    var PinArrowSize = 19;
+    var PinArrowWidth = 20;
+    var GroupRounding = 21;
+    var GroupBorderWidth = 22;
+
+    var Count = 23;
+}
+/*
+// Struct variants. This might work some day.
+
+abstract ArrayStruct<T>(hl.Bytes) {
+}
+
+@:struct
+class ImVec2S
+{
+	public var x: Single;
+	public var y: Single;
+}
+
+@:struct
+class ImVec4S
+{
+	public var x: Single;
+	public var y: Single;
+	public var z: Single;
+	public var w: Single;
+}
+
+@:struct
+class Style
+{
+	public var nodePadding: ImVec4;
+	public var nodeRounding: Single;
+	public var nodeBorderWidth: Single;
+	public var hoveredNodeBorderWidth: Single;
+	public var selectedNodeBorderWidth: Single;
+	public var pinRounding: Single;
+	public var pinBorderWidth: Single;
+	public var linkStrength: Single;
+	public var sourceDirection: ImVec2;
+	public var targetDirection: ImVec2;
+	public var scrollDuration: Single;
+	public var flowMarkerDistance: Single;
+	public var flowSpeed: Single;
+	public var flowDuration: Single;
+	public var pivotAlignment: ImVec2;
+	public var pivotSize: ImVec2;
+	public var pivotScale: ImVec2;
+	public var pinCorners: Single;
+	public var pinRadius: Single;
+	public var pinArrowSize: Single;
+	public var pinArrowWidth: Single;
+	public var groupRounding: Single;
+	public var groupBorderWidth: Single;
+	public var colors: hl.NativeArray<ImVec4>;
+}
+*/
+
+typedef Style =
+{
+	public var NodePadding: ImVec4;
+	public var NodeRounding: Single;
+	public var NodeBorderWidth: Single;
+	public var HoveredNodeBorderWidth: Single;
+	public var SelectedNodeBorderWidth: Single;
+	public var PinRounding: Single;
+	public var PinBorderWidth: Single;
+	public var LinkStrength: Single;
+	public var SourceDirection: ImVec2;
+	public var TargetDirection: ImVec2;
+	public var ScrollDuration: Single;
+	public var FlowMarkerDistance: Single;
+	public var FlowSpeed: Single;
+	public var FlowDuration: Single;
+	public var PivotAlignment: ImVec2;
+	public var PivotSize: ImVec2;
+	public var PivotScale: ImVec2;
+	public var PinCorners: Single;
+	public var PinRadius: Single;
+	public var PinArrowSize: Single;
+	public var PinArrowWidth: Single;
+	public var GroupRounding: Single;
+	public var GroupBorderWidth: Single;
+	public var Colors: hl.NativeArray<ExtDynamic<ImVec4>>;
+}
 
 @:enum abstract PinKind(Int) from Int to Int {
 	var Input : Int = 0;
@@ -20,11 +155,7 @@ typedef EditorContext = hl.Abstract<"imnecontext">;
 	var Backward : Int = 1;
 }
 
-typedef NodeId = Int;
-typedef PinId = Int;
-typedef LinkId = Int;
-
-@:hlNative("hlimgui")
+@:hlNative("hlimgui","nodeeditor_")
 class NodeEditor
 {
 	// Context
@@ -33,9 +164,13 @@ class NodeEditor
 	public static function createEditor() : EditorContext { return null; }
 	public static function destroyEditor( context: EditorContext ) : Void { }
 
+	// Style
+	public static function getStyle( ) : Dynamic { return null; }
+	public static function setStyle( style: Dynamic ) { }
+
 	// Item
-	public static inline function begin(name : String, size : ImVec2 = null) { ne_begin(name, size); }
-	public static inline function end() { ne_end(); }
+	public static function begin(name : String, size : ExtDynamic<ImVec2> = null) : Void { }
+	public static function end() : Void { }
 
 	public static function beginNode(nodeId : NodeId ) : Void { }
 	public static function endNode() : Void { }
@@ -153,11 +288,11 @@ class NodeEditor
 
 
 	// Internal
-	static function ne_begin(name : String, size : ExtDynamic<ImVec2> = null ) : Void {}
-	static function ne_end() : Void {}
 	static function get_hint_foreground_draw_list() : ImDrawListPtr { return null; }
 	static function get_hint_background_draw_list() : ImDrawListPtr { return null; }
 	static function get_node_background_draw_list( nodeId: NodeId ) : ImDrawListPtr { return null; }
 
 
 }
+
+#end
