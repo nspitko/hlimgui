@@ -4,9 +4,9 @@
 #include "lib/imgui/imgui.h"
 #include "utils.h"
 
-HL_PRIM void HL_NAME(begin_table)(vstring *id, int column, ImGuiTableFlags *flags, vdynamic *outer_size, float *inner_width)
+HL_PRIM bool HL_NAME(begin_table)(vstring *id, int column, ImGuiTableFlags *flags, vdynamic *outer_size, float *inner_width)
 {
-    ImGui::BeginTable( convertString( id ), column, convertPtr( flags, 0 ), getImVec2( outer_size ), convertPtr( inner_width, 0.0f ) );
+    return ImGui::BeginTable( convertString( id ), column, convertPtr( flags, 0 ), getImVec2( outer_size ), convertPtr( inner_width, 0.0f ) );
 }
 
 HL_PRIM void HL_NAME(end_table)()
@@ -91,7 +91,7 @@ HL_PRIM void HL_NAME(table_set_bgcolor)( ImGuiTableBgTarget target, ImU32 color,
 
 #define _TIMTSORTSPECS _ABSTRACT(imtablesortspecs)
 
-DEFINE_PRIM(_VOID, begin_table, _STRING _I32 _REF(_I32) _DYN _REF(_I32));
+DEFINE_PRIM(_BOOL, begin_table, _STRING _I32 _REF(_I32) _DYN _REF(_I32));
 DEFINE_PRIM(_VOID, end_table, _NO_ARG);
 DEFINE_PRIM(_VOID, table_next_row, _REF(_I32) _REF(_F32) );
 DEFINE_PRIM(_VOID, table_next_column, _NO_ARG);
