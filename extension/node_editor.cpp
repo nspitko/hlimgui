@@ -134,6 +134,17 @@ HL_PRIM void HL_NAME(nodeeditor_pop_style_var)( int* count )
 	NodeEditor::PopStyleVar( convertPtr(count, 1) );
 }
 
+HL_PRIM void HL_NAME(nodeeditor_push_style_color)(NodeEditor::StyleColor varIndex, vdynamic* color )
+{
+	NodeEditor::PushStyleColor( varIndex,  getImVec4(color) );
+}
+
+HL_PRIM void HL_NAME(nodeeditor_pop_style_color)( int* count )
+{
+	NodeEditor::PopStyleColor( convertPtr(count, 1) );
+}
+
+
 //------------------------------------------------------------------------------
 // Creation
 //------------------------------------------------------------------------------
@@ -201,7 +212,10 @@ HL_PRIM void HL_NAME(nodeeditor_pin_pivot_alignment)( vdynamic *alignment)
 
 HL_PRIM void HL_NAME(nodeeditor_group)( vdynamic *size )
 {
-	NodeEditor::Group( getImVec2(size) );
+	ImVec2 vec = getImVec2(size);
+	NodeEditor::Group( vec );
+	hl_dyn_setf(size, hl_hash_utf8("x"), vec.x);
+	hl_dyn_setf(size, hl_hash_utf8("y"), vec.y);
 }
 
 HL_PRIM bool HL_NAME(nodeeditor_begin_group_hint)( NodeEditor::NodeId nodeId )
@@ -672,6 +686,12 @@ DEFINE_PRIM(_VOID, nodeeditor_destroy_editor, _TNODECTX );
 //
 DEFINE_PRIM(_DYN, nodeeditor_get_style, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_set_style, _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_var, _I32 _F32 );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_var2, _I32 _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_var3, _I32 _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_pop_style_var, _REF(_I32) );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_color, _I32 _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_pop_style_color, _REF(_I32) );
 //
 DEFINE_PRIM(_VOID, nodeeditor_begin, _STRING _DYN);
 DEFINE_PRIM(_VOID, nodeeditor_end, _NO_ARG);

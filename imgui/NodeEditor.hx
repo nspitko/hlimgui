@@ -168,6 +168,13 @@ class NodeEditor
 	public static function getStyle( ) : Dynamic { return null; }
 	public static function setStyle( style: Dynamic ) { }
 
+	public static function pushStyleVar( varIndex: StyleVar, val: Single ) { }
+	public static function pushStyleVar2( varIndex: StyleVar, vec2: ExtDynamic<ImVec2> ) { }
+	public static function pushStyleVar3( varIndex: StyleVar, vec4: ExtDynamic<ImVec4> ) { }
+	public static function popStyleVar( count: Int = 1 ) { }
+	public static function pushStyleColor( varIndex: StyleColor, vec2: ExtDynamic<ImVec4> ) { }
+	public static function popStyleColor( count: Int = 1 ) { }
+
 	// Item
 	public static function begin(name : String, size : ExtDynamic<ImVec2> = null) : Void { }
 	public static function end() : Void { }
