@@ -201,6 +201,10 @@ class ImGuiDrawable extends h2d.Drawable {
 			Key.RCTRL => ImGuiKey.ModCtrl,
 		];
 
+		// Add letters
+		for( ko in 0...26)
+			keycode_map[Key.A + ko] = ImGuiKey.A + ko;
+
 		this.empty_tile = h2d.Tile.fromColor(0xFFFFFF);
 
 		scene.addEventListener(onEvent);
