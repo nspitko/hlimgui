@@ -198,6 +198,8 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var RightAlt : Int = 533;
 	var RightSuper : Int = 534;
 	//
+	var A: Int = 546;
+	//
 	var KeyPadEnter : Int = 615;
 	//
 	var ModCtrl : Int = 641;
