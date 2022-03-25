@@ -436,9 +436,10 @@ HL_PRIM varray *HL_NAME(nodeeditor_get_selected_nodes)()
 	int actualSize = NodeEditor::GetSelectedNodes( selectedNodes, allocSize );
 
 	varray* hlArray = hl_alloc_array( &hlt_i32, actualSize );
-	NodeEditor::NodeId *hlPtr = hl_aptr(hlArray, NodeEditor::NodeId);
+	int *hlPtr = hl_aptr(hlArray, int);
 
-	memcpy( hlPtr, selectedNodes, actualSize * sizeof( NodeEditor::NodeId ) );
+	for( int i=0; i < actualSize; i++)
+		hlPtr[i] = (int)selectedNodes[i].Get();
 
 	delete selectedNodes;
 
@@ -454,9 +455,10 @@ HL_PRIM varray *HL_NAME(nodeeditor_get_selected_links)()
 	int actualSize = NodeEditor::GetSelectedLinks( selectedLinks, allocSize );
 
 	varray* hlArray = hl_alloc_array( &hlt_i32, actualSize );
-	NodeEditor::LinkId *hlPtr = hl_aptr(hlArray, NodeEditor::LinkId);
+	int *hlPtr = hl_aptr(hlArray, int);
 
-	memcpy( hlPtr, selectedLinks, actualSize * sizeof( NodeEditor::LinkId ) );
+	for( int i=0; i < actualSize; i++)
+		hlPtr[i] = (int)selectedLinks[i].Get();
 
 	delete selectedLinks;
 
