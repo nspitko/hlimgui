@@ -252,6 +252,7 @@ abstract ExtDynamic<T>(Dynamic) from T to T {}
 	var RootWindow : Int = 2;
 	var AnyWindow : Int = 4;
 	var RootAndChildWindows : Int = 3;
+	var DockHierarchy : Int = 4;
 }
 
 @:enum abstract ImGuiDragDropFlags(Int) from Int to Int {
