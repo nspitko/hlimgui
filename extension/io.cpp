@@ -1,7 +1,7 @@
 #define HL_NAME(n) hlimgui_##n
 
 #include <hl.h>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 static std::string ini_filename;

@@ -2,7 +2,7 @@
 
 #include <hl.h>
 #include <vector>
-#include "imgui/imgui.h"
+#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 
@@ -158,7 +158,7 @@ HL_PRIM void HL_NAME(drawlist_add_image_quad)(ImDrawList* drawlist, ImTextureID 
 		col);
 }
 
-HL_PRIM void HL_NAME(drawlist_add_image_rounded)(ImDrawList *drawlist, ImTextureID user_texture_id, vdynamic* p_min, vdynamic* p_max, vdynamic* uv_min, vdynamic* uv_max, int col, float rounding, ImDrawCornerFlags rounding_corners) {
+HL_PRIM void HL_NAME(drawlist_add_image_rounded)(ImDrawList *drawlist, ImTextureID user_texture_id, vdynamic* p_min, vdynamic* p_max, vdynamic* uv_min, vdynamic* uv_max, int col, float rounding, ImDrawFlags flags) {
 	drawlist->AddImageRounded(user_texture_id, p_min, p_max, getImVec2(uv_min), getImVec2(uv_max, ImVec2(1, 1)), col, rounding, rounding_corners);
 }
 
@@ -191,6 +191,10 @@ DEFINE_PRIM(_VOID, drawlist_add_ngon_filled, _TDRAWLIST _DYN _F32 _I32 _I32 );
 DEFINE_PRIM(_VOID, drawlist_add_poly_line, _TDRAWLIST _ARR _I32 _BOOL _F32 );
 DEFINE_PRIM(_VOID, drawlist_add_convex_poly_filled, _TDRAWLIST _ARR _I32  );
 DEFINE_PRIM(_VOID, drawlist_add_bezier_curve, _TDRAWLIST _DYN _DYN _DYN _DYN _I32 _F32 _I32 );
+//
+DEFINE_PRIM(_VOID, drawlist_add_image, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _I32 );
+DEFINE_PRIM(_VOID, drawlist_add_image_quad, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _DYN _DYN _DYN _DYN _I32 );
+DEFINE_PRIM(_VOID, drawlist_add_image_rounded, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _I32 _F32 _I32 );
 
 DEFINE_PRIM(_VOID, drawlist_add_text, _TDRAWLIST _DYN _I32 _STRING);
 DEFINE_PRIM(_VOID, drawlist_add_text2, _TDRAWLIST _ABSTRACT(imfont) _F32 _DYN _I32 _STRING _F32 _DYN);
