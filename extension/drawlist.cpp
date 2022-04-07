@@ -185,10 +185,6 @@ DEFINE_PRIM(_VOID, drawlist_add_poly_line, _TDRAWLIST _ARR _I32 _BOOL _F32 );
 DEFINE_PRIM(_VOID, drawlist_add_convex_poly_filled, _TDRAWLIST _ARR _I32  );
 DEFINE_PRIM(_VOID, drawlist_add_bezier_curve, _TDRAWLIST _DYN _DYN _DYN _DYN _I32 _F32 _I32 );
 //
-DEFINE_PRIM(_VOID, drawlist_add_image, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _I32 );
-DEFINE_PRIM(_VOID, drawlist_add_image_quad, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _DYN _DYN _DYN _DYN _I32 );
-DEFINE_PRIM(_VOID, drawlist_add_image_rounded, _TDRAWLIST _DYN _DYN _DYN _DYN _DYN _I32 _F32 _I32 );
-
 DEFINE_PRIM(_VOID, drawlist_add_text, _TDRAWLIST _DYN _I32 _STRING);
 DEFINE_PRIM(_VOID, drawlist_add_text2, _TDRAWLIST _ABSTRACT(imfont) _F32 _DYN _I32 _STRING _F32 _DYN);
 
