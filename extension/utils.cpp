@@ -1,5 +1,4 @@
 #include "utils.h"
-#include <vector>
 
 void convertColor(ImU32 color, float& r, float& g, float& b, float& a)
 {

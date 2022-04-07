@@ -1,8 +1,3 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include <vector>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM bool HL_NAME(is_mouse_down)(ImGuiMouseButton button)

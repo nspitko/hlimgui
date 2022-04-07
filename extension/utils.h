@@ -3,11 +3,15 @@
 #include "imconfig.h"
 #include <string>
 #include <hl.h>
+#include <vector>
 #include "lib/imgui/imgui.h"
 
 #define convertString(st) st != nullptr ? unicodeToUTF8(st).c_str() : NULL
 #define convertStringNullAsEmpty(st) st != nullptr ? unicodeToUTF8(st).c_str() : ""
 #define convertPtr(ptr,default_value) ptr != nullptr ? *ptr : default_value
+#ifndef HL_NAME
+#define HL_NAME(n) hlimgui_##n
+#endif
 
 #ifdef __APPLE__
 #define throw_error(err) hl_throw(hl_alloc_strbytes((const uchar*)(USTR(err))))

@@ -1,11 +1,4 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include <vector>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
-
-
 
 HL_PRIM ImDrawList *HL_NAME(drawlist_get_window_draw_list)()
 {
@@ -56,12 +49,12 @@ HL_PRIM void HL_NAME(drawlist_add_line)(ImDrawList *drawlist, vdynamic* p1, vdyn
 	drawlist->AddLine( getImVec2(p1), getImVec2(p2), col, thickness );
 }
 
-HL_PRIM void HL_NAME(drawlist_add_rect)(ImDrawList *drawlist, vdynamic* p_min, vdynamic* p_max, ImU32 col, float rounding, ImDrawCornerFlags rounding_corners, float thickness)
+HL_PRIM void HL_NAME(drawlist_add_rect)(ImDrawList *drawlist, vdynamic* p_min, vdynamic* p_max, ImU32 col, float rounding, ImDrawFlags rounding_corners, float thickness)
 {
 	drawlist->AddRect( getImVec2(p_min), getImVec2(p_max), col, rounding, rounding_corners, thickness );
 }
 
-HL_PRIM void HL_NAME(drawlist_add_rect_filled)(ImDrawList *drawlist, vdynamic* p_min, vdynamic* p_max, ImU32 col, float rounding, ImDrawCornerFlags rounding_corners)
+HL_PRIM void HL_NAME(drawlist_add_rect_filled)(ImDrawList *drawlist, vdynamic* p_min, vdynamic* p_max, ImU32 col, float rounding, ImDrawFlags rounding_corners)
 {
 	drawlist->AddRectFilled( getImVec2(p_min), getImVec2(p_max), col, rounding, rounding_corners );
 }
@@ -159,7 +152,7 @@ HL_PRIM void HL_NAME(drawlist_add_image_quad)(ImDrawList* drawlist, ImTextureID 
 }
 
 HL_PRIM void HL_NAME(drawlist_add_image_rounded)(ImDrawList *drawlist, ImTextureID user_texture_id, vdynamic* p_min, vdynamic* p_max, vdynamic* uv_min, vdynamic* uv_max, int col, float rounding, ImDrawFlags flags) {
-	drawlist->AddImageRounded(user_texture_id, p_min, p_max, getImVec2(uv_min), getImVec2(uv_max, ImVec2(1, 1)), col, rounding, rounding_corners);
+	drawlist->AddImageRounded(user_texture_id, p_min, p_max, getImVec2(uv_min), getImVec2(uv_max, ImVec2(1, 1)), col, rounding, flags);
 }
 
 #define _TDRAWLIST _ABSTRACT(imdrawlist)

@@ -1,10 +1,4 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
-
-#include <string>
 
 typedef struct
 {
