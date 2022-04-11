@@ -3,7 +3,14 @@ package imgui;
 import haxe.io.Bytes;
 
 @:forward
-abstract ExtDynamic<T>(Dynamic) from T to T {}
+@:forward.variance
+abstract ExtDynamic<T>(Dynamic) from T to T {
+	// Helper methods to cconvert away from vdynamic.
+	public var v(get, never):T;
+	inline function get_v():T return (this:T);
+	public inline function to():T return (this:T);
+	
+}
 
 @:enum abstract ImGuiWindowFlags(Int) from Int to Int {
 	var None : Int = 0;
@@ -559,6 +566,27 @@ typedef ImEvents = {
 // directly for some reason.
 #if heaps
 abstract ImTextureID(Dynamic) from h3d.mat.Texture to h3d.mat.Texture {}
+// To avoid allocation of unecessary things - cache and reuse some instances.
+private class ImTypeCache {
+	
+	public static var imVec2: Array<ImVec2Impl> = [
+		{ x: 0, y: 0 },
+		{ x: 0, y: 0 },
+		{ x: 0, y: 0 },
+		{ x: 0, y: 0 },
+	];
+	
+}
+@:structInit
+private class ImVec2Impl {
+	public var x: Single;
+	public var y: Single;
+	public inline function set(x: Single, y: Single) {
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+}
 #else
 typedef ImTextureID = Dynamic;
 #end
@@ -669,10 +697,45 @@ class ImDrawList
 	//public function addConvexPolyFilled( points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) { drawlist_add_convex_poly_filled(ptr, points, col ); }
 	public function addBezierCurve( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { drawlist_add_bezier_curve(ptr, p1, p2, p3, p4, col, thickness, num_segments ); }
 	//
-	public function addImage( user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2> = null, uv_max: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) { drawlist_add_image( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col ); }
-	public function addImageQuad( user_texture_id : ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2> = null, uv2: ExtDynamic<ImVec2> = null, uv3: ExtDynamic<ImVec2> = null, uv4: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) { drawlist_add_image_quad( ptr, user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
-	public function addImageRounded(  user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2>, uv_max: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, flags: ImDrawFlags = ImDrawFlags.None) { drawlist_add_image_rounded( ptr, user_texture_id, p_min, p_max, uv_min, uv_max, col, rounding, flags); }
+	public function addText( pos: ImVec2, col: ImU32, text: String ) { drawlist_add_text(ptr, pos, col, text); }
+	public function addText2( font: ImFont, fontSize: Single, pos: ImVec2, col: ImU32, text: String, wrapWidth: Single = 0.0, ?cpuFineClipRect: ImVec4 ) { drawlist_add_text2(ptr, font==null?null:(@:privateAccess font.ptr), fontSize, pos, col, text, wrapWidth, cpuFineClipRect); }
 
+	public function addImage( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image(ptr, userTextureId, pMin, pMax, uvMin, uvMax, col); }
+	public function addImageQuad( userTextureId: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, ?uv1: ImVec2, ?uv2: ImVec2, ?uv3: ImVec2, ?uv4: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image_quad(ptr, userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
+	// Due to Haxe limitation on defualt parameters being "constant" and enum abstract values that rely on previous enum abstract value (A | B) are not "constant" - hack with -1
+	public function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1 ) { drawlist_add_image_rounded(ptr, userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners == -1 ? ImDrawFlags.RoundCornersDefault_ : roundingCorners); }
+	
+	#if heaps
+	// Helper methods for Heaps: Use Tile instead of Texture to pass image segments easily.
+	
+	public inline function addTile( tile: h2d.Tile, pMin: ImVec2, pMax: ImVec2, col: Int = 0xffffffff, honorDxDy = false) @:privateAccess {
+		if (honorDxDy) {
+			pMin.x += tile.dx;
+			pMin.y += tile.dy;
+			pMax.x += tile.dx;
+			pMax.y += tile.dy;
+		}
+		addImage(tile.getTexture(), pMin, pMax, ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v2), col);
+	}
+	
+	public inline function addTileQuad( tile: h2d.Tile, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: Int = 0xffffffff) @:privateAccess {
+		addImageQuad( tile.getTexture(), p1, p2, p3, p4,
+			ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), ImTypeCache.imVec2[3].set(tile.u2, tile.v),
+			col
+		);
+	}
+	
+	public inline function addTileRounded( tile: h2d.Tile, pMin: ImVec2, pMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1, honorDxDy = false ) @:privateAccess {
+		if (honorDxDy) {
+			pMin.x += tile.dx;
+			pMin.y += tile.dy;
+			pMax.x += tile.dx;
+			pMax.y += tile.dy;
+		}
+		addImageRounded( tile.getTexture(), pMin, pMax, ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v2), col, rounding, roundingCorners);
+	}
+	#end
+	
 	static function drawlist_add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
 	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
 	static function drawlist_add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
@@ -688,10 +751,12 @@ class ImDrawList
 	static function drawlist_add_poly_line( drawlist: ImDrawListPtr, points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single ) {}
 	static function drawlist_add_convex_poly_filled( drawlist: ImDrawListPtr, points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) {}
 	static function drawlist_add_bezier_curve( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single, num_segments: Int ) {}
-	//
-	static function drawlist_add_image( drawlist: ImDrawListPtr, user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2> = null, uv_max: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) {}
-	static function drawlist_add_image_quad( drawlist: ImDrawListPtr, user_texture_id : ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2> = null, uv2: ExtDynamic<ImVec2> = null, uv3: ExtDynamic<ImVec2> = null, uv4: ExtDynamic<ImVec2> = null, col: ImU32 = 0xFFFFFFFF) {}
-	static function drawlist_add_image_rounded( drawlist: ImDrawListPtr, user_texture_id : ImTextureID, p_min: ExtDynamic<ImVec2>, p_max: ExtDynamic<ImVec2>, uv_min: ExtDynamic<ImVec2>, uv_max: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, flags: ImDrawFlags = ImDrawFlags.None) {}
+	static function drawlist_add_text( drawlist: ImDrawListPtr, pos: ExtDynamic<ImVec2>, col: ImU32, text: String ) {}
+	static function drawlist_add_text2( drawlist: ImDrawListPtr, font: ImFontPtr, font_size: Single, pos: ExtDynamic<ImVec2>, col: ImU32, text: String, wrap_width: Single, cpu_fine_clip_rect: ExtDynamic<ImVec4> ) {}
+	
+	static function drawlist_add_image( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32 ) {}
+	static function drawlist_add_image_quad( drawlist: ImDrawListPtr, userTextureId: ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2>, uv2: ExtDynamic<ImVec2>, uv3: ExtDynamic<ImVec2>, uv4: ExtDynamic<ImVec2>, col: ImU32 ) {}
+	static function drawlist_add_image_rounded( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
 }
 
 
@@ -906,15 +971,24 @@ class ImGui
 	// Widgets: Main
 	public static function button(name : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
 	public static function smallButton(label : String) : Bool {return false;}
-    public static function invisibleButton(str_id : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
-    public static function arrowButton(str_id : String, dir : ImGuiDir) : Bool {return false;}
-    public static function image(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null, uv1 : ExtDynamic<ImVec2> = null, tint_col : ExtDynamic<ImVec4> = null, border_col : ExtDynamic<ImVec4> = null) {}
-    public static function imageButton(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null,  uv1 : ExtDynamic<ImVec2> = null, frame_padding : Int = -1, bg_col : ExtDynamic<ImVec4> = null, tint_col : ExtDynamic<ImVec4> = null) : Bool {return false;}
-    public static function checkbox(label : String, v : hl.Ref<Bool>) : Bool {return false;}
-    public static function checkboxFlags(label : String, flags : hl.Ref<Int>, flags_value : Int) : Bool {return false;}
-    public static function radioButton(label : String, active : Bool) : Bool {return false;}
-    public static function radioButton2(label : String, v : hl.Ref<Int>, v_button : Int) : Bool {return false;}
-    public static function progressBar(fraction : Single, size_arg : ExtDynamic<ImVec2> = null, overlay : String = null) {}
+	public static function invisibleButton(str_id : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function arrowButton(str_id : String, dir : ImGuiDir) : Bool {return false;}
+	public static function image(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null, uv1 : ExtDynamic<ImVec2> = null, tint_col : ExtDynamic<ImVec4> = null, border_col : ExtDynamic<ImVec4> = null) {}
+	public static function imageButton(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null,  uv1 : ExtDynamic<ImVec2> = null, frame_padding : Int = -1, bg_col : ExtDynamic<ImVec4> = null, tint_col : ExtDynamic<ImVec4> = null) : Bool {return false;}
+	#if heaps
+	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2, ?tint_col: ImVec4, ?border_col: ImVec4) @:privateAccess {
+		image(tile.getTexture(), size == null ? ImTypeCache.imVec2[0].set(tile.width, tile.height) : size, ImTypeCache.imVec2[1].set(tile.u, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), tint_col, border_col);
+	}
+	
+	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2, frame_padding: Int = -1, ?bg_col: ImVec4, ?tint_col: ImVec4): Bool @:privateAccess {
+		return imageButton(tile.getTexture(), size == null ? ImTypeCache.imVec2[0].set(tile.width, tile.height) : size, ImTypeCache.imVec2[1].set(tile.u, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
+	}
+	#end
+	public static function checkbox(label : String, v : hl.Ref<Bool>) : Bool {return false;}
+	public static function checkboxFlags(label : String, flags : hl.Ref<Int>, flags_value : Int) : Bool {return false;}
+	public static function radioButton(label : String, active : Bool) : Bool {return false;}
+	public static function radioButton2(label : String, v : hl.Ref<Int>, v_button : Int) : Bool {return false;}
+	public static function progressBar(fraction : Single, size_arg : ExtDynamic<ImVec2> = null, overlay : String = null) {}
 	public static function bullet() {}
 
     // Widgets: Combo Box
@@ -925,7 +999,7 @@ class ImGui
 
 	// Widgets: Drags
 	public static function dragFloat(label : String, v : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function dragInt(label : String, v : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragInt(label : String, v : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragDouble(label : String, v : hl.Ref<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static function dragFloatRange2(label : String, v_current_min : hl.Ref<Single>, v_current_max : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -934,7 +1008,7 @@ class ImGui
 	public static inline function dragFloatN(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
 		return drag_scalar_n(label, ImGuiDataType.Float, v, v_speed, v_min, v_max, format, flags);
 	}
-	public static inline function dragIntN(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", flags : ImGuiSliderFlags = 0) : Bool {
+	public static inline function dragIntN(label : String, v : hl.NativeArray<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {
 		return drag_scalar_n(label, ImGuiDataType.S32, v, v_speed, v_min, v_max, format, flags);
 	}
 	public static inline function dragDoubleN(label : String, v : hl.NativeArray<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {

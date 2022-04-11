@@ -1,8 +1,3 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include <vector>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM vdynamic* HL_NAME(calc_text_size)(vstring* text, vstring* text_end, bool* hide_text_after_double_hash, float* wrap_width)

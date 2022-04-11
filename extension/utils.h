@@ -1,7 +1,10 @@
 #pragma once
 
+#define HL_NAME(n) hlimgui_##n
+
 #include <string>
 #include <hl.h>
+#include <vector>
 #include "lib/imgui/imgui.h"
 
 #define convertString(st) st != nullptr ? unicodeToUTF8(st).c_str() : NULL
@@ -30,11 +33,12 @@ vdynamic* getHLFromImGuiStyle(const ImGuiStyle& imgui_style);
 
 void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config);
 
-ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value = ImVec2(0, 0));
-ImVec4 getImVec4(vdynamic* vec4, const ImVec4& default_value = ImVec4(0, 0, 0, 0));
+// Replaced by imconfig.h extra converters
+inline ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value : vec2; }
+inline ImVec4 getImVec4(vdynamic* vec4, const ImVec4& default_value = ImVec4(0, 0, 0, 0)) { return vec4 == nullptr ? default_value : vec4; }
 
-vdynamic* getHLFromImVec2(ImVec2 value);
-vdynamic* getHLFromImVec4(ImVec4 value);
+inline vdynamic* getHLFromImVec2(ImVec2 value) { return value; }
+inline vdynamic* getHLFromImVec4(ImVec4 value) { return value; }
 
 vbyte* getVByteFromCStr(const char* str);
 

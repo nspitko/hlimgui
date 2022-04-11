@@ -1,7 +1,3 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM bool HL_NAME(begin_table)(vstring *id, int column, ImGuiTableFlags *flags, vdynamic *outer_size, float *inner_width)
