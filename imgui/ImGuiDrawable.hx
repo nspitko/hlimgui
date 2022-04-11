@@ -1,5 +1,7 @@
 package imgui;
 
+#if heaps
+
 import h3d.mat.Texture;
 import imgui.ImGui;
 import hxd.Key;
@@ -357,3 +359,5 @@ class ImGuiDrawable extends h2d.Drawable {
 		ctx.engine.setRenderZone();
 	}
 }
+
+#end
