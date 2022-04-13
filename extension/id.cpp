@@ -2,13 +2,13 @@
 
 HL_PRIM void HL_NAME(push_id)(vstring* str_id)
 {
-	ImGui::PushID(unicodeToUTF8(str_id).c_str());
+	ImGui::PushID(convertString(str_id));
 }
 
 HL_PRIM void HL_NAME(push_id_sub)(vstring* str_id, int begin, int end)
 {
 	// Likely will break if contains real UTF, but at least it works compared to old implementation.
-	auto str = unicodeToUTF8(str_id).c_str();
+	auto str = convertString(str_id);
 	if (end > str_id->length) end = str_id->length;
 	ImGui::PushID(str + begin, str + end);
 }
@@ -29,12 +29,12 @@ HL_PRIM void HL_NAME(pop_id)()
 
 HL_PRIM ImGuiID HL_NAME(get_id)(vstring* str_id)
 {
-	return ImGui::GetID(unicodeToUTF8(str_id).c_str());
+	return ImGui::GetID(convertString(str_id));
 }
 
 HL_PRIM ImGuiID HL_NAME(get_id_sub)(vstring* str_id, int begin, int end)
 {
-	auto str = unicodeToUTF8(str_id).c_str();
+	auto str = convertString(str_id);
 	if (end > str_id->length) end = str_id->length;
 	return ImGui::GetID(str + begin, str + end);
 }

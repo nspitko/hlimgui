@@ -20,6 +20,11 @@ HL_PRIM void HL_NAME(end_tab_item)()
     ImGui::EndTabItem();
 }
 
+HL_PRIM bool HL_NAME(tab_item_button)(vstring* label, ImGuiTabItemFlags* flags)
+{
+    return ImGui::TabItemButton(convertString(label), convertPtr(flags, 0));
+}
+
 HL_PRIM void HL_NAME(set_tab_item_closed)(vstring* tab_or_docked_window_label)
 {
     ImGui::SetTabItemClosed(convertString(tab_or_docked_window_label));
@@ -29,4 +34,5 @@ DEFINE_PRIM(_BOOL, begin_tab_bar, _STRING _REF(_I32));
 DEFINE_PRIM(_VOID, end_tab_bar, _NO_ARG);
 DEFINE_PRIM(_BOOL, begin_tab_item, _STRING _REF(_BOOL) _REF(_I32));
 DEFINE_PRIM(_VOID, end_tab_item, _NO_ARG);
+DEFINE_PRIM(_BOOL, tab_item_button, _STRING _REF(_I32));
 DEFINE_PRIM(_VOID, set_tab_item_closed, _STRING);

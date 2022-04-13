@@ -1145,37 +1145,50 @@ class ImGui
     public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
 	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
 
-    // Widgets: Value() Helpers.
-    public static function valueBool(prefix : String, b : Bool) {}
-    public static function valueInt(prefix : String, v : Int) {}
+	// Widgets: Value() Helpers.
+	public static function valueBool(prefix : String, b : Bool) {}
+	public static function valueInt(prefix : String, v : Int) {}
 	public static function valueSingle(prefix : String, v : Single, float_format : String = null) {}
+	public static function valueDouble(prefix: String, v: Float, double_format: String = null) {}
 
-    // Widgets: Menus
-    public static function beginMenuBar() : Bool {return false;}
-    public static function endMenuBar() {}
-    public static function beginMainMenuBar() : Bool {return false;}
-    public static function endMainMenuBar() {}
-    public static function beginMenu(label : String, enabled : Bool = true) : Bool {return false;}
-    public static function endMenu() {}
-    public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
-    public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
+	// Widgets: Menus
+	public static function beginMenuBar() : Bool {return false;}
+	/** Only call EndMenuBar() if BeginMenuBar() returns true! **/
+	public static function endMenuBar() {}
+	public static function beginMainMenuBar() : Bool {return false;}
+	/** Only call EndMainMenuBar() if BeginMainMenuBar() returns true! **/
+	public static function endMainMenuBar() {}
+	public static function beginMenu(label : String, enabled : Bool = true) : Bool {return false;}
+	/** Only call EndMenu() if BeginMenu() returns true! **/
+	public static function endMenu() {}
+	public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
+	public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
 
 	// ToolTips
-    public static function beginTooltip() {}
-    public static function endTooltip() {}
-	public static function setTooltip(fmt : String) {}
+	public static function beginTooltip() {}
+	public static function endTooltip() {}
+	public static function setTooltip(fmt : String) {} // TODO: Allow format args
 
-	// Popups
+	// Popups, Modals
+	
+	// Popups: begin/end function
+	public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function endPopup() {}
+	
+	// Popups: open/close functions
 	public static function openPopup(str_id : String) {}
-    public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-    public static function beginPopupContextItem(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Bool {return false;}
-    public static function beginPopupContextWindow(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {return false;}
-    public static function beginPopupContextVoid(str_id : String = null, mouse_button : ImGuiMouseButton= 1) : Bool {return false;}
-    public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-    public static function endPopup() {}
-    public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
-    public static function isPopupOpen(str_id : String) : Bool {return false;}
+	// TODO: openPopup with id: ImGuiID
+	public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
 	public static function closeCurrentPopup() {}
+	
+	// Popups: open+begin combined function helpers
+	public static function beginPopupContextItem(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Bool {return false;}
+	public static function beginPopupContextWindow(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {return false;}
+	public static function beginPopupContextVoid(str_id : String = null, mouse_button : ImGuiMouseButton= 1) : Bool {return false;}
+	
+	// Popups: query functions
+	public static function isPopupOpen(str_id : String) : Bool {return false;}
 
     // Columns
     public static function columns(count : Int = 1, id : String = null, border : Bool = true) {}
@@ -1212,6 +1225,7 @@ class ImGui
 	public static function endTabBar() {}
 	public static function beginTabItem(label : String, p_open : hl.Ref<Bool> = null, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function endTabItem() {}
+	public static function tabItemButton(label : String, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
 
 	// Logging/Capture
@@ -1220,7 +1234,7 @@ class ImGui
 	public static function logToClipboard(auto_open_depth : Int = -1) {}
 	public static function logFinish() {}
 	public static function logButtons() {}
-	public static function logText(text : String) {}
+	public static function logText(text : String) {} // TODO: Allow format args
 
     // Clipping
     public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}

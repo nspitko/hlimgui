@@ -106,22 +106,22 @@ HL_PRIM void HL_NAME(set_window_font_scale)(float scale)
 
 HL_PRIM void HL_NAME(set_window_pos2)(vstring* name, vdynamic* pos, ImGuiCond* cond)
 {
-	ImGui::SetWindowPos(unicodeToUTF8(name).c_str(), getImVec2(pos), convertPtr(cond, 0));
+	ImGui::SetWindowPos(convertString(name), getImVec2(pos), convertPtr(cond, 0));
 }
 
 HL_PRIM void HL_NAME(set_window_size2)(vstring* name, vdynamic* size, ImGuiCond* cond)
 {
-	ImGui::SetWindowSize(unicodeToUTF8(name).c_str(), getImVec2(size), convertPtr(cond, 0));
+	ImGui::SetWindowSize(convertString(name), getImVec2(size), convertPtr(cond, 0));
 }
 
 HL_PRIM void HL_NAME(set_window_collapsed2)(vstring* name, bool collapsed, ImGuiCond* cond)
 {
-	ImGui::SetWindowCollapsed(unicodeToUTF8(name).c_str(), collapsed, convertPtr(cond, 0));
+	ImGui::SetWindowCollapsed(convertString(name), collapsed, convertPtr(cond, 0));
 }
 
 HL_PRIM void HL_NAME(set_window_focus2)(vstring* name)
 {
-	ImGui::SetWindowFocus(unicodeToUTF8(name).c_str());
+	ImGui::SetWindowFocus(convertString(name));
 }
 
 DEFINE_PRIM(_BOOL, is_window_appearing, _NO_ARG);
