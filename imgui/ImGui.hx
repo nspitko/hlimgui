@@ -797,9 +797,9 @@ class ImGui
 	public static inline var FLT_MAX = 3.402823466e+38;
 
 	// Context
-    public static function createContext() : ImContextPtr {return null;}
-    public static function destroyContext(ctx : ImContextPtr = null) {}
-    public static function getCurrentContext() : ImContextPtr {return null;}
+	public static function createContext() : ImContextPtr {return null;}
+	public static function destroyContext(ctx : ImContextPtr = null) {}
+	public static function getCurrentContext() : ImContextPtr {return null;}
 	public static function setCurrentContext(ctx : ImContextPtr) {}
 
 	// Main
@@ -810,15 +810,16 @@ class ImGui
 	public static function render() {}
 
 	// Demo, Debug, Information
-    public static function showDemoWindow(open : hl.Ref<Bool> = null) {}
-    public static function showAboutWindow(open : hl.Ref<Bool> = null) {}
+	public static function showDemoWindow(open : hl.Ref<Bool> = null) {}
 	public static function showMetricsWindow(open : hl.Ref<Bool> = null) {}
+	public static function showStackToolWindow(open : hl.Ref<Bool> = null) {}
+	public static function showAboutWindow(open : hl.Ref<Bool> = null) {}
 	public static function showStyleEditor(style : ExtDynamic<ImGuiStyle> = null) {}
-    public static function showStyleSelector(label : String) : Bool {return false;}
-    public static function showFontSelector(label : String) {}
+	public static function showStyleSelector(label : String) : Bool {return false;}
+	public static function showFontSelector(label : String) {}
 	public static function showUserGuide() {}
 	static function get_version() : hl.Bytes {return null;}
-    public static function getVersion() : String {
+	public static inline function getVersion() : String {
 		return @:privateAccess String.fromUTF8(get_version());
 	}
 
