@@ -976,13 +976,15 @@ class ImGui
 	@:deprecated("use pushIDSub") public static inline function pushID2(str_id : String, begin : Int, end : Int) { pushIDSub(str_id, begin, end); }
 	@:deprecated("use pushIDInt") public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
 
-    // Widgets: Text
-    public static function text(text : String) {}
-    public static function textColored(col : ExtDynamic<ImVec4>, fmt : String) {}
-    public static function textDisabled(text : String) {}
-    public static function textWrapped(text : String) {}
-    public static function labelText(label : String, text : String) {}
-    public static function bulletText(text : String) {}
+	// Widgets: Text
+	// TODO: TextUnformatted(text: String, ?start: Int, ?end: Int)
+	// TODO: Allow format arguments to be passed
+	public static function text(text : String) {}
+	public static function textColored(col : ExtDynamic<ImVec4>, fmt : String) {}
+	public static function textDisabled(text : String) {}
+	public static function textWrapped(text : String) {}
+	public static function labelText(label : String, text : String) {}
+	public static function bulletText(text : String) {}
 
 	// Widgets: Main
 	public static function button(name : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
@@ -1007,11 +1009,12 @@ class ImGui
 	public static function progressBar(fraction : Single, size_arg : ExtDynamic<ImVec2> = null, overlay : String = null) {}
 	public static function bullet() {}
 
-    // Widgets: Combo Box
-    public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
-    public static function endCombo() {}
-    public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	// Widgets: Combo Box
+	public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
+	public static function endCombo() {}
+	public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	// TODO: comboCallback variant
 
 	// Widgets: Drags
 	public static function dragFloat(label : String, v : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1120,10 +1123,22 @@ class ImGui
     public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
 	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
 
-    // Widgets: List Boxes
-    public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
-    public static function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
-    public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
+	// Widgets: List Boxes
+	/**
+		- Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
+		- Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
+	**/
+	public static function beginListBox(label: String, size: ExtDynamic<ImVec2> = null): Bool { return false; }
+	/** Only call if beginListBox returns true! **/
+	public static function endListBox(): Bool { return false; }
+	
+	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
+	// TODO: Callback variant
+	@:deprecated("Use beginListBox")
+	public static function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return beginListBox(label, size);}
+	@:deprecated("Obsolete")
+	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
+	@:deprecated("Use endListBox")
 	public static function listBoxFooter() {}
 
 	// Widgets: Data Plotting
