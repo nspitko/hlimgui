@@ -1,8 +1,3 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include <vector>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM bool HL_NAME(list_box)(vstring* label, int* current_item, varray* items, int* height_in_items)

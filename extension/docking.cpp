@@ -1,9 +1,5 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include "lib/imgui/imgui.h"
-#include "lib/imgui/imgui_internal.h"
 #include "utils.h"
+#include "lib/imgui/imgui_internal.h"
 
 HL_PRIM void HL_NAME(dock_space)( ImGuiID id, vdynamic* size, ImGuiDockNodeFlags* flags )
 {

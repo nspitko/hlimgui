@@ -1,7 +1,3 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
 
 HL_PRIM bool HL_NAME(drag_float)(vstring* label, float* v, float* v_speed, float* v_min, float* v_max, vstring* format, ImGuiSliderFlags* flags)

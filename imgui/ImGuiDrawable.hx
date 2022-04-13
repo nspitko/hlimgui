@@ -1,8 +1,19 @@
 package imgui;
 
+#if heaps
+
 import h3d.mat.Texture;
 import imgui.ImGui;
 import hxd.Key;
+
+private typedef CursorInfo = { 
+	next: CursorInfo,
+	c: ImGuiMouseCursor,
+	x1: Int, y1: Int,
+	x2: Int, y2: Int,
+	w: Int, h: Int,
+	ox: Int, oy: Int
+}
 
 class ImGuiDrawableBuffers {
 
@@ -16,25 +27,52 @@ class ImGuiDrawableBuffers {
 		buffer:h3d.Indexes}> = [];
 
 	private var initialized : Bool;
-	private var textures : Array<Texture> = [];
-	private var font_texture : Texture;
+	public var font_texture : Texture;
+	#if hlimgui_cursor
+	public var cursor_map: Map<ImGuiMouseCursor, hxd.Cursor> = [];
+	#end
 
 	public function initialize() {
 		if (this.initialized) {
 			return;
 		}
 
-		var font_info:{buffer:hl.Bytes, width:Int, height:Int} = ImGui.initialize(renderDrawListsFromExternal);
+		var font_info:{buffer:hl.Bytes, width:Int, height:Int, cursors: CursorInfo } = ImGui.initialize(renderDrawListsFromExternal);
 
 		// create font texture
 		var texture_size = font_info.width * font_info.height * 4;
-		font_texture = Texture.fromPixels(new hxd.Pixels(
-			font_info.width,
+		var font_pixels = new hxd.Pixels(font_info.width,
 			font_info.height,
 			font_info.buffer.toBytes(texture_size),
 			hxd.PixelFormat.RGBA
-		));
+		);
+		font_texture = Texture.fromPixels(font_pixels);
 		ImGui.setFontTexture(font_texture);
+
+		#if hlimgui_cursor
+		var cur = font_info.cursors;
+		while (cur != null) {
+			// Assemble the cursor pixel data
+			var cursor_bitmap = new hxd.BitmapData(cur.w+2, cur.h+2);
+			
+			// Mix the fill and outline data same way ImGui would do it
+			for (y in 0...cur.h) for (x in 0...cur.w) {
+				// Outline
+				if ((font_pixels.getPixel(x+cur.x2, y+cur.y2)&0xff000000) != 0)
+				{
+					cursor_bitmap.setPixel(x, y, 0xff000000);
+					// Shadow
+					cursor_bitmap.setPixel(x+1, y+1, 0x30000000);
+					cursor_bitmap.setPixel(x+2, y+2, 0x30000000);
+					
+				}
+				// Fill
+				else if ((font_pixels.getPixel(x+cur.x1, y+cur.y1)&0xff000000) != 0) cursor_bitmap.setPixel(x, y, 0xffffffff);
+			}
+			cursor_map[cur.c] = hxd.Cursor.Custom(new hxd.Cursor.CustomCursor([cursor_bitmap], 0, cur.ox, cur.oy));
+			cur = cur.next;
+		}
+		#end
 
 		this.initialized = true;
 	}
@@ -49,11 +87,6 @@ class ImGuiDrawableBuffers {
 			vertex_buffer.dispose();
 		}
 		this.vertex_buffers = [];
-
-		for (texture in this.textures) {
-			texture.dispose();
-		}
-		this.textures = [];
 
 		this.initialized = false;
 	}
@@ -165,7 +198,9 @@ class ImGuiDrawable extends h2d.Drawable {
 	var mouse_delta : Float;
 	var keycode_map : Map<Int,Int>;
 	var wheel_inverted : Bool;
-	var textures : Array<Texture>;
+	#if hlimgui_cursor
+	var cursorMap:Map<ImGuiMouseCursor, hxd.Cursor> = [];
+	#end
 	private var scene_size : {width: Int, height:Int};
 
 	public function new(?parent) {
@@ -208,6 +243,9 @@ class ImGuiDrawable extends h2d.Drawable {
 		this.empty_tile = h2d.Tile.fromColor(0xFFFFFF);
 
 		scene.addEventListener(onEvent);
+		#if hlimgui_cursor
+		hxd.System.setCursor = updateCursor;
+		#end
 
 		this.mouse_x = scene.mouseX;
 		this.mouse_y = scene.mouseY;
@@ -227,7 +265,33 @@ class ImGuiDrawable extends h2d.Drawable {
 			ImGui.setDisplaySize(scene.width, scene.height);
 			this.scene_size = {width: scene.width, height:scene.width};
 		}
+		#if hlimgui_cursor
+		// Somewhat hacky solution to enforce a cursor: But that's what we can do.
+		var cursor = ImGuiDrawableBuffers.instance.cursor_map[ImGui.getMouseCursor()];
+		if (cursor != null) @:privateAccess scene.events.defaultCursor = cursor;
+		#end
 	}
+
+	#if hlimgui_cursor
+	function updateCursor(cursor:hxd.Cursor) {
+		switch (ImGui.getMouseCursor()) {
+			case None: hxd.System.setNativeCursor(Hide);
+			case Arrow: hxd.System.setNativeCursor(cursor);
+			case TextInput: hxd.System.setNativeCursor(TextInput);
+			case ResizeAll: hxd.System.setNativeCursor(Move);
+			case Hand: hxd.System.setNativeCursor(Button);
+			// case ResizeNS:
+			// case ResizeEW:
+			// case ResizeNESW:
+			// case ResizeNWSE:
+			// case NotAllowed:
+			case expected:
+				var cur = ImGuiDrawableBuffers.instance.cursor_map[expected];
+				if (cur != null) cursor = cur;
+				hxd.System.setNativeCursor(cursor);
+		}
+	}
+	#end
 
 	private function onEvent(event: hxd.Event) {
 		switch (event.kind) {
@@ -295,3 +359,5 @@ class ImGuiDrawable extends h2d.Drawable {
 		ctx.engine.setRenderZone();
 	}
 }
+
+#end

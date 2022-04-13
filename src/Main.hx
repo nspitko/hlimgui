@@ -1,6 +1,21 @@
 import imgui.ImGuiDrawable;
 import imgui.ImGui;
 
+// Sample with a simplified ImGuiApp that handles imgui presentation and update automatically
+class Main extends imgui.ImGuiApp {
+    
+    override function update(dt:Float) {
+        ImGui.showDemoWindow();
+    }
+    
+    static function main() {
+        new Main();
+    }
+    
+}
+
+// Sample with just ImGuiDrawable and manual handling of imgui presentation and update:
+/*
 class Main extends hxd.App
 {
     var drawable:ImGuiDrawable;
@@ -31,3 +46,4 @@ class Main extends hxd.App
         new Main();
     }
 }
+*/

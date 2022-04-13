@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(${TARGET_NAME}${TARGET_EXT} SHARED ${SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES})
+add_compile_definitions(IMGUI_USER_CONFIG="../../imgui_config.h")
 
 set_target_properties(${TARGET_NAME}${TARGET_EXT}
     PROPERTIES

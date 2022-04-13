@@ -1,10 +1,4 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
-#include "lib/imgui/imgui.h"
 #include "utils.h"
-
-#include <string>
 
 typedef struct
 {
@@ -133,6 +127,30 @@ HL_PRIM vdynamic* HL_NAME(initialize)(vclosure* render_fn)
 	hl_dyn_setp(font_info, hl_hash_utf8("buffer"), &hlt_bytes, buffer);
 	hl_dyn_seti(font_info, hl_hash_utf8("width"), &hlt_i32, width);
 	hl_dyn_seti(font_info, hl_hash_utf8("height"), &hlt_i32, height);
+	
+	ImVec2 offset, size, uv[4];
+	vdynamic* cursors = nullptr;
+	
+	// Retrieve cursor positioning data from imgui default font and pass it to Heaps
+	// Allows us to display all actual cursors without being restricted by what Heaps supports.
+	for ( int cursor = ImGuiMouseCursor_Arrow; cursor < ImGuiMouseCursor_COUNT; cursor++) {
+		if (io.Fonts->GetMouseCursorTexData(cursor, &offset, &size, &uv[0], &uv[2])) {
+			vdynamic* cur = (vdynamic*)hl_alloc_dynobj();
+			hl_dyn_seti(cur, hl_hash_utf8("x1"), &hlt_i32, (int)(uv[0].x * width));
+			hl_dyn_seti(cur, hl_hash_utf8("y1"), &hlt_i32, (int)(uv[0].y * height));
+			hl_dyn_seti(cur, hl_hash_utf8("x2"), &hlt_i32, (int)(uv[2].x * width));
+			hl_dyn_seti(cur, hl_hash_utf8("y2"), &hlt_i32, (int)(uv[2].y * height));
+			hl_dyn_seti(cur, hl_hash_utf8("w"), &hlt_i32, (int)size.x);
+			hl_dyn_seti(cur, hl_hash_utf8("h"), &hlt_i32, (int)size.y);
+			hl_dyn_seti(cur, hl_hash_utf8("ox"), &hlt_i32, (int)offset.x);
+			hl_dyn_seti(cur, hl_hash_utf8("oy"), &hlt_i32, (int)offset.y);
+			hl_dyn_seti(cur, hl_hash_utf8("c"), &hlt_i32, cursor);
+			
+			hl_dyn_setp(cur, hl_hash_utf8("next"), &hlt_dynobj, cursors);
+			cursors = cur;
+		}
+	}
+	hl_dyn_setp(font_info, hl_hash_utf8("cursors"), &hlt_dynobj, cursors);
 
 	io.Fonts->ClearTexData();
 
