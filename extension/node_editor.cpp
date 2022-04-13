@@ -1,6 +1,3 @@
-#define HL_NAME(n) hlimgui_##n
-
-#include <hl.h>
 #include "utils.h"
 #include "lib/imgui-node-editor/imgui_node_editor.h"
 

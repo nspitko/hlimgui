@@ -228,7 +228,7 @@ class NodeEditor
 	public static function setNodePosition( nodeId: NodeId, position: ExtDynamic<ImVec2> ) : Void {}
 	public static function getNodePosition( nodeId: NodeId ) : ExtDynamic<ImVec2> { return null; }
 	public static function getNodeSize( nodeId: NodeId ) : ExtDynamic<ImVec2> { return null; }
-	public static function setGroupSize( nodeId: NodeId, size: ExtDynamic<ImVec4> ) : Void {}
+	public static function setGroupSize( nodeId: NodeId, size: ExtDynamic<ImVec2> ) : Void {}
 	public static function centerNodeOnScreen( nodeId: NodeId ) : Void {}
 	public static function setNodeZPosition( nodeId: NodeId, z: Single ) : Void {}
 	public static function getNodeZPosition( nodeId: NodeId ) : Single { return 0; }
