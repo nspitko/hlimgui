@@ -672,6 +672,7 @@ class ImFontConfig
 private typedef ImFontPtr = hl.Abstract<"imfont">;
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
+private typedef ImContextPtr = hl.Abstract<"imcontext">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
 
 @:hlNative("hlimgui")
@@ -796,10 +797,10 @@ class ImGui
 	public static inline var FLT_MAX = 3.402823466e+38;
 
 	// Context
-    public static function createContext() : hl.Bytes {return null;}
-    public static function destroyContext(ctx : hl.Bytes = null) {}
-    public static function getCurrentContext() : hl.Bytes {return null;}
-	public static function setCurrentContext(ctx : hl.Bytes) {}
+    public static function createContext() : ImContextPtr {return null;}
+    public static function destroyContext(ctx : ImContextPtr = null) {}
+    public static function getCurrentContext() : ImContextPtr {return null;}
+	public static function setCurrentContext(ctx : ImContextPtr) {}
 
 	// Main
 	public static function getStyle() : ExtDynamic<ImGuiStyle> {return null;}
