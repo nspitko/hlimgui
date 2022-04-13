@@ -20,6 +20,10 @@ HL_PRIM bool HL_NAME(is_window_hovered)(ImGuiFocusedFlags* flags)
 	return ImGui::IsWindowHovered(convertPtr(flags, 0));
 }
 
+HL_PRIM float HL_NAME(get_window_dpi_scale)() {
+	return ImGui::GetWindowDpiScale();
+}
+
 HL_PRIM vdynamic* HL_NAME(get_window_pos)()
 {
 	return getHLFromImVec2(ImGui::GetWindowPos());
@@ -124,6 +128,7 @@ DEFINE_PRIM(_BOOL, is_window_appearing, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_window_collapsed, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_window_focused, _REF(_I32));
 DEFINE_PRIM(_BOOL, is_window_hovered, _REF(_I32));
+DEFINE_PRIM(_F32, get_window_dpi_scale, _NO_ARG);
 DEFINE_PRIM(_DYN, get_window_pos, _NO_ARG);
 DEFINE_PRIM(_DYN, get_window_size, _NO_ARG);
 DEFINE_PRIM(_F32, get_window_width, _NO_ARG);

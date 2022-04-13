@@ -825,43 +825,45 @@ class ImGui
 
 	// styles
 	public static function styleColorsDark(style : ExtDynamic<ImGuiStyle> = null) {}
-    public static function styleColorsClassic(style : ExtDynamic<ImGuiStyle> = null) {}
-    public static function styleColorsLight(style : ExtDynamic<ImGuiStyle> = null) {}
+	public static function styleColorsClassic(style : ExtDynamic<ImGuiStyle> = null) {}
+	public static function styleColorsLight(style : ExtDynamic<ImGuiStyle> = null) {}
 
 	// windows
-    public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function end() {}
 
 	// Child windows
-    public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-    public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChild() {}
 
 	// Windows utilities
 	public static function isWindowAppearing() : Bool {return false;}
-    public static function isWindowCollapsed() : Bool {return false;}
-    public static function isWindowFocused(flags : ImGuiFocusedFlags = 0) {return false;}
-    public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
-    public static function getWindowPos() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowWidth() : Single {return 0;}
+	public static function isWindowCollapsed() : Bool {return false;}
+	public static function isWindowFocused(flags : ImGuiFocusedFlags = 0) {return false;}
+	public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
+	public static function getWindowDpiScale(): Single { return 0; }
+	public static function getWindowPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowWidth() : Single {return 0;}
 	public static function getWindowHeight(): Single {return 0;}
 
-    public static function setNextWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0, pivot : ExtDynamic<ImVec2> = null) {}
-    public static function setNextWindowSize(size: ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setNextWindowSizeConstraints(size_min : ExtDynamic<ImVec2>, size_max : ExtDynamic<ImVec2>) {}
-    public static function setNextWindowContentSize(size : ExtDynamic<ImVec2>) {}
-    public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
-    public static function setNextWindowFocus() {}
-    public static function setNextWindowBgAlpha(alpha : Single) {}
-    public static function setWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowSize(size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
-    public static function setWindowFocus() {}
-    public static function setWindowFontScale(scale : Single) {}
-    public static function setWindowPos2(name : String, pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowSize2(name : String, size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
+	// Window manipulation
+	public static function setNextWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0, pivot : ExtDynamic<ImVec2> = null) {}
+	public static function setNextWindowSize(size: ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setNextWindowSizeConstraints(size_min : ExtDynamic<ImVec2>, size_max : ExtDynamic<ImVec2>) {}
+	public static function setNextWindowContentSize(size : ExtDynamic<ImVec2>) {}
+	public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
+	public static function setNextWindowFocus() {}
+	public static function setNextWindowBgAlpha(alpha : Single) {}
+	public static function setWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowSize(size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
+	public static function setWindowFocus() {}
+	public static function setWindowFontScale(scale : Single) {}
+	public static function setWindowPos2(name : String, pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowSize2(name : String, size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus2(name : String) {}
 
 	// Docking
@@ -886,79 +888,93 @@ class ImGui
 
 	// Content region
 	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
-    public static function getContentRegionAvail() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowContentRegionMin() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowContentRegionMax() : ExtDynamic<ImVec2> {return null;}
+	public static function getContentRegionAvail() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowContentRegionMin() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowContentRegionMax() : ExtDynamic<ImVec2> {return null;}
+	@:deprecated // Obsoleted in latest imgui
 	public static function getWindowContentRegionWidth() : Single {return 0;}
 
 	// Windows Scrolling
 	public static function getScrollX() : Single {return 0;}
-    public static function getScrollY() : Single {return 0;}
-    public static function getScrollMaxX() : Single {return 0;}
-    public static function getScrollMaxY() : Single {return 0;}
-    public static function setScrollX(scroll_x : Single) {}
-    public static function setScrollY(scroll_y : Single) {}
-    public static function setScrollHereX(center_x_ratio : Single = 0.5) {}
-    public static function setScrollHereY(center_y_ratio : Single = 0.5) {}
-    public static function setScrollFromPosX(local_x : Single, center_x_ratio : Single = 0.5) {}
+	public static function getScrollY() : Single {return 0;}
+	public static function setScrollX(scroll_x : Single) {}
+	public static function setScrollY(scroll_y : Single) {}
+	public static function getScrollMaxX() : Single {return 0;}
+	public static function getScrollMaxY() : Single {return 0;}
+	public static function setScrollHereX(center_x_ratio : Single = 0.5) {}
+	public static function setScrollHereY(center_y_ratio : Single = 0.5) {}
+	public static function setScrollFromPosX(local_x : Single, center_x_ratio : Single = 0.5) {}
 	public static function setScrollFromPosY(local_y : Single, center_y_ratio : Single = 0.5) {}
 
-	// Parameters stacks
-    public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
-    public static function pushStyleColor2(idx : ImGuiCol, col : ExtDynamic<ImVec4>) {}
-    public static function popStyleColor(count : Int = 1) {}
-    public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
-    public static function pushStyleVar2(idx : ImGuiStyleVar, val : ExtDynamic<ImVec2>) {}
-    public static function popStyleVar(count : Int = 1) {}
-    public static function getStyleColorVec4(idx : ImGuiCol) : ExtDynamic<ImVec4> {return null;}
-    public static function getFontSize() : Single {return 0;}
-    public static function getFontTexUvWhitePixel() : ExtDynamic<ImVec2> {return null;}
-    public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
-    public static function getColorU322(col : ExtDynamic<ImVec4>) : ImU32 {return 0;}
-    public static function getColorU323(col : ImU32) : ImU32 {return 0;}
-    public static function pushItemWidth(item_width : Single) {}
-    public static function popItemWidth() {}
-    public static function setNextItemWidth(item_width : Single) {}
-    public static function calcItemWidth() : Single {return 0;}
-    public static function pushTextWrapPos(wrap_local_pos_x : Single = 0.0) {}
-    public static function popTextWrapPos() {}
-    public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
-    public static function popAllowKeyboardFocus() {}
-    public static function pushButtonRepeat(repeat : Bool) {}
-    public static function popButtonRepeat() {}
+	// Parameters stacks (shared)
+	public static function pushFont( font: ImFont ) {}
+	public static function popFont() {}
+	public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
+	public static function pushStyleColor2(idx : ImGuiCol, col : ExtDynamic<ImVec4>) {}
+	public static function popStyleColor(count : Int = 1) {}
+	public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
+	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ExtDynamic<ImVec2>) {}
+	public static function popStyleVar(count : Int = 1) {}
+	public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
+	public static function popAllowKeyboardFocus() {}
+	public static function pushButtonRepeat(repeat : Bool) {}
+	public static function popButtonRepeat() {}
+	
+	// Parameters stacks (current window)
+	public static function pushItemWidth(item_width : Single) {}
+	public static function popItemWidth() {}
+	public static function setNextItemWidth(item_width : Single) {}
+	public static function calcItemWidth() : Single {return 0;}
+	public static function pushTextWrapPos(wrap_local_pos_x : Single = 0.0) {}
+	public static function popTextWrapPos() {}
+	
+	// Style read access
+	public static function getFont(): ImFont {return null;}
+	public static function getFontSize() : Single {return 0;}
+	public static function getFontTexUvWhitePixel() : ExtDynamic<ImVec2> {return null;}
+	public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
+	public static function getColorU322(col : ExtDynamic<ImVec4>) : ImU32 {return 0;}
+	public static function getColorU323(col : ImU32) : ImU32 {return 0;}
+	public static function getStyleColorVec4(idx : ImGuiCol) : ExtDynamic<ImVec4> {return null;}
 
 	// Cursor / Layout
-    public static function separator() {}
-    public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
-    public static function newLine() {}
-    public static function spacing() {}
-    public static function dummy(size : ExtDynamic<ImVec2>) {}
-    public static function indent(indent_w : Single = 0.0) {}
-    public static function unindent(indent_w : Single = 0.0) {}
-    public static function beginGroup() {}
-    public static function endGroup() {}
-    public static function getCursorPos() : ExtDynamic<ImVec2> {return null;}
-    public static function getCursorPosX() : Single {return 0;}
-    public static function getCursorPosY() : Single {return 0;}
-    public static function setCursorPos(local_pos : ExtDynamic<ImVec2>) {}
-    public static function setCursorPosX(local_x : Single) {}
-    public static function setCursorPosY(local_y : Single) {}
-    public static function getCursorStartPos() : ExtDynamic<ImVec2> {return null;}
-    public static function getCursorScreenPos() : ExtDynamic<ImVec2> {return null;}
-    public static function setCursorScreenPos(pos : ExtDynamic<ImVec2>) {}
-    public static function alignTextToFramePadding() {}
-    public static function getTextLineHeight() : Single {return 0;}
-    public static function getTextLineHeightWithSpacing() : Single {return 0;}
-    public static function getFrameHeight() : Single {return 0;}
+	public static function separator() {}
+	public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
+	public static function newLine() {}
+	public static function spacing() {}
+	public static function dummy(size : ExtDynamic<ImVec2>) {}
+	public static function indent(indent_w : Single = 0.0) {}
+	public static function unindent(indent_w : Single = 0.0) {}
+	public static function beginGroup() {}
+	public static function endGroup() {}
+	public static function getCursorPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getCursorPosX() : Single {return 0;}
+	public static function getCursorPosY() : Single {return 0;}
+	public static function setCursorPos(local_pos : ExtDynamic<ImVec2>) {}
+	public static function setCursorPosX(local_x : Single) {}
+	public static function setCursorPosY(local_y : Single) {}
+	public static function getCursorStartPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getCursorScreenPos() : ExtDynamic<ImVec2> {return null;}
+	public static function setCursorScreenPos(pos : ExtDynamic<ImVec2>) {}
+	public static function alignTextToFramePadding() {}
+	public static function getTextLineHeight() : Single {return 0;}
+	public static function getTextLineHeightWithSpacing() : Single {return 0;}
+	public static function getFrameHeight() : Single {return 0;}
 	public static function getFrameHeightWithSpacing() : Single {return 0;}
 
 	// ID stack/scopes
 	public static function pushID(str_id : String) {}
-    public static function pushID2(str_id_begin : String, str_id_end : String) {}
-    public static function pushID3(int_id : Int) {}
-    public static function popID() {}
-    public static function getID(str_id : String) : Int {return 0;}
-    public static function getID2(str_id_begin : String, str_id_end : String) : Int {return 0;}
+	@:native("push_id_sub") public static function pushIDSub(str_id : String, begin : Int, end : Int) {}
+	@:native("push_id_int") public static function pushIDInt(int_id : Int) {}
+	@:native("push_id_ptr") public static function pushIDPtr(obj: Any) {}
+	public static function popID() {}
+	public static function getID(str_id : String) : Int {return 0;}
+	@:native("get_id_sub") public static function getIDSub(str_id : String, begin: Int, end: Int) : Int {return 0;}
+	@:native("get_id_ptr") public static function getIDPtr(obj: Any) : Int {return 0;}
+	
+	@:deprecated("use getIDSub") public static function getID2(str_id : String, begin: Int, end: Int) : Int {return getIDSub(str_id, begin, end);}
+	@:deprecated("use pushIDSub") public static inline function pushID2(str_id : String, begin : Int, end : Int) { pushIDSub(str_id, begin, end); }
+	@:deprecated("use pushIDInt") public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
 
     // Widgets: Text
     public static function text(text : String) {}
@@ -1324,9 +1340,6 @@ class ImGui
 	public static function add_font_from_file_ttf( filename: String, size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
 	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return new ImFont(add_font_from_memory_ttf(bytes, size, font_size, config, glyphRanges)); }
 	public static function add_font_from_memory_ttf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
-	public static inline function pushFont( font: ImFont ) { push_font( @:privateAccess font.ptr );	}
-	static function push_font( font: ImFontPtr ) {}
-	public static function popFont() {}
 	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
 	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
 
