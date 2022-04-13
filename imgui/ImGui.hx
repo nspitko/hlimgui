@@ -803,6 +803,7 @@ class ImGui
 	public static function setCurrentContext(ctx : ImContextPtr) {}
 
 	// Main
+	// TODO: GetIO()
 	public static function getStyle() : ExtDynamic<ImGuiStyle> {return null;}
 	public static function setStyle(style : ExtDynamic<ImGuiStyle>) {}
 	public static function newFrame() {}
@@ -823,25 +824,26 @@ class ImGui
 		return @:privateAccess String.fromUTF8(get_version());
 	}
 
-	// styles
+	// Styles
 	public static function styleColorsDark(style : ExtDynamic<ImGuiStyle> = null) {}
 	public static function styleColorsClassic(style : ExtDynamic<ImGuiStyle> = null) {}
 	public static function styleColorsLight(style : ExtDynamic<ImGuiStyle> = null) {}
 
-	// windows
+	// Windows
 	public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function end() {}
 
-	// Child windows
+	// Child Windows
 	public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChild() {}
 
-	// Windows utilities
+	// Windows Utilities
 	public static function isWindowAppearing() : Bool {return false;}
 	public static function isWindowCollapsed() : Bool {return false;}
 	public static function isWindowFocused(flags : ImGuiFocusedFlags = 0) {return false;}
 	public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
+	public static function getWindowDrawList() : ImDrawList {return null;}
 	public static function getWindowDpiScale(): Single { return 0; }
 	public static function getWindowPos() : ExtDynamic<ImVec2> {return null;}
 	public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
@@ -865,26 +867,6 @@ class ImGui
 	public static function setWindowSize2(name : String, size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
 	public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus2(name : String) {}
-
-	// Docking
-	public static function dockSpace(id : ImGuiID, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
-	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
-	public static function getWindowDockId() : ImGuiID { return 0; }
-	public static function isWindowDocked() : Bool { return false; }
-
-	// Dock Builder
-	public static function dockBuilderDockWindow(window_name: String, node_id : ImGuiID) {}
-	public static function dockBuilderGetNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
-	public static function dockBuilderGetCentralNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
-	public static function dockBuilderAddNode(node_id : ImGuiID, flags: ImGuiDockNodeFlags) : ImGuiID { return 0; }
-	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
-	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
-	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
-	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ExtDynamic<ImVec2> ) {}
-	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ExtDynamic<ImVec2> ) {}
-	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
-	public static function dockBuilderCopyWindowSettings(src_name: String, dst_name: String) {}
-	public static function dockBuilderFinish(node_id : ImGuiID) {}
 
 	// Content region
 	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
@@ -1016,7 +998,7 @@ class ImGui
 	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	// TODO: comboCallback variant
 
-	// Widgets: Drags
+	// Widgets: Drag Sliders
 	public static function dragFloat(label : String, v : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragInt(label : String, v : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragDouble(label : String, v : hl.Ref<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1035,7 +1017,7 @@ class ImGui
 	}
 	static function drag_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, v_speed : Single, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
-	// Widgets: Sliders
+	// Widgets: Regular Sliders
 	public static function sliderFloat(label : String, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1130,16 +1112,16 @@ class ImGui
 	**/
 	public static function beginListBox(label: String, size: ExtDynamic<ImVec2> = null): Bool { return false; }
 	/** Only call if beginListBox returns true! **/
-	public static function endListBox(): Bool { return false; }
+	public static function endListBox() {}
 	
 	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
 	// TODO: Callback variant
 	@:deprecated("Use beginListBox")
-	public static function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return beginListBox(label, size);}
+	public static inline function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return beginListBox(label, size);}
 	@:deprecated("Obsolete")
 	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
 	@:deprecated("Use endListBox")
-	public static function listBoxFooter() {}
+	public static inline function listBoxFooter() { endListBox(); }
 
 	// Widgets: Data Plotting
     public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
@@ -1190,27 +1172,23 @@ class ImGui
 	// Popups: query functions
 	public static function isPopupOpen(str_id : String) : Bool {return false;}
 
-    // Columns
-    public static function columns(count : Int = 1, id : String = null, border : Bool = true) {}
-    public static function nextColumn() {}
-    public static function getColumnIndex() : Int {return 0;}
-    public static function getColumnWidth(column_index : Int = -1) : Single {return 0;}
-    public static function setColumnWidth(column_index : Int, width : Single) {}
-    public static function getColumnOffset(column_index : Int = -1) : Single {return 0;}
-    public static function setColumnOffset(column_index : Int, offset_x : Single) {}
-	public static function getColumnsCount() : Int {return 0;}
-
 	// Tables
 	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, outer_size: ExtDynamic<ImVec2> = null, inner_width = 0 ): Bool { return false; }
 	public static function endTable() {}
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
 	public static function tableNextColumn() {}
 	public static function tableSetColumnIndex( columnIndex: Int ) {}
+	
+	// Tables: Headers & Columns declaration
 	public static function tableSetupColumn( id: String, flags: ImGuiTableColumnFlags = ImGuiTableColumnFlags.None, initWidthOrHeight: Single = 0, userId: ImGuiID = 0) {}
 	public static function tableSetupScrollFreeze( cols: Int, rows: Int ) {}
 	public static function tableHeadersRow() {}
 	public static function tableHeader( id: String ) {}
+	
+	// Tables: Sorting
 	//public static function tableGetSortSpecs( id: String ): ImGUiTableSortSpecs { return null } // @todo
+	
+	// Tables: Miscellaneous functions
 	public static function tableGetColumnCount(): Int { return 0; }
 	public static function tableGetColumnIndex(): Int { return 0; }
 	public static function tableGetRowIndex(): Int { return 0; }
@@ -1219,6 +1197,15 @@ class ImGui
 	public static function tableSetColumnEnabled( column_n: Int, enabled: Bool ): Void {}
 	public static function tableSetBGColor( target: ImGuiTableBgTarget, color: Int, column_n: Int = -1 ): Void { }
 
+	// Legacy Columns API (prefer using Tables!)
+	public static function columns(count : Int = 1, id : String = null, border : Bool = true) {}
+	public static function nextColumn() {}
+	public static function getColumnIndex() : Int {return 0;}
+	public static function getColumnWidth(column_index : Int = -1) : Single {return 0;}
+	public static function setColumnWidth(column_index : Int, width : Single) {}
+	public static function getColumnOffset(column_index : Int = -1) : Single {return 0;}
+	public static function setColumnOffset(column_index : Int, offset_x : Single) {}
+	public static function getColumnsCount() : Int {return 0;}
 
 	// Tab Bars, Tabs
 	public static function beginTabBar(str_id : String, flags : ImGuiTabBarFlags = 0) : Bool {return false;}
@@ -1228,6 +1215,30 @@ class ImGui
 	public static function tabItemButton(label : String, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
 
+	// Docking
+	public static function dockSpace(id : ImGuiID, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
+	// dockSpaceOverViewport // Viewport API
+	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
+	// setNextWindowClass // Viewport API
+	public static function getWindowDockId() : ImGuiID { return 0; }
+	public static function isWindowDocked() : Bool { return false; }
+
+	// [imgui_internal] Dock Builder
+	public static function dockBuilderDockWindow(window_name: String, node_id : ImGuiID) {}
+	public static function dockBuilderGetNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
+	public static function dockBuilderGetCentralNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
+	public static function dockBuilderAddNode(node_id : ImGuiID, flags: ImGuiDockNodeFlags) : ImGuiID { return 0; }
+	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
+	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
+	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
+	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
+	// DockBuilderCopyDockSpace
+	// DockBuilderCopyNode
+	public static function dockBuilderCopyWindowSettings(src_name: String, dst_name: String) {}
+	public static function dockBuilderFinish(node_id : ImGuiID) {}
+
 	// Logging/Capture
 	public static function logToTTY(auto_open_depth : Int = -1) {}
 	public static function logToFile(auto_open_depth : Int = -1, filename : String = null) {}
@@ -1236,80 +1247,6 @@ class ImGui
 	public static function logButtons() {}
 	public static function logText(text : String) {} // TODO: Allow format args
 
-    // Clipping
-    public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}
-    public static function popClipRect() {}
-
-    // Focus, Activation
-    public static function setItemDefaultFocus() {}
-	public static function setKeyboardFocusHere(offset : Int = 0) {}
-
-	// Item/Widgets Utilities
-    public static function isItemHovered(flags : ImGuiHoveredFlags = 0) : Bool {return false;}
-    public static function isItemActive() : Bool {return false;}
-    public static function isItemFocused() : Bool {return false;}
-    public static function isItemClicked(mouse_button : ImGuiMouseButton = 0) : Bool {return false;}
-    public static function isItemVisible() : Bool {return false;}
-    public static function isItemEdited() : Bool {return false;}
-    public static function isItemActivated() : Bool {return false;}
-    public static function isItemDeactivated() : Bool {return false;}
-    public static function isItemDeactivatedAfterEdit() : Bool {return false;}
-    public static function isItemToggledOpen() : Bool {return false;}
-    public static function isAnyItemHovered() : Bool {return false;}
-    public static function isAnyItemActive() : Bool {return false;}
-    public static function isAnyItemFocused() : Bool {return false;}
-    public static function getItemRectMin() : ExtDynamic<ImVec2> {return null;}
-    public static function getItemRectMax() : ExtDynamic<ImVec2> {return null;}
-    public static function getItemRectSize() : ExtDynamic<ImVec2> {return null;}
-    public static function setItemAllowOverlap() {}
-
-    // Miscellaneous Utilities
-    public static function isRectVisible(size : ExtDynamic<ImVec2>) : Bool {return false;}
-    public static function isRectVisible2(rect_min : ExtDynamic<ImVec2>, rect_max : ExtDynamic<ImVec2>) : Bool {return false;}
-    public static function getTime() : Float {return 0;}
-    public static function getFrameCount() : Int {return 0;}
-	static function get_style_color_name(idx : ImGuiCol) : hl.Bytes {return null;}
-    public static function getStyleColorName(idx : ImGuiCol) : String {
-		return @:privateAccess String.fromUTF8(get_style_color_name(idx));
-	}
-    public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
-    public static function beginChildFrame(id : ImGuiID, size : ExtDynamic<ImVec2>, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	public static function endChildFrame() {}
-
-	// Text Utilities
-	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
-
-    // Color Utilities
-    public static function colorConvertU32ToFloat4(color : ImU32) : ExtDynamic<ImVec4> {return null;}
-    public static function colorConvertFloat4ToU32(color : ExtDynamic<ImVec4>) : ImU32 {return 0;}
-    public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
-    public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
-
-    // Inputs Utilities: Keyboard
-    public static function getKeyIndex(imgui_key : ImGuiKey) : Int {return 0;}
-    public static function isKeyDown(user_key_index : Int) : Bool {return false;}
-    public static function isKeyPressed(user_key_index : Int, repeat : Bool = true) : Bool {return false;}
-    public static function isKeyReleased(user_key_index : Int) : Bool {return false;}
-    public static function getKeyPressedAmount(key_index : Int, repeat_delay : Single, rate : Single) : Int {return 0;}
-    public static function captureKeyboardFromApp(want_capture_keyboard_value : Bool = true) {}
-
-    // Inputs Utilities: Mouse
-    public static function isMouseDown(button : ImGuiMouseButton) : Bool {return false;}
-    public static function isMouseClicked(button : ImGuiMouseButton, repeat : Bool = false) : Bool {return false;}
-    public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
-    public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
-    public static function isMouseHoveringRect(r_min : ExtDynamic<ImVec2>, r_max : ExtDynamic<ImVec2>, clip : Bool = true) : Bool {return false;}
-    public static function isMousePosValid(mouse_pos : ExtDynamic<ImVec2> = null) : Bool {return false;}
-    public static function isAnyMouseDown() : Bool {return false;}
-    public static function getMousePos() : ExtDynamic<ImVec2> {return null;}
-    public static function getMousePosOnOpeningCurrentPopup() : ExtDynamic<ImVec2> {return null;}
-    public static function isMouseDragging(button : ImGuiMouseButton, lock_threshold : Single = -1.0) : Bool {return false;}
-    public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
-    public static function resetMouseDragDelta(button : ImGuiMouseButton = 0) {}
-    public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
-    public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}
-    public static function captureMouseFromApp(want_capture_mouse_value : Bool = true) {}
-
 	// Drag and drop
 	public static function beginDragDropTarget(): Bool { return false; }
 	public static function endDragDropTarget() {}
@@ -1317,6 +1254,114 @@ class ImGui
 	public static function endDragDropSource() {}
 	public static function setDragDropPayload(type: String, payload: hl.Bytes, length: Int, cond: ImGuiCond = 0 ) : Bool { return false; }
 	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : hl.Bytes { return null; }
+
+	// Disabling [BETA API]
+	// public static function beginDisabled(disabled: Bool = true) {}
+	// public static function endDisabled() {}
+
+	// Clipping
+	public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}
+	public static function popClipRect() {}
+
+	// Focus, Activation
+	public static function setItemDefaultFocus() {}
+	public static function setKeyboardFocusHere(offset : Int = 0) {}
+
+	// Item/Widgets Utilities
+	public static function isItemHovered(flags : ImGuiHoveredFlags = 0) : Bool {return false;}
+	public static function isItemActive() : Bool {return false;}
+	public static function isItemFocused() : Bool {return false;}
+	public static function isItemClicked(mouse_button : ImGuiMouseButton = 0) : Bool {return false;}
+	public static function isItemVisible() : Bool {return false;}
+	public static function isItemEdited() : Bool {return false;}
+	public static function isItemActivated() : Bool {return false;}
+	public static function isItemDeactivated() : Bool {return false;}
+	public static function isItemDeactivatedAfterEdit() : Bool {return false;}
+	public static function isItemToggledOpen() : Bool {return false;}
+	public static function isAnyItemHovered() : Bool {return false;}
+	public static function isAnyItemActive() : Bool {return false;}
+	public static function isAnyItemFocused() : Bool {return false;}
+	public static function getItemRectMin() : ExtDynamic<ImVec2> {return null;}
+	public static function getItemRectMax() : ExtDynamic<ImVec2> {return null;}
+	public static function getItemRectSize() : ExtDynamic<ImVec2> {return null;}
+	public static function setItemAllowOverlap() {}
+
+	// Viewports
+	// public static function getMainViewport(): IMViewport
+
+	// Miscellaneous Utilities
+	public static function isRectVisible(size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function isRectVisible2(rect_min : ExtDynamic<ImVec2>, rect_max : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function getTime() : Float {return 0;}
+	public static function getFrameCount() : Int {return 0;}
+	public static function getForegroundDrawList() : ImDrawList {return null;}
+	//getForegroundDrawList(viewport) // Viewport API
+	public static function getBackgroundDrawList() : ImDrawList {return null;}
+	//getBackgroundDrawList(viewport) // Viewport API
+	//getDrawListSharedData()
+	static function get_style_color_name(idx : ImGuiCol) : hl.Bytes {return null;}
+	public static function getStyleColorName(idx : ImGuiCol) : String {
+		return @:privateAccess String.fromUTF8(get_style_color_name(idx));
+	}
+	public static function getStateStorage() : ImStateStorage {return null;}
+	//setStateStorage
+	public static function beginChildFrame(id : ImGuiID, size : ExtDynamic<ImVec2>, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function endChildFrame() {}
+	@:deprecated("Obsolete: Use ImGuiListClipper")
+	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
+
+	// Text Utilities
+	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
+
+	// Color Utilities
+	public static function colorConvertU32ToFloat4(color : ImU32) : ExtDynamic<ImVec4> {return null;}
+	public static function colorConvertFloat4ToU32(color : ExtDynamic<ImVec4>) : ImU32 {return 0;}
+	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
+	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
+
+	// Inputs Utilities: Keyboard
+	public static function isKeyDown(user_key_index : Int) : Bool {return false;}
+	public static function isKeyPressed(user_key_index : Int, repeat : Bool = true) : Bool {return false;}
+	public static function isKeyReleased(user_key_index : Int) : Bool {return false;}
+	public static function getKeyPressedAmount(key_index : Int, repeat_delay : Single, rate : Single) : Int {return 0;}
+	//TODO: getKeyName
+	public static function captureKeyboardFromApp(want_capture_keyboard_value : Bool = true) {}
+	@:deprecated("Obsolete")
+	public static function getKeyIndex(imgui_key : ImGuiKey) : Int {return 0;}
+
+	// Inputs Utilities: Mouse
+	public static function isMouseDown(button : ImGuiMouseButton) : Bool {return false;}
+	public static function isMouseClicked(button : ImGuiMouseButton, repeat : Bool = false) : Bool {return false;}
+	public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
+	public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
+	//TODO: getMouseClickedCount
+	public static function isMouseHoveringRect(r_min : ExtDynamic<ImVec2>, r_max : ExtDynamic<ImVec2>, clip : Bool = true) : Bool {return false;}
+	public static function isMousePosValid(mouse_pos : ExtDynamic<ImVec2> = null) : Bool {return false;}
+	public static function isAnyMouseDown() : Bool {return false;}
+	public static function getMousePos() : ExtDynamic<ImVec2> {return null;}
+	public static function getMousePosOnOpeningCurrentPopup() : ExtDynamic<ImVec2> {return null;}
+	public static function isMouseDragging(button : ImGuiMouseButton, lock_threshold : Single = -1.0) : Bool {return false;}
+	public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
+	public static function resetMouseDragDelta(button : ImGuiMouseButton = 0) {}
+	public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
+	public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}
+	public static function captureMouseFromApp(want_capture_mouse_value : Bool = true) {}
+
+	// Clipboard Utilities
+	static function get_clipboard_text() : hl.Bytes {return null;}
+	public static function getClipboardText() : String {
+		return @:privateAccess String.fromUTF8(get_clipboard_text());
+	}
+	public static function setClipboardText(text : String) {}
+
+	// Settings/.Ini Utilities
+	public static function loadIniSettingsFromDisk(ini_filename : String) {}
+	public static function loadIniSettingsFromMemory(ini_data : String, ini_size : Int = 0) {}
+	public static function saveIniSettingsToDisk(ini_filename : String) {}
+	static function save_ini_settings_to_memory(out_ini_size : hl.Ref<Int>) : hl.Bytes {return null;}
+	public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
+		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
+	}
 
 	// Payload helpers
 	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ) : Bool {
@@ -1340,64 +1385,50 @@ class ImGui
 			return bytes.getI32(0);
 		return 0;
 	}
+	
+	// Debug Utilities
+	//debugCheckVersionAndDataLayout
+	
+	// Memory Allocators - Should not be exposed!
+	//setAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
+	//getAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
+	//memAlloc(size_t size);
+	//memFree(void* ptr);
+	
+	// (Optional) Platform/OS interface for multi-viewport support
+	// Read comments around the ImGuiPlatformIO structure for more details.
+	// Note: You may use GetWindowViewport() to get the current viewport of the current window.
+	// GetPlatformIO(): ImGuiPlatformIO
+	// UpdatePlatformWindows();                                        // call in main loop. will call CreateWindow/ResizeWindow/etc. platform functions for each secondary viewport, and DestroyWindow for each inactive viewport.
+	// RenderPlatformWindowsDefault(void* platform_render_arg = NULL, void* renderer_render_arg = NULL); // call in main loop. will call RenderWindow/SwapBuffers platform functions for each secondary viewport which doesn't have the ImGuiViewportFlags_Minimized flag set. May be reimplemented by user for custom rendering needs.
+	// DestroyPlatformWindows();                                       // call DestroyWindow platform functions for all viewports. call from backend Shutdown() if you need to close platform windows before imgui shutdown. otherwise will be called by DestroyContext().
+	// FindViewportByID(ImGuiID id): ImGuiViewport;                                   // this is a helper for backends.
+	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
 
+	// GetIO()->... wrappers
+	public static function setFontTexture(texture_id : ImTextureID) {} // Fonts->SetTexID
+	public static function setIniFilename(filename : String) {} // IniFilename
+	public static function addKeyChar(c : Int) {} // AddInputCharacter
+	public static function addKeyEvent(c : Int, down: Bool) {} // AddKeyEvent
+	// Shortcut to set MousePos, MouseWheel, MouseDown[0] and MouseDown[1]
+	public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
+	public static function setDisplaySize(display_width:Int, display_height:Int) {} // DisplaySize
+	public static function wantCaptureMouse() : Bool {return false;} // WantCaptureMouse
+	public static function wantCaptureKeyboard() : Bool {return false;} // WantCaptureKeyboard
+	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {} // ConfigFlags
+	public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
+	public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
+	public static function getUserData() : Dynamic {return null;} // UserData
+	
 
-    // Clipboard Utilities
-	static function get_clipboard_text() : hl.Bytes {return null;}
-    public static function getClipboardText() : String {
-		return @:privateAccess String.fromUTF8(get_clipboard_text());
-	}
-    public static function setClipboardText(text : String) {}
-
-    // Settings/.Ini Utilities
-    public static function loadIniSettingsFromDisk(ini_filename : String) {}
-    public static function loadIniSettingsFromMemory(ini_data : String, ini_size : Int = 0) {}
-    public static function saveIniSettingsToDisk(ini_filename : String) {}
-	static function save_ini_settings_to_memory(out_ini_size : hl.Ref<Int>) : hl.Bytes {return null;}
-    public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
-		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
-	}
-
-	// IO
-	public static function setIniFilename(filename : String) {}
-
-	// Fonts
-
-	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return new ImFont(add_font_default(config)); }
-	static function add_font_default(config:ExtDynamic<ImFontConfig>) : ImFontPtr { return null; }
-	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig = null, ?glyphRanges: hl.NativeArray<hl.UI16> = null ) : ImFont { return new ImFont(add_font_from_file_ttf(filename, size, config, glyphRanges)); }
-	public static function add_font_from_file_ttf( filename: String, size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
-	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return new ImFont(add_font_from_memory_ttf(bytes, size, font_size, config, glyphRanges)); }
-	public static function add_font_from_memory_ttf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
+	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
+	public static function addFontDefault(?config:ExtDynamic<ImFontConfig>) : ImFont { return null; }
+	public static function addFontFromFileTtf( filename: String, size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
+	public static function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
 	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
-	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
 
 	// internal functions
 	public static function initialize(render_fn:Dynamic->Void) : Dynamic {return null;}
-	public static function setFontTexture(texture_id : ImTextureID) {}
-	public static function addKeyChar(c : Int) {}
-	public static function addKeyEvent(c : Int, down: Bool) {}
-	public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
-	public static function setDisplaySize(display_width:Int, display_height:Int) {}
-	public static function wantCaptureMouse() : Bool {return false;}
-	public static function wantCaptureKeyboard() : Bool {return false;}
-	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {}
-	public static function getConfigFlags() : ImGuiConfigFlags {return 0;}
-	public static function setUserData(data : Dynamic) {}
-	public static function getUserData() : Dynamic {return null;}
-
-	// Draw Lists
-	public static inline function getWindowDrawList() : ImDrawList { return new ImDrawList( drawlist_get_window_draw_list() ); }
-	public static inline function getForegroundDrawList() : ImDrawList { return new ImDrawList( drawlist_get_foreground_draw_list() ); }
-	public static inline function getBackgroundDrawList() : ImDrawList { return new ImDrawList( drawlist_get_background_draw_list() ); }
-
-	static function drawlist_get_window_draw_list() : ImDrawListPtr { return null; }
-	static function drawlist_get_foreground_draw_list() : ImDrawListPtr { return null; }
-	static function drawlist_get_background_draw_list() : ImDrawListPtr { return null; }
-
-	// State storage
-	public static inline function getStateStorage() : ImStateStorage { return new ImStateStorage( get_state_storage() ); }
-
-	static function get_state_storage() : ImStateStoragePtr { return null; }
+	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
 
 }
