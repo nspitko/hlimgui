@@ -2,22 +2,22 @@
 
 HL_PRIM bool HL_NAME(button)(vstring* label, vdynamic* size)
 {
-	return ImGui::Button(unicodeToUTF8(label).c_str(), getImVec2(size));
+	return ImGui::Button(convertString(label), getImVec2(size));
 }
 
 HL_PRIM bool HL_NAME(small_button)(vstring* label)
 {
-	return ImGui::SmallButton(unicodeToUTF8(label).c_str());
+	return ImGui::SmallButton(convertString(label));
 }
 
 HL_PRIM bool HL_NAME(invisible_button)(vstring* str_id, vdynamic* size)
 {
-	return ImGui::InvisibleButton(unicodeToUTF8(str_id).c_str(), getImVec2(size));
+	return ImGui::InvisibleButton(convertString(str_id), getImVec2(size));
 }
 
 HL_PRIM bool HL_NAME(arrow_button)(vstring* str_id, ImGuiDir dir)
 {
-	return ImGui::ArrowButton(unicodeToUTF8(str_id).c_str(), dir);
+	return ImGui::ArrowButton(convertString(str_id), dir);
 }
 
 HL_PRIM void HL_NAME(image)(ImTextureID user_texture_id, vdynamic* size, vdynamic* uv0, vdynamic* uv1, vdynamic* tint_col, vdynamic* border_col)
@@ -45,27 +45,27 @@ HL_PRIM bool HL_NAME(image_button)(ImTextureID user_texture_id, vdynamic* size, 
 
 HL_PRIM bool HL_NAME(checkbox)(vstring* label, bool* v)
 {
-	return ImGui::Checkbox(unicodeToUTF8(label).c_str(), v);
+	return ImGui::Checkbox(convertString(label), v);
 }
 
 HL_PRIM bool HL_NAME(checkbox_flags)(vstring* label, unsigned int* flags, unsigned int flags_value)
 {
-	return ImGui::CheckboxFlags(unicodeToUTF8(label).c_str(), flags, flags_value);
+	return ImGui::CheckboxFlags(convertString(label), flags, flags_value);
 }
 
 HL_PRIM bool HL_NAME(radio_button)(vstring* label, bool active)
 {
-	return ImGui::RadioButton(unicodeToUTF8(label).c_str(), active);
+	return ImGui::RadioButton(convertString(label), active);
 }
 
 HL_PRIM bool HL_NAME(radio_button2)(vstring* label, int* v, int v_button)
 {
-	return ImGui::RadioButton(unicodeToUTF8(label).c_str(), v, v_button);
+	return ImGui::RadioButton(convertString(label), v, v_button);
 }
 
 HL_PRIM void HL_NAME(progress_bar)(float fraction, vdynamic* size_arg, vstring* overlay)
 {
-	ImGui::ProgressBar(fraction, getImVec2(size_arg, ImVec2(-1, 0)), overlay != nullptr ? unicodeToUTF8(overlay).c_str() : NULL);
+	ImGui::ProgressBar(fraction, getImVec2(size_arg, ImVec2(-1, 0)), convertString(overlay));
 }
 
 HL_PRIM void HL_NAME(bullet)()

@@ -63,6 +63,11 @@ HL_PRIM void HL_NAME(pop_font)()
     ImGui::PopFont();
 }
 
+HL_PRIM ImFont* HL_NAME(get_font)()
+{
+    return ImGui::GetFont();
+}
+
 
 HL_PRIM void HL_NAME(build_font)()
 {
@@ -77,4 +82,5 @@ DEFINE_PRIM(_TFONT, add_font_from_file_ttf, _STRING _F32 _DYN _ARR );
 DEFINE_PRIM(_DYN, get_tex_data_as_rgba32, _NO_ARG);
 DEFINE_PRIM(_VOID, push_font, _TFONT);
 DEFINE_PRIM(_VOID, pop_font, _NO_ARG );
+DEFINE_PRIM(_TFONT, get_font, _NO_ARG);
 DEFINE_PRIM(_VOID, build_font, _NO_ARG );
