@@ -673,6 +673,7 @@ private typedef ImFontPtr = hl.Abstract<"imfont">;
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
 private typedef ImContextPtr = hl.Abstract<"imcontext">;
+private typedef ImDragDropPayloadPtr = hl.Abstract<"imdnd">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
 
 @:hlNative("hlimgui")
@@ -789,6 +790,43 @@ abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStor
 	public inline function getFloat(id: ImGuiID, default_val: Single = 0.0):Single return state_storage_get_float(this, id, default_val);
 }
 
+@:hlNative("hlimgui")
+abstract ImDragDropPayload(ImDragDropPayloadPtr) from ImDragDropPayloadPtr to ImDragDropPayloadPtr {
+	
+	public inline function new(ptr: ImDragDropPayloadPtr) { this = ptr; }
+	
+	public inline function clear() dndpayload_clear(this);
+	public inline function isDataType(type: String) return dndpayload_is_data_type(this, type);
+	public var isPreview(get, never): Bool;
+	public var isDelivery(get, never): Bool;
+	
+	public var asBinary(get, never):hl.Bytes;
+	public var asString(get, never):String;
+	public var asInt(get, never):Int;
+	public var asFloat(get, never): Float;
+	public var asBool(get, never): Bool;
+	/**
+		@param clear If true, the stored object will be removed from gc root and could be GC collected at any time if no other references to it remained on Haxe side.
+		Subsequent asObject calls would return null as well.
+	**/
+	public inline function asObject<T>(clear: Bool = false):T return dndpayload_get_object(this, clear);
+	
+	inline function get_isPreview() return dndpayload_is_preview(this);
+	inline function get_isDelivery() return dndpayload_is_delivery(this);
+	inline function get_asBinary() return dndpayload_get_binary(this);
+	inline function get_asString() return @:privateAccess String.fromUTF8(asBinary);
+	inline function get_asInt() return asBinary.getI32(0);
+	inline function get_asFloat() return asBinary.getF64(0);
+	inline function get_asBool() return asBinary[0] != 0;
+	
+	static function dndpayload_clear(payload: ImDragDropPayloadPtr) {};
+	static function dndpayload_is_data_type(payload: ImDragDropPayloadPtr, type: String): Bool {return false;};
+	static function dndpayload_is_preview(payload: ImDragDropPayloadPtr): Bool {return false;};
+	static function dndpayload_is_delivery(payload: ImDragDropPayloadPtr): Bool {return false;};
+	
+	static function dndpayload_get_binary(payload: ImDragDropPayloadPtr): hl.Bytes {return null;}
+	static function dndpayload_get_object(payload: ImDragDropPayloadPtr, clear: Bool): Dynamic {return null;}
+}
 
 
 @:hlNative("hlimgui")
@@ -1253,8 +1291,58 @@ class ImGui
 	public static function beginDragDropSource( flags: ImGuiDragDropFlags = 0 ): Bool { return false; }
 	public static function endDragDropSource() {}
 	public static function setDragDropPayload(type: String, payload: hl.Bytes, length: Int, cond: ImGuiCond = 0 ) : Bool { return false; }
-	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : hl.Bytes { return null; }
+	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : ImDragDropPayload { return null; }
+	public static function getDragDropPayload() : ImDragDropPayload { return null; }
+	/**
+		Due to Haxe being a GC language, payload will be added as gc root until new payload is set or `clearDragDropPayloadObject()` is called.
+		Alternatively, when accepting payload, call `payload.asObject(true)` to clear the stored object, however subsequent `asObject` calls will yield `null`.
+	**/
+	public static function setDragDropPayloadObject(type: String, payload: Dynamic, cond: ImGuiCond = 0): Bool { return false; }
+	public static function clearDragDropPayloadObject() {}
+	/**
+		Returns currently stored payload object.
+	**/
+	public static function getDragDropPayloadObject<T>(): T { return null; }
 
+	// Payload helpers
+	/** Shortcut to set a String payload **/
+	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ): Bool
+	{
+		var b = Bytes.ofString( payload + '\x00' );
+		return setDragDropPayload(type, b, b.length, cond);
+	}
+	/**
+		Accept a drag&drop payload with specified type and return it as String or null if no payload present.
+	**/
+	public static inline function acceptDragDropPayloadString(type: String, cond: ImGuiCond = 0 ): String
+	{
+		var payload = acceptDragDropPayload(type, cond);
+		return payload != null ? payload.asString : null;
+	}
+	/** Shortcut to set an Int payload **/
+	public static inline function setDragDropPayloadInt(type: String, payload: Int, cond: ImGuiCond = 0 ): Bool
+	{
+		var b = new hl.Bytes(4);
+		b.setI32(0, payload);
+		return setDragDropPayload(type, b, 4, cond);
+	}
+	/**
+		Accept a drag&drop payload with specified type and return it as an Int or 0 if no payload present.
+	**/
+	public static inline function acceptDragDropPayloadInt(type: String, cond: ImGuiCond = 0 ): Int
+	{
+		var payload = ImGui.acceptDragDropPayload(type);
+		return payload != null ? payload.asInt : 0;
+	}
+	/**
+		Accept a drag&drop payload with specified type and return it as `T` or null if no payload present.
+	**/
+	public static inline function acceptDragDropPayloadObject<T>(type: String, cond: ImGuiCond = 0, clear: Bool = false): T
+	{
+		var payload = ImGui.acceptDragDropPayload(type);
+		return payload != null ? payload.asObject(clear) : null;
+	}
+	
 	// Disabling [BETA API]
 	// public static function beginDisabled(disabled: Bool = true) {}
 	// public static function endDisabled() {}
@@ -1361,29 +1449,6 @@ class ImGui
 	static function save_ini_settings_to_memory(out_ini_size : hl.Ref<Int>) : hl.Bytes {return null;}
 	public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
-	}
-
-	// Payload helpers
-	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ) : Bool {
-		var b = Bytes.ofString( payload + '\x00' );
-		return setDragDropPayload(type, b, b.length, cond);
-	 }
-	public static inline function acceptDragDropPayloadString(type: String, cond: ImGuiCond = 0 ) : String {
-		var bytes = ImGui.acceptDragDropPayload(type);
-		if( bytes != null )
-			return @:privateAccess String.fromUTF8( bytes );
-		return null;
-	}
-	public static inline function setDragDropPayloadInt(type: String, payload: Int, cond: ImGuiCond = 0 ) : Bool {
-		var b = new hl.Bytes(4);
-		b.setI32(0, payload);
-		return setDragDropPayload(type, b, 4, cond);
-	 }
-	public static inline function acceptDragDropPayloadInt(type: String, cond: ImGuiCond = 0 ) : Int {
-		var bytes = ImGui.acceptDragDropPayload(type);
-		if( bytes != null )
-			return bytes.getI32(0);
-		return 0;
 	}
 	
 	// Debug Utilities
