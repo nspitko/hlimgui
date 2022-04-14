@@ -5,13 +5,24 @@ set(TARGET_EXT .hdll)
 
 project(${TARGET_NAME})
 
+option(NODE_EDITOR "Include imgui-node-editor (required to use NodeEditor.hx)" OFF)
+
 file(GLOB SOURCES "*.cpp")
 file(GLOB IMGUI_SOURCES "lib/imgui/*.cpp")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if( NODE_EDITOR )
+    file(GLOB IMGUI_NODE_EDITOR_EXTENSION_SOURCES "addons/node_editor/*.cpp")
+    file(GLOB IMGUI_NODE_EDITOR_SOURCES "lib/imgui-node-editor/*.cpp")
+
+    list(APPEND SOURCES ${IMGUI_NODE_EDITOR_EXTENSION_SOURCES})
+    list(APPEND IMGUI_SOURCES ${IMGUI_NODE_EDITOR_SOURCES})
+endif()
+
 add_library(${TARGET_NAME}${TARGET_EXT} SHARED ${SOURCES} ${IMGUI_SOURCES})
+
 add_compile_definitions(IMGUI_USER_CONFIG="../../imgui_config.h")
 
 set_target_properties(${TARGET_NAME}${TARGET_EXT}

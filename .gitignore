@@ -8,3 +8,4 @@ Release/
 /extension/build/
 .DS_Store
 .vscode/
+*.log

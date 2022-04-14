@@ -80,6 +80,25 @@ void setStructImVec2(vdynamic* dyn, const char* name, const ImVec2& value)
 	hl_dyn_setp(dyn, hl_hash_utf8(name), &hlt_dynobj, vec2);
 }
 
+void getStructImVec4(vdynamic* dyn, const char* name, ImVec4& value)
+{
+	vdynamic* vec4 = (vdynamic*)hl_dyn_getp(dyn, hl_hash_utf8(name), &hlt_dyn);
+	getStructFloat(vec4, "x", value.x);
+	getStructFloat(vec4, "y", value.y);
+	getStructFloat(vec4, "z", value.z);
+	getStructFloat(vec4, "w", value.w);
+}
+
+void setStructImVec4(vdynamic* dyn, const char* name, const ImVec4& value)
+{
+	vdynamic* vec4 = (vdynamic*)hl_alloc_dynobj();
+	setStructFloat(vec4, "x", value.x);
+	setStructFloat(vec4, "y", value.y);
+	setStructFloat(vec4, "z", value.z);
+	setStructFloat(vec4, "w", value.w);
+	hl_dyn_setp(dyn, hl_hash_utf8(name), &hlt_dynobj, vec4);
+}
+
 void getStructArrayImVec4(vdynamic* dyn, const char* name, ImVec4* values, int size)
 {
 	varray* array = (varray*)hl_dyn_getp(dyn, hl_hash_utf8(name), &hlt_array);
