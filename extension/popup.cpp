@@ -2,7 +2,7 @@
 
 HL_PRIM void HL_NAME(open_popup)(vstring* str_id)
 {
-    ImGui::OpenPopup(unicodeToUTF8(str_id).c_str());
+    ImGui::OpenPopup(convertString(str_id));
 }
 
 HL_PRIM bool HL_NAME(begin_popup)(vstring* str_id, ImGuiWindowFlags* flags)

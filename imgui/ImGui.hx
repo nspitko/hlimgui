@@ -672,38 +672,38 @@ class ImFontConfig
 private typedef ImFontPtr = hl.Abstract<"imfont">;
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
+private typedef ImContextPtr = hl.Abstract<"imcontext">;
+private typedef ImDragDropPayloadPtr = hl.Abstract<"imdnd">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
 
 @:hlNative("hlimgui")
-class ImDrawList
+abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 {
-	var ptr: ImDrawListPtr;
+	public function new(ptr: ImDrawListPtr) { this = ptr; }
 
-	public function new(ptr: ImDrawListPtr) { this.ptr = ptr; }
-
-	public function addLine( p1: ImVec2, p2: ImVec2, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_line( ptr, p1, p2, col, thickness ); }
-	public function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None, thickness: Single = 1.0 ) { drawlist_add_rect( ptr, pMin, pMax, col, rounding, roundingCorners, thickness ); }
-	public function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None ) { drawlist_add_rect_filled( ptr, pMin, pMax, col, rounding, roundingCorners); }
-	public function addRectFilledMultiColor( pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) { drawlist_add_rect_filled_multicolor( ptr, pMin, pMax, col_upr_left, col_upr_right, col_bot_right, col_bot_left ); }
-	public function addQuad( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_quad(ptr, p1, p2, p3, p4, col, thickness ); }
-	public function addQuadFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_quad_filled( ptr, p1, p2, p3, p4, col ); }
-	public function addTriangle( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_triangle(ptr, p1, p2, p3, col, thickness ); }
-	public function addTriangleFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_triangle_filled(ptr, p1, p2, p3, col ); }
-	public function addCircle( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0, thickness: Single = 1.0 ) { drawlist_add_circle( ptr, center, radius, col, num_segments, thickness ); }
-	public function addCircleFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_circle_filled(ptr, center, radius, col, num_segments ); }
-	public function addNgon( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single = 1.0 ) { drawlist_add_ngon(ptr, center, radius, col, num_segments, thickness ); }
-	public function addNgonFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_ngon_filled(ptr, center, radius, col, num_segments ); }
-	//public function addPolyLine( points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { drawlist_add_poly_line(ptr, points, col, closed, thickness ); }
-	//public function addConvexPolyFilled( points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) { drawlist_add_convex_poly_filled(ptr, points, col ); }
-	public function addBezierCurve( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { drawlist_add_bezier_curve(ptr, p1, p2, p3, p4, col, thickness, num_segments ); }
+	public function addLine( p1: ImVec2, p2: ImVec2, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_line( this, p1, p2, col, thickness ); }
+	public function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None, thickness: Single = 1.0 ) { drawlist_add_rect( this, pMin, pMax, col, rounding, roundingCorners, thickness ); }
+	public function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None ) { drawlist_add_rect_filled( this, pMin, pMax, col, rounding, roundingCorners); }
+	public function addRectFilledMultiColor( pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) { drawlist_add_rect_filled_multicolor( this, pMin, pMax, col_upr_left, col_upr_right, col_bot_right, col_bot_left ); }
+	public function addQuad( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_quad(this, p1, p2, p3, p4, col, thickness ); }
+	public function addQuadFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_quad_filled( this, p1, p2, p3, p4, col ); }
+	public function addTriangle( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_triangle(this, p1, p2, p3, col, thickness ); }
+	public function addTriangleFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_triangle_filled(this, p1, p2, p3, col ); }
+	public function addCircle( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0, thickness: Single = 1.0 ) { drawlist_add_circle( this, center, radius, col, num_segments, thickness ); }
+	public function addCircleFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_circle_filled(this, center, radius, col, num_segments ); }
+	public function addNgon( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single = 1.0 ) { drawlist_add_ngon(this, center, radius, col, num_segments, thickness ); }
+	public function addNgonFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_ngon_filled(this, center, radius, col, num_segments ); }
+	//public function addPolyLine( points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { drawlist_add_poly_line(this, points, col, closed, thickness ); }
+	//public function addConvexPolyFilled( points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) { drawlist_add_convex_poly_filled(this, points, col ); }
+	public function addBezierCurve( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { drawlist_add_bezier_curve(this, p1, p2, p3, p4, col, thickness, num_segments ); }
 	//
-	public function addText( pos: ImVec2, col: ImU32, text: String ) { drawlist_add_text(ptr, pos, col, text); }
-	public function addText2( font: ImFont, fontSize: Single, pos: ImVec2, col: ImU32, text: String, wrapWidth: Single = 0.0, ?cpuFineClipRect: ImVec4 ) { drawlist_add_text2(ptr, font==null?null:(@:privateAccess font.ptr), fontSize, pos, col, text, wrapWidth, cpuFineClipRect); }
+	public function addText( pos: ImVec2, col: ImU32, text: String ) { drawlist_add_text(this, pos, col, text); }
+	public function addText2( font: ImFont, fontSize: Single, pos: ImVec2, col: ImU32, text: String, wrapWidth: Single = 0.0, ?cpuFineClipRect: ImVec4 ) { drawlist_add_text2(this, font==null?null:(@:privateAccess font.ptr), fontSize, pos, col, text, wrapWidth, cpuFineClipRect); }
 
-	public function addImage( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image(ptr, userTextureId, pMin, pMax, uvMin, uvMax, col); }
-	public function addImageQuad( userTextureId: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, ?uv1: ImVec2, ?uv2: ImVec2, ?uv3: ImVec2, ?uv4: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image_quad(ptr, userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
+	public function addImage( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image(this, userTextureId, pMin, pMax, uvMin, uvMax, col); }
+	public function addImageQuad( userTextureId: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, ?uv1: ImVec2, ?uv2: ImVec2, ?uv3: ImVec2, ?uv4: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image_quad(this, userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
 	// Due to Haxe limitation on defualt parameters being "constant" and enum abstract values that rely on previous enum abstract value (A | B) are not "constant" - hack with -1
-	public function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1 ) { drawlist_add_image_rounded(ptr, userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners == -1 ? ImDrawFlags.RoundCornersDefault_ : roundingCorners); }
+	public function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1 ) { drawlist_add_image_rounded(this, userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners == -1 ? ImDrawFlags.RoundCornersDefault_ : roundingCorners); }
 
 	#if heaps
 	// Helper methods for Heaps: Use Tile instead of Texture to pass image segments easily.
@@ -761,19 +761,19 @@ class ImDrawList
 
 
 @:hlNative("hlimgui")
-class ImFont
+abstract ImFont(ImFontPtr) from ImFontPtr to ImFontPtr
 {
-	var ptr: ImFontPtr;
+	// For backwards compatibility
+	var ptr(get, never): ImFontPtr;
+	inline function get_ptr() return this;
 
-	public function new(ptr: ImFontPtr) { this.ptr = ptr; }
+	public function new(ptr: ImFontPtr) { this = ptr; }
 }
 
 @:hlNative("hlimgui")
-class ImStateStorage
+abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStoragePtr
 {
-	var ptr: ImStateStoragePtr;
-
-	public inline function new(ptr: ImStateStoragePtr) { this.ptr = ptr; }
+	public inline function new(ptr: ImStateStoragePtr) { this = ptr; }
 
 	static function state_storage_get_int(storage: ImStateStoragePtr, id: ImGuiID, default_val: Int): Int { return 0; }
 	static function state_storage_set_int(storage: ImStateStoragePtr, id: ImGuiID, val: Int): Void {}
@@ -782,14 +782,51 @@ class ImStateStorage
 	static function state_storage_get_float(storage: ImStateStoragePtr, id: ImGuiID, default_val: Single): Single { return 0; }
 	static function state_storage_set_float(storage: ImStateStoragePtr, id: ImGuiID, val: Single): Void {}
 
-	public inline function setInt(id: ImGuiID, val: Int):Void state_storage_set_int(ptr, id, val);
-	public inline function getInt(id: ImGuiID, default_val: Int = 0):Int return state_storage_get_int(ptr, id, default_val);
-	public inline function setBool(id: ImGuiID, val: Bool):Void state_storage_set_bool(ptr, id, val);
-	public inline function getBool(id: ImGuiID, default_val: Bool = false):Bool return state_storage_get_bool(ptr, id, default_val);
-	public inline function setFloat(id: ImGuiID, val: Single):Void state_storage_set_float(ptr, id, val);
-	public inline function getFloat(id: ImGuiID, default_val: Single = 0.0):Single return state_storage_get_float(ptr, id, default_val);
+	public inline function setInt(id: ImGuiID, val: Int):Void state_storage_set_int(this, id, val);
+	public inline function getInt(id: ImGuiID, default_val: Int = 0):Int return state_storage_get_int(this, id, default_val);
+	public inline function setBool(id: ImGuiID, val: Bool):Void state_storage_set_bool(this, id, val);
+	public inline function getBool(id: ImGuiID, default_val: Bool = false):Bool return state_storage_get_bool(this, id, default_val);
+	public inline function setFloat(id: ImGuiID, val: Single):Void state_storage_set_float(this, id, val);
+	public inline function getFloat(id: ImGuiID, default_val: Single = 0.0):Single return state_storage_get_float(this, id, default_val);
 }
 
+@:hlNative("hlimgui")
+abstract ImDragDropPayload(ImDragDropPayloadPtr) from ImDragDropPayloadPtr to ImDragDropPayloadPtr {
+
+	public inline function new(ptr: ImDragDropPayloadPtr) { this = ptr; }
+
+	public inline function clear() dndpayload_clear(this);
+	public inline function isDataType(type: String) return dndpayload_is_data_type(this, type);
+	public var isPreview(get, never): Bool;
+	public var isDelivery(get, never): Bool;
+
+	public var asBinary(get, never):hl.Bytes;
+	public var asString(get, never):String;
+	public var asInt(get, never):Int;
+	public var asFloat(get, never): Float;
+	public var asBool(get, never): Bool;
+	/**
+		@param clear If true, the stored object will be removed from gc root and could be GC collected at any time if no other references to it remained on Haxe side.
+		Subsequent asObject calls would return null as well.
+	**/
+	public inline function asObject<T>(clear: Bool = false):T return dndpayload_get_object(this, clear);
+
+	inline function get_isPreview() return dndpayload_is_preview(this);
+	inline function get_isDelivery() return dndpayload_is_delivery(this);
+	inline function get_asBinary() return dndpayload_get_binary(this);
+	inline function get_asString() return @:privateAccess String.fromUTF8(asBinary);
+	inline function get_asInt() return asBinary.getI32(0);
+	inline function get_asFloat() return asBinary.getF64(0);
+	inline function get_asBool() return asBinary[0] != 0;
+
+	static function dndpayload_clear(payload: ImDragDropPayloadPtr) {};
+	static function dndpayload_is_data_type(payload: ImDragDropPayloadPtr, type: String): Bool {return false;};
+	static function dndpayload_is_preview(payload: ImDragDropPayloadPtr): Bool {return false;};
+	static function dndpayload_is_delivery(payload: ImDragDropPayloadPtr): Bool {return false;};
+
+	static function dndpayload_get_binary(payload: ImDragDropPayloadPtr): hl.Bytes {return null;}
+	static function dndpayload_get_object(payload: ImDragDropPayloadPtr, clear: Bool): Dynamic {return null;}
+}
 
 
 @:hlNative("hlimgui")
@@ -798,12 +835,13 @@ class ImGui
 	public static inline var FLT_MAX = 3.402823466e+38;
 
 	// Context
-    public static function createContext() : hl.Bytes {return null;}
-    public static function destroyContext(ctx : hl.Bytes = null) {}
-    public static function getCurrentContext() : hl.Bytes {return null;}
-	public static function setCurrentContext(ctx : hl.Bytes) {}
+	public static function createContext() : ImContextPtr {return null;}
+	public static function destroyContext(ctx : ImContextPtr = null) {}
+	public static function getCurrentContext() : ImContextPtr {return null;}
+	public static function setCurrentContext(ctx : ImContextPtr) {}
 
 	// Main
+	// TODO: GetIO()
 	public static function getStyle() : ExtDynamic<ImGuiStyle> {return null;}
 	public static function setStyle(style : ExtDynamic<ImGuiStyle>) {}
 	public static function newFrame() {}
@@ -811,162 +849,162 @@ class ImGui
 	public static function render() {}
 
 	// Demo, Debug, Information
-    public static function showDemoWindow(open : hl.Ref<Bool> = null) {}
-    public static function showAboutWindow(open : hl.Ref<Bool> = null) {}
+	public static function showDemoWindow(open : hl.Ref<Bool> = null) {}
 	public static function showMetricsWindow(open : hl.Ref<Bool> = null) {}
+	public static function showStackToolWindow(open : hl.Ref<Bool> = null) {}
+	public static function showAboutWindow(open : hl.Ref<Bool> = null) {}
 	public static function showStyleEditor(style : ExtDynamic<ImGuiStyle> = null) {}
-    public static function showStyleSelector(label : String) : Bool {return false;}
-    public static function showFontSelector(label : String) {}
+	public static function showStyleSelector(label : String) : Bool {return false;}
+	public static function showFontSelector(label : String) {}
 	public static function showUserGuide() {}
 	static function get_version() : hl.Bytes {return null;}
-    public static function getVersion() : String {
+	public static inline function getVersion() : String {
 		return @:privateAccess String.fromUTF8(get_version());
 	}
 
-	// styles
+	// Styles
 	public static function styleColorsDark(style : ExtDynamic<ImGuiStyle> = null) {}
-    public static function styleColorsClassic(style : ExtDynamic<ImGuiStyle> = null) {}
-    public static function styleColorsLight(style : ExtDynamic<ImGuiStyle> = null) {}
+	public static function styleColorsClassic(style : ExtDynamic<ImGuiStyle> = null) {}
+	public static function styleColorsLight(style : ExtDynamic<ImGuiStyle> = null) {}
 
-	// windows
-    public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	// Windows
+	public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function end() {}
 
-	// Child windows
-    public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-    public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	// Child Windows
+	public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChild() {}
 
-	// Windows utilities
+	// Windows Utilities
 	public static function isWindowAppearing() : Bool {return false;}
-    public static function isWindowCollapsed() : Bool {return false;}
-    public static function isWindowFocused(flags : ImGuiFocusedFlags = 0) {return false;}
-    public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
-    public static function getWindowPos() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowWidth() : Single {return 0;}
+	public static function isWindowCollapsed() : Bool {return false;}
+	public static function isWindowFocused(flags : ImGuiFocusedFlags = 0) {return false;}
+	public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
+	public static function getWindowDrawList() : ImDrawList {return null;}
+	public static function getWindowDpiScale(): Single { return 0; }
+	public static function getWindowPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowWidth() : Single {return 0;}
 	public static function getWindowHeight(): Single {return 0;}
 
-    public static function setNextWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0, pivot : ExtDynamic<ImVec2> = null) {}
-    public static function setNextWindowSize(size: ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setNextWindowSizeConstraints(size_min : ExtDynamic<ImVec2>, size_max : ExtDynamic<ImVec2>) {}
-    public static function setNextWindowContentSize(size : ExtDynamic<ImVec2>) {}
-    public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
-    public static function setNextWindowFocus() {}
-    public static function setNextWindowBgAlpha(alpha : Single) {}
-    public static function setWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowSize(size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
-    public static function setWindowFocus() {}
-    public static function setWindowFontScale(scale : Single) {}
-    public static function setWindowPos2(name : String, pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowSize2(name : String, size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-    public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
+	// Window manipulation
+	public static function setNextWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0, pivot : ExtDynamic<ImVec2> = null) {}
+	public static function setNextWindowSize(size: ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setNextWindowSizeConstraints(size_min : ExtDynamic<ImVec2>, size_max : ExtDynamic<ImVec2>) {}
+	public static function setNextWindowContentSize(size : ExtDynamic<ImVec2>) {}
+	public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
+	public static function setNextWindowFocus() {}
+	public static function setNextWindowBgAlpha(alpha : Single) {}
+	public static function setWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowSize(size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
+	public static function setWindowFocus() {}
+	public static function setWindowFontScale(scale : Single) {}
+	public static function setWindowPos2(name : String, pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowSize2(name : String, size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus2(name : String) {}
-
-	// Docking
-	public static function dockSpace(id : ImGuiID, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
-	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
-	public static function getWindowDockId() : ImGuiID { return 0; }
-	public static function isWindowDocked() : Bool { return false; }
-
-	// Dock Builder
-	public static function dockBuilderDockWindow(window_name: String, node_id : ImGuiID) {}
-	public static function dockBuilderGetNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
-	public static function dockBuilderGetCentralNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
-	public static function dockBuilderAddNode(node_id : ImGuiID, flags: ImGuiDockNodeFlags) : ImGuiID { return 0; }
-	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
-	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
-	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
-	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ExtDynamic<ImVec2> ) {}
-	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ExtDynamic<ImVec2> ) {}
-	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
-	public static function dockBuilderCopyWindowSettings(src_name: String, dst_name: String) {}
-	public static function dockBuilderFinish(node_id : ImGuiID) {}
 
 	// Content region
 	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
-    public static function getContentRegionAvail() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowContentRegionMin() : ExtDynamic<ImVec2> {return null;}
-    public static function getWindowContentRegionMax() : ExtDynamic<ImVec2> {return null;}
+	public static function getContentRegionAvail() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowContentRegionMin() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowContentRegionMax() : ExtDynamic<ImVec2> {return null;}
+	@:deprecated // Obsoleted in latest imgui
 	public static function getWindowContentRegionWidth() : Single {return 0;}
 
 	// Windows Scrolling
 	public static function getScrollX() : Single {return 0;}
-    public static function getScrollY() : Single {return 0;}
-    public static function getScrollMaxX() : Single {return 0;}
-    public static function getScrollMaxY() : Single {return 0;}
-    public static function setScrollX(scroll_x : Single) {}
-    public static function setScrollY(scroll_y : Single) {}
-    public static function setScrollHereX(center_x_ratio : Single = 0.5) {}
-    public static function setScrollHereY(center_y_ratio : Single = 0.5) {}
-    public static function setScrollFromPosX(local_x : Single, center_x_ratio : Single = 0.5) {}
+	public static function getScrollY() : Single {return 0;}
+	public static function setScrollX(scroll_x : Single) {}
+	public static function setScrollY(scroll_y : Single) {}
+	public static function getScrollMaxX() : Single {return 0;}
+	public static function getScrollMaxY() : Single {return 0;}
+	public static function setScrollHereX(center_x_ratio : Single = 0.5) {}
+	public static function setScrollHereY(center_y_ratio : Single = 0.5) {}
+	public static function setScrollFromPosX(local_x : Single, center_x_ratio : Single = 0.5) {}
 	public static function setScrollFromPosY(local_y : Single, center_y_ratio : Single = 0.5) {}
 
-	// Parameters stacks
-    public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
-    public static function pushStyleColor2(idx : ImGuiCol, col : ExtDynamic<ImVec4>) {}
-    public static function popStyleColor(count : Int = 1) {}
-    public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
-    public static function pushStyleVar2(idx : ImGuiStyleVar, val : ExtDynamic<ImVec2>) {}
-    public static function popStyleVar(count : Int = 1) {}
-    public static function getStyleColorVec4(idx : ImGuiCol) : ExtDynamic<ImVec4> {return null;}
-    public static function getFontSize() : Single {return 0;}
-    public static function getFontTexUvWhitePixel() : ExtDynamic<ImVec2> {return null;}
-    public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
-    public static function getColorU322(col : ExtDynamic<ImVec4>) : ImU32 {return 0;}
-    public static function getColorU323(col : ImU32) : ImU32 {return 0;}
-    public static function pushItemWidth(item_width : Single) {}
-    public static function popItemWidth() {}
-    public static function setNextItemWidth(item_width : Single) {}
-    public static function calcItemWidth() : Single {return 0;}
-    public static function pushTextWrapPos(wrap_local_pos_x : Single = 0.0) {}
-    public static function popTextWrapPos() {}
-    public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
-    public static function popAllowKeyboardFocus() {}
-    public static function pushButtonRepeat(repeat : Bool) {}
-    public static function popButtonRepeat() {}
+	// Parameters stacks (shared)
+	public static function pushFont( font: ImFont ) {}
+	public static function popFont() {}
+	public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
+	public static function pushStyleColor2(idx : ImGuiCol, col : ExtDynamic<ImVec4>) {}
+	public static function popStyleColor(count : Int = 1) {}
+	public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
+	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ExtDynamic<ImVec2>) {}
+	public static function popStyleVar(count : Int = 1) {}
+	public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
+	public static function popAllowKeyboardFocus() {}
+	public static function pushButtonRepeat(repeat : Bool) {}
+	public static function popButtonRepeat() {}
+
+	// Parameters stacks (current window)
+	public static function pushItemWidth(item_width : Single) {}
+	public static function popItemWidth() {}
+	public static function setNextItemWidth(item_width : Single) {}
+	public static function calcItemWidth() : Single {return 0;}
+	public static function pushTextWrapPos(wrap_local_pos_x : Single = 0.0) {}
+	public static function popTextWrapPos() {}
+
+	// Style read access
+	public static function getFont(): ImFont {return null;}
+	public static function getFontSize() : Single {return 0;}
+	public static function getFontTexUvWhitePixel() : ExtDynamic<ImVec2> {return null;}
+	public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
+	public static function getColorU322(col : ExtDynamic<ImVec4>) : ImU32 {return 0;}
+	public static function getColorU323(col : ImU32) : ImU32 {return 0;}
+	public static function getStyleColorVec4(idx : ImGuiCol) : ExtDynamic<ImVec4> {return null;}
 
 	// Cursor / Layout
-    public static function separator() {}
-    public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
-    public static function newLine() {}
-    public static function spacing() {}
-    public static function dummy(size : ExtDynamic<ImVec2>) {}
-    public static function indent(indent_w : Single = 0.0) {}
-    public static function unindent(indent_w : Single = 0.0) {}
-    public static function beginGroup() {}
-    public static function endGroup() {}
-    public static function getCursorPos() : ExtDynamic<ImVec2> {return null;}
-    public static function getCursorPosX() : Single {return 0;}
-    public static function getCursorPosY() : Single {return 0;}
-    public static function setCursorPos(local_pos : ExtDynamic<ImVec2>) {}
-    public static function setCursorPosX(local_x : Single) {}
-    public static function setCursorPosY(local_y : Single) {}
-    public static function getCursorStartPos() : ExtDynamic<ImVec2> {return null;}
-    public static function getCursorScreenPos() : ExtDynamic<ImVec2> {return null;}
-    public static function setCursorScreenPos(pos : ExtDynamic<ImVec2>) {}
-    public static function alignTextToFramePadding() {}
-    public static function getTextLineHeight() : Single {return 0;}
-    public static function getTextLineHeightWithSpacing() : Single {return 0;}
-    public static function getFrameHeight() : Single {return 0;}
+	public static function separator() {}
+	public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
+	public static function newLine() {}
+	public static function spacing() {}
+	public static function dummy(size : ExtDynamic<ImVec2>) {}
+	public static function indent(indent_w : Single = 0.0) {}
+	public static function unindent(indent_w : Single = 0.0) {}
+	public static function beginGroup() {}
+	public static function endGroup() {}
+	public static function getCursorPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getCursorPosX() : Single {return 0;}
+	public static function getCursorPosY() : Single {return 0;}
+	public static function setCursorPos(local_pos : ExtDynamic<ImVec2>) {}
+	public static function setCursorPosX(local_x : Single) {}
+	public static function setCursorPosY(local_y : Single) {}
+	public static function getCursorStartPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getCursorScreenPos() : ExtDynamic<ImVec2> {return null;}
+	public static function setCursorScreenPos(pos : ExtDynamic<ImVec2>) {}
+	public static function alignTextToFramePadding() {}
+	public static function getTextLineHeight() : Single {return 0;}
+	public static function getTextLineHeightWithSpacing() : Single {return 0;}
+	public static function getFrameHeight() : Single {return 0;}
 	public static function getFrameHeightWithSpacing() : Single {return 0;}
 
 	// ID stack/scopes
 	public static function pushID(str_id : String) {}
-    public static function pushID2(str_id_begin : String, str_id_end : String) {}
-    public static function pushID3(int_id : Int) {}
-    public static function popID() {}
-    public static function getID(str_id : String) : Int {return 0;}
-    public static function getID2(str_id_begin : String, str_id_end : String) : Int {return 0;}
+	@:native("push_id_sub") public static function pushIDSub(str_id : String, begin : Int, end : Int) {}
+	@:native("push_id_int") public static function pushIDInt(int_id : Int) {}
+	@:native("push_id_ptr") public static function pushIDPtr(obj: Any) {}
+	public static function popID() {}
+	public static function getID(str_id : String) : Int {return 0;}
+	@:native("get_id_sub") public static function getIDSub(str_id : String, begin: Int, end: Int) : Int {return 0;}
+	@:native("get_id_ptr") public static function getIDPtr(obj: Any) : Int {return 0;}
 
-    // Widgets: Text
-    public static function text(text : String) {}
-    public static function textColored(col : ExtDynamic<ImVec4>, fmt : String) {}
-    public static function textDisabled(text : String) {}
-    public static function textWrapped(text : String) {}
-    public static function labelText(label : String, text : String) {}
-    public static function bulletText(text : String) {}
+	@:deprecated("use getIDSub") public static function getID2(str_id : String, begin: Int, end: Int) : Int {return getIDSub(str_id, begin, end);}
+	@:deprecated("use pushIDSub") public static inline function pushID2(str_id : String, begin : Int, end : Int) { pushIDSub(str_id, begin, end); }
+	@:deprecated("use pushIDInt") public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
+
+	// Widgets: Text
+	// TODO: TextUnformatted(text: String, ?start: Int, ?end: Int)
+	// TODO: Allow format arguments to be passed
+	public static function text(text : String) {}
+	public static function textColored(col : ExtDynamic<ImVec4>, fmt : String) {}
+	public static function textDisabled(text : String) {}
+	public static function textWrapped(text : String) {}
+	public static function labelText(label : String, text : String) {}
+	public static function bulletText(text : String) {}
 
 	// Widgets: Main
 	public static function button(name : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
@@ -991,13 +1029,14 @@ class ImGui
 	public static function progressBar(fraction : Single, size_arg : ExtDynamic<ImVec2> = null, overlay : String = null) {}
 	public static function bullet() {}
 
-    // Widgets: Combo Box
-    public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
-    public static function endCombo() {}
-    public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	// Widgets: Combo Box
+	public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
+	public static function endCombo() {}
+	public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	// TODO: comboCallback variant
 
-	// Widgets: Drags
+	// Widgets: Drag Sliders
 	public static function dragFloat(label : String, v : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragInt(label : String, v : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragDouble(label : String, v : hl.Ref<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1016,7 +1055,7 @@ class ImGui
 	}
 	static function drag_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, v_speed : Single, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
-	// Widgets: Sliders
+	// Widgets: Regular Sliders
 	public static function sliderFloat(label : String, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1104,57 +1143,72 @@ class ImGui
     public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
 	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
 
-    // Widgets: List Boxes
-    public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
-    public static function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
-    public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
-	public static function listBoxFooter() {}
+	// Widgets: List Boxes
+	/**
+		- Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
+		- Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
+	**/
+	public static function beginListBox(label: String, size: ExtDynamic<ImVec2> = null): Bool { return false; }
+	/** Only call if beginListBox returns true! **/
+	public static function endListBox() {}
+
+	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
+	// TODO: Callback variant
+	@:deprecated("Use beginListBox")
+	public static inline function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return beginListBox(label, size);}
+	@:deprecated("Obsolete")
+	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
+	@:deprecated("Use endListBox")
+	public static inline function listBoxFooter() { endListBox(); }
 
 	// Widgets: Data Plotting
     public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
 	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
 
-    // Widgets: Value() Helpers.
-    public static function valueBool(prefix : String, b : Bool) {}
-    public static function valueInt(prefix : String, v : Int) {}
+	// Widgets: Value() Helpers.
+	public static function valueBool(prefix : String, b : Bool) {}
+	public static function valueInt(prefix : String, v : Int) {}
 	public static function valueSingle(prefix : String, v : Single, float_format : String = null) {}
+	public static function valueDouble(prefix: String, v: Float, double_format: String = null) {}
 
-    // Widgets: Menus
-    public static function beginMenuBar() : Bool {return false;}
-    public static function endMenuBar() {}
-    public static function beginMainMenuBar() : Bool {return false;}
-    public static function endMainMenuBar() {}
-    public static function beginMenu(label : String, enabled : Bool = true) : Bool {return false;}
-    public static function endMenu() {}
-    public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
-    public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
+	// Widgets: Menus
+	public static function beginMenuBar() : Bool {return false;}
+	/** Only call EndMenuBar() if BeginMenuBar() returns true! **/
+	public static function endMenuBar() {}
+	public static function beginMainMenuBar() : Bool {return false;}
+	/** Only call EndMainMenuBar() if BeginMainMenuBar() returns true! **/
+	public static function endMainMenuBar() {}
+	public static function beginMenu(label : String, enabled : Bool = true) : Bool {return false;}
+	/** Only call EndMenu() if BeginMenu() returns true! **/
+	public static function endMenu() {}
+	public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
+	public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
 
 	// ToolTips
-    public static function beginTooltip() {}
-    public static function endTooltip() {}
-	public static function setTooltip(fmt : String) {}
+	public static function beginTooltip() {}
+	public static function endTooltip() {}
+	public static function setTooltip(fmt : String) {} // TODO: Allow format args
 
-	// Popups
+	// Popups, Modals
+
+	// Popups: begin/end function
+	public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function endPopup() {}
+
+	// Popups: open/close functions
 	public static function openPopup(str_id : String) {}
-    public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-    public static function beginPopupContextItem(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Bool {return false;}
-    public static function beginPopupContextWindow(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {return false;}
-    public static function beginPopupContextVoid(str_id : String = null, mouse_button : ImGuiMouseButton= 1) : Bool {return false;}
-    public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-    public static function endPopup() {}
-    public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
-    public static function isPopupOpen(str_id : String) : Bool {return false;}
+	// TODO: openPopup with id: ImGuiID
+	public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
 	public static function closeCurrentPopup() {}
 
-    // Columns
-    public static function columns(count : Int = 1, id : String = null, border : Bool = true) {}
-    public static function nextColumn() {}
-    public static function getColumnIndex() : Int {return 0;}
-    public static function getColumnWidth(column_index : Int = -1) : Single {return 0;}
-    public static function setColumnWidth(column_index : Int, width : Single) {}
-    public static function getColumnOffset(column_index : Int = -1) : Single {return 0;}
-    public static function setColumnOffset(column_index : Int, offset_x : Single) {}
-	public static function getColumnsCount() : Int {return 0;}
+	// Popups: open+begin combined function helpers
+	public static function beginPopupContextItem(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Bool {return false;}
+	public static function beginPopupContextWindow(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {return false;}
+	public static function beginPopupContextVoid(str_id : String = null, mouse_button : ImGuiMouseButton= 1) : Bool {return false;}
+
+	// Popups: query functions
+	public static function isPopupOpen(str_id : String) : Bool {return false;}
 
 	// Tables
 	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, outer_size: ExtDynamic<ImVec2> = null, inner_width = 0 ): Bool { return false; }
@@ -1162,11 +1216,17 @@ class ImGui
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
 	public static function tableNextColumn() {}
 	public static function tableSetColumnIndex( columnIndex: Int ) {}
+
+	// Tables: Headers & Columns declaration
 	public static function tableSetupColumn( id: String, flags: ImGuiTableColumnFlags = ImGuiTableColumnFlags.None, initWidthOrHeight: Single = 0, userId: ImGuiID = 0) {}
 	public static function tableSetupScrollFreeze( cols: Int, rows: Int ) {}
 	public static function tableHeadersRow() {}
 	public static function tableHeader( id: String ) {}
+
+	// Tables: Sorting
 	//public static function tableGetSortSpecs( id: String ): ImGUiTableSortSpecs { return null } // @todo
+
+	// Tables: Miscellaneous functions
 	public static function tableGetColumnCount(): Int { return 0; }
 	public static function tableGetColumnIndex(): Int { return 0; }
 	public static function tableGetRowIndex(): Int { return 0; }
@@ -1175,13 +1235,47 @@ class ImGui
 	public static function tableSetColumnEnabled( column_n: Int, enabled: Bool ): Void {}
 	public static function tableSetBGColor( target: ImGuiTableBgTarget, color: Int, column_n: Int = -1 ): Void { }
 
+	// Legacy Columns API (prefer using Tables!)
+	public static function columns(count : Int = 1, id : String = null, border : Bool = true) {}
+	public static function nextColumn() {}
+	public static function getColumnIndex() : Int {return 0;}
+	public static function getColumnWidth(column_index : Int = -1) : Single {return 0;}
+	public static function setColumnWidth(column_index : Int, width : Single) {}
+	public static function getColumnOffset(column_index : Int = -1) : Single {return 0;}
+	public static function setColumnOffset(column_index : Int, offset_x : Single) {}
+	public static function getColumnsCount() : Int {return 0;}
 
 	// Tab Bars, Tabs
 	public static function beginTabBar(str_id : String, flags : ImGuiTabBarFlags = 0) : Bool {return false;}
 	public static function endTabBar() {}
 	public static function beginTabItem(label : String, p_open : hl.Ref<Bool> = null, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function endTabItem() {}
+	public static function tabItemButton(label : String, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
+
+	// Docking
+	public static function dockSpace(id : ImGuiID, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
+	// dockSpaceOverViewport // Viewport API
+	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
+	// setNextWindowClass // Viewport API
+	public static function getWindowDockId() : ImGuiID { return 0; }
+	public static function isWindowDocked() : Bool { return false; }
+
+	// [imgui_internal] Dock Builder
+	public static function dockBuilderDockWindow(window_name: String, node_id : ImGuiID) {}
+	public static function dockBuilderGetNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
+	public static function dockBuilderGetCentralNode(node_id : ImGuiID) : ImGuiDockNode { return null; }
+	public static function dockBuilderAddNode(node_id : ImGuiID, flags: ImGuiDockNodeFlags) : ImGuiID { return 0; }
+	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
+	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
+	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
+	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
+	// DockBuilderCopyDockSpace
+	// DockBuilderCopyNode
+	public static function dockBuilderCopyWindowSettings(src_name: String, dst_name: String) {}
+	public static function dockBuilderFinish(node_id : ImGuiID) {}
 
 	// Logging/Capture
 	public static function logToTTY(auto_open_depth : Int = -1) {}
@@ -1189,81 +1283,7 @@ class ImGui
 	public static function logToClipboard(auto_open_depth : Int = -1) {}
 	public static function logFinish() {}
 	public static function logButtons() {}
-	public static function logText(text : String) {}
-
-    // Clipping
-    public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}
-    public static function popClipRect() {}
-
-    // Focus, Activation
-    public static function setItemDefaultFocus() {}
-	public static function setKeyboardFocusHere(offset : Int = 0) {}
-
-	// Item/Widgets Utilities
-    public static function isItemHovered(flags : ImGuiHoveredFlags = 0) : Bool {return false;}
-    public static function isItemActive() : Bool {return false;}
-    public static function isItemFocused() : Bool {return false;}
-    public static function isItemClicked(mouse_button : ImGuiMouseButton = 0) : Bool {return false;}
-    public static function isItemVisible() : Bool {return false;}
-    public static function isItemEdited() : Bool {return false;}
-    public static function isItemActivated() : Bool {return false;}
-    public static function isItemDeactivated() : Bool {return false;}
-    public static function isItemDeactivatedAfterEdit() : Bool {return false;}
-    public static function isItemToggledOpen() : Bool {return false;}
-    public static function isAnyItemHovered() : Bool {return false;}
-    public static function isAnyItemActive() : Bool {return false;}
-    public static function isAnyItemFocused() : Bool {return false;}
-    public static function getItemRectMin() : ExtDynamic<ImVec2> {return null;}
-    public static function getItemRectMax() : ExtDynamic<ImVec2> {return null;}
-    public static function getItemRectSize() : ExtDynamic<ImVec2> {return null;}
-    public static function setItemAllowOverlap() {}
-
-    // Miscellaneous Utilities
-    public static function isRectVisible(size : ExtDynamic<ImVec2>) : Bool {return false;}
-    public static function isRectVisible2(rect_min : ExtDynamic<ImVec2>, rect_max : ExtDynamic<ImVec2>) : Bool {return false;}
-    public static function getTime() : Float {return 0;}
-    public static function getFrameCount() : Int {return 0;}
-	static function get_style_color_name(idx : ImGuiCol) : hl.Bytes {return null;}
-    public static function getStyleColorName(idx : ImGuiCol) : String {
-		return @:privateAccess String.fromUTF8(get_style_color_name(idx));
-	}
-    public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
-    public static function beginChildFrame(id : ImGuiID, size : ExtDynamic<ImVec2>, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	public static function endChildFrame() {}
-
-	// Text Utilities
-	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
-
-    // Color Utilities
-    public static function colorConvertU32ToFloat4(color : ImU32) : ExtDynamic<ImVec4> {return null;}
-    public static function colorConvertFloat4ToU32(color : ExtDynamic<ImVec4>) : ImU32 {return 0;}
-    public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
-    public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
-
-    // Inputs Utilities: Keyboard
-    public static function getKeyIndex(imgui_key : ImGuiKey) : Int {return 0;}
-    public static function isKeyDown(user_key_index : Int) : Bool {return false;}
-    public static function isKeyPressed(user_key_index : Int, repeat : Bool = true) : Bool {return false;}
-    public static function isKeyReleased(user_key_index : Int) : Bool {return false;}
-    public static function getKeyPressedAmount(key_index : Int, repeat_delay : Single, rate : Single) : Int {return 0;}
-    public static function captureKeyboardFromApp(want_capture_keyboard_value : Bool = true) {}
-
-    // Inputs Utilities: Mouse
-    public static function isMouseDown(button : ImGuiMouseButton) : Bool {return false;}
-    public static function isMouseClicked(button : ImGuiMouseButton, repeat : Bool = false) : Bool {return false;}
-    public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
-    public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
-    public static function isMouseHoveringRect(r_min : ExtDynamic<ImVec2>, r_max : ExtDynamic<ImVec2>, clip : Bool = true) : Bool {return false;}
-    public static function isMousePosValid(mouse_pos : ExtDynamic<ImVec2> = null) : Bool {return false;}
-    public static function isAnyMouseDown() : Bool {return false;}
-    public static function getMousePos() : ExtDynamic<ImVec2> {return null;}
-    public static function getMousePosOnOpeningCurrentPopup() : ExtDynamic<ImVec2> {return null;}
-    public static function isMouseDragging(button : ImGuiMouseButton, lock_threshold : Single = -1.0) : Bool {return false;}
-    public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
-    public static function resetMouseDragDelta(button : ImGuiMouseButton = 0) {}
-    public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
-    public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}
-    public static function captureMouseFromApp(want_capture_mouse_value : Bool = true) {}
+	public static function logText(text : String) {} // TODO: Allow format args
 
 	// Drag and drop
 	public static function beginDragDropTarget(): Bool { return false; }
@@ -1271,91 +1291,209 @@ class ImGui
 	public static function beginDragDropSource( flags: ImGuiDragDropFlags = 0 ): Bool { return false; }
 	public static function endDragDropSource() {}
 	public static function setDragDropPayload(type: String, payload: hl.Bytes, length: Int, cond: ImGuiCond = 0 ) : Bool { return false; }
-	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : hl.Bytes { return null; }
+	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : ImDragDropPayload { return null; }
+	public static function getDragDropPayload() : ImDragDropPayload { return null; }
+	/**
+		Due to Haxe being a GC language, payload will be added as gc root until new payload is set or `clearDragDropPayloadObject()` is called.
+		Alternatively, when accepting payload, call `payload.asObject(true)` to clear the stored object, however subsequent `asObject` calls will yield `null`.
+	**/
+	public static function setDragDropPayloadObject(type: String, payload: Dynamic, cond: ImGuiCond = 0): Bool { return false; }
+	public static function clearDragDropPayloadObject() {}
+	/**
+		Returns currently stored payload object.
+	**/
+	public static function getDragDropPayloadObject<T>(): T { return null; }
 
 	// Payload helpers
-	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ) : Bool {
+	/** Shortcut to set a String payload **/
+	public static inline function setDragDropPayloadString(type: String, payload: String, cond: ImGuiCond = 0 ): Bool
+	{
 		var b = Bytes.ofString( payload + '\x00' );
 		return setDragDropPayload(type, b, b.length, cond);
-	 }
-	public static inline function acceptDragDropPayloadString(type: String, cond: ImGuiCond = 0 ) : String {
-		var bytes = ImGui.acceptDragDropPayload(type);
-		if( bytes != null )
-			return @:privateAccess String.fromUTF8( bytes );
-		return null;
 	}
-	public static inline function setDragDropPayloadInt(type: String, payload: Int, cond: ImGuiCond = 0 ) : Bool {
+	/**
+		Accept a drag&drop payload with specified type and return it as String or null if no payload present.
+	**/
+	public static inline function acceptDragDropPayloadString(type: String, cond: ImGuiCond = 0 ): String
+	{
+		var payload = acceptDragDropPayload(type, cond);
+		return payload != null ? payload.asString : null;
+	}
+	/** Shortcut to set an Int payload **/
+	public static inline function setDragDropPayloadInt(type: String, payload: Int, cond: ImGuiCond = 0 ): Bool
+	{
 		var b = new hl.Bytes(4);
 		b.setI32(0, payload);
 		return setDragDropPayload(type, b, 4, cond);
-	 }
-	public static inline function acceptDragDropPayloadInt(type: String, cond: ImGuiCond = 0 ) : Int {
-		var bytes = ImGui.acceptDragDropPayload(type);
-		if( bytes != null )
-			return bytes.getI32(0);
-		return 0;
+	}
+	/**
+		Accept a drag&drop payload with specified type and return it as an Int or 0 if no payload present.
+	**/
+	public static inline function acceptDragDropPayloadInt(type: String, cond: ImGuiCond = 0 ): Int
+	{
+		var payload = ImGui.acceptDragDropPayload(type);
+		return payload != null ? payload.asInt : 0;
+	}
+	/**
+		Accept a drag&drop payload with specified type and return it as `T` or null if no payload present.
+	**/
+	public static inline function acceptDragDropPayloadObject<T>(type: String, cond: ImGuiCond = 0, clear: Bool = false): T
+	{
+		var payload = ImGui.acceptDragDropPayload(type);
+		return payload != null ? payload.asObject(clear) : null;
 	}
 
+	// Disabling [BETA API]
+	// public static function beginDisabled(disabled: Bool = true) {}
+	// public static function endDisabled() {}
 
-    // Clipboard Utilities
+	// Clipping
+	public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}
+	public static function popClipRect() {}
+
+	// Focus, Activation
+	public static function setItemDefaultFocus() {}
+	public static function setKeyboardFocusHere(offset : Int = 0) {}
+
+	// Item/Widgets Utilities
+	public static function isItemHovered(flags : ImGuiHoveredFlags = 0) : Bool {return false;}
+	public static function isItemActive() : Bool {return false;}
+	public static function isItemFocused() : Bool {return false;}
+	public static function isItemClicked(mouse_button : ImGuiMouseButton = 0) : Bool {return false;}
+	public static function isItemVisible() : Bool {return false;}
+	public static function isItemEdited() : Bool {return false;}
+	public static function isItemActivated() : Bool {return false;}
+	public static function isItemDeactivated() : Bool {return false;}
+	public static function isItemDeactivatedAfterEdit() : Bool {return false;}
+	public static function isItemToggledOpen() : Bool {return false;}
+	public static function isAnyItemHovered() : Bool {return false;}
+	public static function isAnyItemActive() : Bool {return false;}
+	public static function isAnyItemFocused() : Bool {return false;}
+	public static function getItemRectMin() : ExtDynamic<ImVec2> {return null;}
+	public static function getItemRectMax() : ExtDynamic<ImVec2> {return null;}
+	public static function getItemRectSize() : ExtDynamic<ImVec2> {return null;}
+	public static function setItemAllowOverlap() {}
+
+	// Viewports
+	// public static function getMainViewport(): IMViewport
+
+	// Miscellaneous Utilities
+	public static function isRectVisible(size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function isRectVisible2(rect_min : ExtDynamic<ImVec2>, rect_max : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function getTime() : Float {return 0;}
+	public static function getFrameCount() : Int {return 0;}
+	public static function getForegroundDrawList() : ImDrawList {return null;}
+	//getForegroundDrawList(viewport) // Viewport API
+	public static function getBackgroundDrawList() : ImDrawList {return null;}
+	//getBackgroundDrawList(viewport) // Viewport API
+	//getDrawListSharedData()
+	static function get_style_color_name(idx : ImGuiCol) : hl.Bytes {return null;}
+	public static function getStyleColorName(idx : ImGuiCol) : String {
+		return @:privateAccess String.fromUTF8(get_style_color_name(idx));
+	}
+	public static function getStateStorage() : ImStateStorage {return null;}
+	//setStateStorage
+	public static function beginChildFrame(id : ImGuiID, size : ExtDynamic<ImVec2>, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function endChildFrame() {}
+	@:deprecated("Obsolete: Use ImGuiListClipper")
+	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
+
+	// Text Utilities
+	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
+
+	// Color Utilities
+	public static function colorConvertU32ToFloat4(color : ImU32) : ExtDynamic<ImVec4> {return null;}
+	public static function colorConvertFloat4ToU32(color : ExtDynamic<ImVec4>) : ImU32 {return 0;}
+	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
+	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
+
+	// Inputs Utilities: Keyboard
+	public static function isKeyDown(user_key_index : Int) : Bool {return false;}
+	public static function isKeyPressed(user_key_index : Int, repeat : Bool = true) : Bool {return false;}
+	public static function isKeyReleased(user_key_index : Int) : Bool {return false;}
+	public static function getKeyPressedAmount(key_index : Int, repeat_delay : Single, rate : Single) : Int {return 0;}
+	//TODO: getKeyName
+	public static function captureKeyboardFromApp(want_capture_keyboard_value : Bool = true) {}
+	@:deprecated("Obsolete")
+	public static function getKeyIndex(imgui_key : ImGuiKey) : Int {return 0;}
+
+	// Inputs Utilities: Mouse
+	public static function isMouseDown(button : ImGuiMouseButton) : Bool {return false;}
+	public static function isMouseClicked(button : ImGuiMouseButton, repeat : Bool = false) : Bool {return false;}
+	public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
+	public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
+	//TODO: getMouseClickedCount
+	public static function isMouseHoveringRect(r_min : ExtDynamic<ImVec2>, r_max : ExtDynamic<ImVec2>, clip : Bool = true) : Bool {return false;}
+	public static function isMousePosValid(mouse_pos : ExtDynamic<ImVec2> = null) : Bool {return false;}
+	public static function isAnyMouseDown() : Bool {return false;}
+	public static function getMousePos() : ExtDynamic<ImVec2> {return null;}
+	public static function getMousePosOnOpeningCurrentPopup() : ExtDynamic<ImVec2> {return null;}
+	public static function isMouseDragging(button : ImGuiMouseButton, lock_threshold : Single = -1.0) : Bool {return false;}
+	public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
+	public static function resetMouseDragDelta(button : ImGuiMouseButton = 0) {}
+	public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
+	public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}
+	public static function captureMouseFromApp(want_capture_mouse_value : Bool = true) {}
+
+	// Clipboard Utilities
 	static function get_clipboard_text() : hl.Bytes {return null;}
-    public static function getClipboardText() : String {
+	public static function getClipboardText() : String {
 		return @:privateAccess String.fromUTF8(get_clipboard_text());
 	}
-    public static function setClipboardText(text : String) {}
+	public static function setClipboardText(text : String) {}
 
-    // Settings/.Ini Utilities
-    public static function loadIniSettingsFromDisk(ini_filename : String) {}
-    public static function loadIniSettingsFromMemory(ini_data : String, ini_size : Int = 0) {}
-    public static function saveIniSettingsToDisk(ini_filename : String) {}
+	// Settings/.Ini Utilities
+	public static function loadIniSettingsFromDisk(ini_filename : String) {}
+	public static function loadIniSettingsFromMemory(ini_data : String, ini_size : Int = 0) {}
+	public static function saveIniSettingsToDisk(ini_filename : String) {}
 	static function save_ini_settings_to_memory(out_ini_size : hl.Ref<Int>) : hl.Bytes {return null;}
-    public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
+	public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
 	}
 
-	// IO
-	public static function setIniFilename(filename : String) {}
+	// Debug Utilities
+	//debugCheckVersionAndDataLayout
 
-	// Fonts
+	// Memory Allocators - Should not be exposed!
+	//setAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
+	//getAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
+	//memAlloc(size_t size);
+	//memFree(void* ptr);
 
-	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return new ImFont(add_font_default(config)); }
-	static function add_font_default(config:ExtDynamic<ImFontConfig>) : ImFontPtr { return null; }
-	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig = null, ?glyphRanges: hl.NativeArray<hl.UI16> = null ) : ImFont { return new ImFont(add_font_from_file_ttf(filename, size, config, glyphRanges)); }
-	public static function add_font_from_file_ttf( filename: String, size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
-	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return new ImFont(add_font_from_memory_ttf(bytes, size, font_size, config, glyphRanges)); }
-	public static function add_font_from_memory_ttf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig>, glyphRanges: hl.NativeArray<hl.UI16>) : ImFontPtr { return null; }
-	public static inline function pushFont( font: ImFont ) { push_font( @:privateAccess font.ptr );	}
-	static function push_font( font: ImFontPtr ) {}
-	public static function popFont() {}
+	// (Optional) Platform/OS interface for multi-viewport support
+	// Read comments around the ImGuiPlatformIO structure for more details.
+	// Note: You may use GetWindowViewport() to get the current viewport of the current window.
+	// GetPlatformIO(): ImGuiPlatformIO
+	// UpdatePlatformWindows();                                        // call in main loop. will call CreateWindow/ResizeWindow/etc. platform functions for each secondary viewport, and DestroyWindow for each inactive viewport.
+	// RenderPlatformWindowsDefault(void* platform_render_arg = NULL, void* renderer_render_arg = NULL); // call in main loop. will call RenderWindow/SwapBuffers platform functions for each secondary viewport which doesn't have the ImGuiViewportFlags_Minimized flag set. May be reimplemented by user for custom rendering needs.
+	// DestroyPlatformWindows();                                       // call DestroyWindow platform functions for all viewports. call from backend Shutdown() if you need to close platform windows before imgui shutdown. otherwise will be called by DestroyContext().
+	// FindViewportByID(ImGuiID id): ImGuiViewport;                                   // this is a helper for backends.
+	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
+
+	// GetIO()->... wrappers
+	public static function setFontTexture(texture_id : ImTextureID) {} // Fonts->SetTexID
+	public static function setIniFilename(filename : String) {} // IniFilename
+	public static function addKeyChar(c : Int) {} // AddInputCharacter
+	public static function addKeyEvent(c : Int, down: Bool) {} // AddKeyEvent
+	// Shortcut to set MousePos, MouseWheel, MouseDown[0] and MouseDown[1]
+	public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
+	public static function setDisplaySize(display_width:Int, display_height:Int) {} // DisplaySize
+	public static function wantCaptureMouse() : Bool {return false;} // WantCaptureMouse
+	public static function wantCaptureKeyboard() : Bool {return false;} // WantCaptureKeyboard
+	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {} // ConfigFlags
+	public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
+	public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
+	public static function getUserData() : Dynamic {return null;} // UserData
+
+
+	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
+	public static function addFontDefault(?config:ExtDynamic<ImFontConfig>) : ImFont { return null; }
+	public static function addFontFromFileTtf( filename: String, size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
+	public static function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
 	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
-	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
 
 	// internal functions
 	public static function initialize(render_fn:Dynamic->Void) : Dynamic {return null;}
-	public static function setFontTexture(texture_id : ImTextureID) {}
-	public static function addKeyChar(c : Int) {}
-	public static function addKeyEvent(c : Int, down: Bool) {}
-	public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
-	public static function setDisplaySize(display_width:Int, display_height:Int) {}
-	public static function wantCaptureMouse() : Bool {return false;}
-	public static function wantCaptureKeyboard() : Bool {return false;}
-	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {}
-	public static function getConfigFlags() : ImGuiConfigFlags {return 0;}
-	public static function setUserData(data : Dynamic) {}
-	public static function getUserData() : Dynamic {return null;}
-
-	// Draw Lists
-	public static inline function getWindowDrawList() : ImDrawList { return new ImDrawList( drawlist_get_window_draw_list() ); }
-	public static inline function getForegroundDrawList() : ImDrawList { return new ImDrawList( drawlist_get_foreground_draw_list() ); }
-	public static inline function getBackgroundDrawList() : ImDrawList { return new ImDrawList( drawlist_get_background_draw_list() ); }
-
-	static function drawlist_get_window_draw_list() : ImDrawListPtr { return null; }
-	static function drawlist_get_foreground_draw_list() : ImDrawListPtr { return null; }
-	static function drawlist_get_background_draw_list() : ImDrawListPtr { return null; }
-
-	// State storage
-	public static inline function getStateStorage() : ImStateStorage { return new ImStateStorage( get_state_storage() ); }
-
-	static function get_state_storage() : ImStateStoragePtr { return null; }
+	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
 
 }

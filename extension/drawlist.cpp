@@ -1,16 +1,16 @@
 #include "utils.h"
 
-HL_PRIM ImDrawList *HL_NAME(drawlist_get_window_draw_list)()
+HL_PRIM ImDrawList *HL_NAME(get_window_draw_list)()
 {
     return ImGui::GetWindowDrawList();
 }
 
-HL_PRIM ImDrawList *HL_NAME(drawlist_get_foreground_draw_list)()
+HL_PRIM ImDrawList *HL_NAME(get_foreground_draw_list)()
 {
     return ImGui::GetForegroundDrawList();
 }
 
-HL_PRIM ImDrawList *HL_NAME(drawlist_get_background_draw_list)()
+HL_PRIM ImDrawList *HL_NAME(get_background_draw_list)()
 {
     return ImGui::GetBackgroundDrawList();
 }
@@ -157,9 +157,9 @@ HL_PRIM void HL_NAME(drawlist_add_image_rounded)(ImDrawList *drawlist, ImTexture
 
 #define _TDRAWLIST _ABSTRACT(imdrawlist)
 
-DEFINE_PRIM(_TDRAWLIST, drawlist_get_window_draw_list, _NO_ARG );
-DEFINE_PRIM(_TDRAWLIST, drawlist_get_foreground_draw_list, _NO_ARG );
-DEFINE_PRIM(_TDRAWLIST, drawlist_get_background_draw_list, _NO_ARG );
+DEFINE_PRIM(_TDRAWLIST, get_window_draw_list, _NO_ARG );
+DEFINE_PRIM(_TDRAWLIST, get_foreground_draw_list, _NO_ARG );
+DEFINE_PRIM(_TDRAWLIST, get_background_draw_list, _NO_ARG );
 
 DEFINE_PRIM(_VOID, drawlist_push_clip_rect, _TDRAWLIST _DYN _DYN _BOOL);
 DEFINE_PRIM(_VOID, drawlist_push_clip_rect_full_screen, _TDRAWLIST);
