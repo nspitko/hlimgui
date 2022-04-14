@@ -5,7 +5,7 @@ set(TARGET_EXT .hdll)
 
 project(${TARGET_NAME})
 
-option(NODE_EDITOR "Include imgui-node-editor (required to use NodeEditor.hx)" OFF)
+option(NODE_EDITOR "Include imgui-node-editor (required to use NodeEditor.hx)" ON)
 
 file(GLOB SOURCES "*.cpp")
 file(GLOB IMGUI_SOURCES "lib/imgui/*.cpp")
