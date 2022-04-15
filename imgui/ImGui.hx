@@ -9,7 +9,7 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
 	public var v(get, never):T;
 	inline function get_v():T return (this:T);
 	public inline function to():T return (this:T);
-	
+
 }
 
 @:enum abstract ImGuiWindowFlags(Int) from Int to Int {
@@ -575,14 +575,14 @@ typedef ImEvents = {
 abstract ImTextureID(Dynamic) from h3d.mat.Texture to h3d.mat.Texture {}
 // To avoid allocation of unecessary things - cache and reuse some instances.
 private class ImTypeCache {
-	
+
 	public static var imVec2: Array<ImVec2Impl> = [
 		{ x: 0, y: 0 },
 		{ x: 0, y: 0 },
 		{ x: 0, y: 0 },
 		{ x: 0, y: 0 },
 	];
-	
+
 }
 @:structInit
 private class ImVec2Impl {
@@ -724,10 +724,10 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 	public function addImageQuad( userTextureId: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, ?uv1: ImVec2, ?uv2: ImVec2, ?uv3: ImVec2, ?uv4: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image_quad(this, userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
 	// Due to Haxe limitation on defualt parameters being "constant" and enum abstract values that rely on previous enum abstract value (A | B) are not "constant" - hack with -1
 	public function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1 ) { drawlist_add_image_rounded(this, userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners == -1 ? ImDrawFlags.RoundCornersDefault_ : roundingCorners); }
-	
+
 	#if heaps
 	// Helper methods for Heaps: Use Tile instead of Texture to pass image segments easily.
-	
+
 	public inline function addTile( tile: h2d.Tile, pMin: ImVec2, pMax: ImVec2, col: Int = 0xffffffff, honorDxDy = false) @:privateAccess {
 		if (honorDxDy) {
 			pMin.x += tile.dx;
@@ -737,14 +737,14 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 		}
 		addImage(tile.getTexture(), pMin, pMax, ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v2), col);
 	}
-	
+
 	public inline function addTileQuad( tile: h2d.Tile, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: Int = 0xffffffff) @:privateAccess {
 		addImageQuad( tile.getTexture(), p1, p2, p3, p4,
 			ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), ImTypeCache.imVec2[3].set(tile.u2, tile.v),
 			col
 		);
 	}
-	
+
 	public inline function addTileRounded( tile: h2d.Tile, pMin: ImVec2, pMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1, honorDxDy = false ) @:privateAccess {
 		if (honorDxDy) {
 			pMin.x += tile.dx;
@@ -755,7 +755,7 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 		addImageRounded( tile.getTexture(), pMin, pMax, ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v2), col, rounding, roundingCorners);
 	}
 	#end
-	
+
 	static function drawlist_add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
 	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
 	static function drawlist_add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
@@ -773,7 +773,7 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 	static function drawlist_add_bezier_curve( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single, num_segments: Int ) {}
 	static function drawlist_add_text( drawlist: ImDrawListPtr, pos: ExtDynamic<ImVec2>, col: ImU32, text: String ) {}
 	static function drawlist_add_text2( drawlist: ImDrawListPtr, font: ImFontPtr, font_size: Single, pos: ExtDynamic<ImVec2>, col: ImU32, text: String, wrap_width: Single, cpu_fine_clip_rect: ExtDynamic<ImVec4> ) {}
-	
+
 	static function drawlist_add_image( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32 ) {}
 	static function drawlist_add_image_quad( drawlist: ImDrawListPtr, userTextureId: ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2>, uv2: ExtDynamic<ImVec2>, uv3: ExtDynamic<ImVec2>, uv4: ExtDynamic<ImVec2>, col: ImU32 ) {}
 	static function drawlist_add_image_rounded( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
@@ -812,14 +812,14 @@ abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStor
 
 @:hlNative("hlimgui")
 abstract ImDragDropPayload(ImDragDropPayloadPtr) from ImDragDropPayloadPtr to ImDragDropPayloadPtr {
-	
+
 	public inline function new(ptr: ImDragDropPayloadPtr) { this = ptr; }
-	
+
 	public inline function clear() dndpayload_clear(this);
 	public inline function isDataType(type: String) return dndpayload_is_data_type(this, type);
 	public var isPreview(get, never): Bool;
 	public var isDelivery(get, never): Bool;
-	
+
 	public var asBinary(get, never):hl.Bytes;
 	public var asString(get, never):String;
 	public var asInt(get, never):Int;
@@ -830,7 +830,7 @@ abstract ImDragDropPayload(ImDragDropPayloadPtr) from ImDragDropPayloadPtr to Im
 		Subsequent asObject calls would return null as well.
 	**/
 	public inline function asObject<T>(clear: Bool = false):T return dndpayload_get_object(this, clear);
-	
+
 	inline function get_isPreview() return dndpayload_is_preview(this);
 	inline function get_isDelivery() return dndpayload_is_delivery(this);
 	inline function get_asBinary() return dndpayload_get_binary(this);
@@ -838,12 +838,12 @@ abstract ImDragDropPayload(ImDragDropPayloadPtr) from ImDragDropPayloadPtr to Im
 	inline function get_asInt() return asBinary.getI32(0);
 	inline function get_asFloat() return asBinary.getF64(0);
 	inline function get_asBool() return asBinary[0] != 0;
-	
+
 	static function dndpayload_clear(payload: ImDragDropPayloadPtr) {};
 	static function dndpayload_is_data_type(payload: ImDragDropPayloadPtr, type: String): Bool {return false;};
 	static function dndpayload_is_preview(payload: ImDragDropPayloadPtr): Bool {return false;};
 	static function dndpayload_is_delivery(payload: ImDragDropPayloadPtr): Bool {return false;};
-	
+
 	static function dndpayload_get_binary(payload: ImDragDropPayloadPtr): hl.Bytes {return null;}
 	static function dndpayload_get_object(payload: ImDragDropPayloadPtr, clear: Bool): Dynamic {return null;}
 }
@@ -959,7 +959,7 @@ class ImGui
 	public static function popAllowKeyboardFocus() {}
 	public static function pushButtonRepeat(repeat : Bool) {}
 	public static function popButtonRepeat() {}
-	
+
 	// Parameters stacks (current window)
 	public static function pushItemWidth(item_width : Single) {}
 	public static function popItemWidth() {}
@@ -967,7 +967,7 @@ class ImGui
 	public static function calcItemWidth() : Single {return 0;}
 	public static function pushTextWrapPos(wrap_local_pos_x : Single = 0.0) {}
 	public static function popTextWrapPos() {}
-	
+
 	// Style read access
 	public static function getFont(): ImFont {return null;}
 	public static function getFontSize() : Single {return 0;}
@@ -1011,7 +1011,7 @@ class ImGui
 	public static function getID(str_id : String) : Int {return 0;}
 	@:native("get_id_sub") public static function getIDSub(str_id : String, begin: Int, end: Int) : Int {return 0;}
 	@:native("get_id_ptr") public static function getIDPtr(obj: Any) : Int {return 0;}
-	
+
 	@:deprecated("use getIDSub") public static function getID2(str_id : String, begin: Int, end: Int) : Int {return getIDSub(str_id, begin, end);}
 	@:deprecated("use pushIDSub") public static inline function pushID2(str_id : String, begin : Int, end : Int) { pushIDSub(str_id, begin, end); }
 	@:deprecated("use pushIDInt") public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
@@ -1037,7 +1037,7 @@ class ImGui
 	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2, ?tint_col: ImVec4, ?border_col: ImVec4) @:privateAccess {
 		image(tile.getTexture(), size == null ? ImTypeCache.imVec2[0].set(tile.width, tile.height) : size, ImTypeCache.imVec2[1].set(tile.u, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), tint_col, border_col);
 	}
-	
+
 	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2, frame_padding: Int = -1, ?bg_col: ImVec4, ?tint_col: ImVec4): Bool @:privateAccess {
 		return imageButton(tile.getTexture(), size == null ? ImTypeCache.imVec2[0].set(tile.width, tile.height) : size, ImTypeCache.imVec2[1].set(tile.u, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
 	}
@@ -1171,7 +1171,7 @@ class ImGui
 	public static function beginListBox(label: String, size: ExtDynamic<ImVec2> = null): Bool { return false; }
 	/** Only call if beginListBox returns true! **/
 	public static function endListBox() {}
-	
+
 	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
 	// TODO: Callback variant
 	@:deprecated("Use beginListBox")
@@ -1210,23 +1210,23 @@ class ImGui
 	public static function setTooltip(fmt : String) {} // TODO: Allow format args
 
 	// Popups, Modals
-	
+
 	// Popups: begin/end function
 	public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endPopup() {}
-	
+
 	// Popups: open/close functions
 	public static function openPopup(str_id : String) {}
 	// TODO: openPopup with id: ImGuiID
 	public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
 	public static function closeCurrentPopup() {}
-	
+
 	// Popups: open+begin combined function helpers
 	public static function beginPopupContextItem(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Bool {return false;}
 	public static function beginPopupContextWindow(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {return false;}
 	public static function beginPopupContextVoid(str_id : String = null, mouse_button : ImGuiMouseButton= 1) : Bool {return false;}
-	
+
 	// Popups: query functions
 	public static function isPopupOpen(str_id : String) : Bool {return false;}
 
@@ -1236,16 +1236,16 @@ class ImGui
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
 	public static function tableNextColumn() {}
 	public static function tableSetColumnIndex( columnIndex: Int ) {}
-	
+
 	// Tables: Headers & Columns declaration
 	public static function tableSetupColumn( id: String, flags: ImGuiTableColumnFlags = ImGuiTableColumnFlags.None, initWidthOrHeight: Single = 0, userId: ImGuiID = 0) {}
 	public static function tableSetupScrollFreeze( cols: Int, rows: Int ) {}
 	public static function tableHeadersRow() {}
 	public static function tableHeader( id: String ) {}
-	
+
 	// Tables: Sorting
 	//public static function tableGetSortSpecs( id: String ): ImGUiTableSortSpecs { return null } // @todo
-	
+
 	// Tables: Miscellaneous functions
 	public static function tableGetColumnCount(): Int { return 0; }
 	public static function tableGetColumnIndex(): Int { return 0; }
@@ -1362,7 +1362,7 @@ class ImGui
 		var payload = ImGui.acceptDragDropPayload(type);
 		return payload != null ? payload.asObject(clear) : null;
 	}
-	
+
 	// Disabling [BETA API]
 	// public static function beginDisabled(disabled: Bool = true) {}
 	// public static function endDisabled() {}
@@ -1470,16 +1470,16 @@ class ImGui
 	public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
 	}
-	
+
 	// Debug Utilities
 	//debugCheckVersionAndDataLayout
-	
+
 	// Memory Allocators - Should not be exposed!
 	//setAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
 	//getAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
 	//memAlloc(size_t size);
 	//memFree(void* ptr);
-	
+
 	// (Optional) Platform/OS interface for multi-viewport support
 	// Read comments around the ImGuiPlatformIO structure for more details.
 	// Note: You may use GetWindowViewport() to get the current viewport of the current window.
@@ -1504,7 +1504,7 @@ class ImGui
 	public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
 	public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
 	public static function getUserData() : Dynamic {return null;} // UserData
-	
+
 
 	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
 	public static function addFontDefault(?config:ExtDynamic<ImFontConfig>) : ImFont { return null; }

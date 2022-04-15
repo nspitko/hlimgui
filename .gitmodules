@@ -2,3 +2,7 @@
 	path = extension/lib/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "extension/lib/imgui-node-editor"]
+	path = extension/lib/imgui-node-editor
+	url = https://github.com/thedmd/imgui-node-editor.git
+	branch = develop

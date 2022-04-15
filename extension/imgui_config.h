@@ -14,6 +14,9 @@
 
 #pragma once
 
+// Prevent windows from defining min/max functions (Some libs use std:: versions, which will explode)
+#define NOMINMAX
+
 //---- Define assertion handler. Defaults to calling assert().
 // If your macro uses multiple statements, make sure is enclosed in a 'do { .. } while (0)' block so it can be used as a single statement.
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
