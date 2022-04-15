@@ -28,9 +28,6 @@
 void convertColor(ImU32 color, float& r, float& g, float& b, float& a);
 std::string unicodeToUTF8(vstring* hl_string);
 
-ImGuiStyle getImGuiStyleFromHL(vdynamic* style);
-vdynamic* getHLFromImGuiStyle(const ImGuiStyle& imgui_style);
-
 void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config);
 
 // Replaced by imconfig.h extra converters

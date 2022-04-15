@@ -96,32 +96,32 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
 }
 
 @:enum abstract ImGuiStyleVar(Int) from Int to Int {
-	var Alpha : Int = 0;
-	var DisabledAlpha : Int = 1;
-	var WindowPadding : Int = 2;
-	var WindowRounding : Int = 3;
-	var WindowBorderSize : Int = 4;
-	var WindowMinSize : Int = 5;
-	var WindowTitleAlign : Int = 6;
-	var ChildRounding : Int = 7;
-	var ChildBorderSize : Int = 8;
-	var PopupRounding : Int = 9;
-	var PopupBorderSize : Int = 10;
-	var FramePadding : Int = 11;
-	var FrameRounding : Int = 12;
-	var FrameBorderSize : Int = 13;
-	var ItemSpacing : Int = 14;
-	var ItemInnerSpacing : Int = 15;
-	var IndentSpacing : Int = 16;
-	var CellPadding : Int = 17;
-	var ScrollbarSize : Int = 18;
-	var ScrollbarRounding : Int = 19;
-	var GrabMinSize : Int = 20;
-	var GrabRounding : Int = 21;
-	var TabRounding : Int = 22;
-	var ButtonTextAlign : Int = 23;
-	var SelectableTextAlign : Int = 24;
-	var COUNT : Int = 25;
+	var Alpha = 0;
+	var DisabledAlpha;
+	var WindowPadding;
+	var WindowRounding;
+	var WindowBorderSize;
+	var WindowMinSize;
+	var WindowTitleAlign;
+	var ChildRounding;
+	var ChildBorderSize;
+	var PopupRounding;
+	var PopupBorderSize;
+	var FramePadding;
+	var FrameRounding;
+	var FrameBorderSize;
+	var ItemSpacing;
+	var ItemInnerSpacing;
+	var IndentSpacing;
+	var CellPadding;
+	var ScrollbarSize;
+	var ScrollbarRounding;
+	var GrabMinSize;
+	var GrabRounding;
+	var TabRounding;
+	var ButtonTextAlign;
+	var SelectableTextAlign;
+	var COUNT;
 }
 
 @:enum abstract ImGuiSelectableFlags(Int) from Int to Int {
@@ -364,55 +364,62 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
 }
 
 @:enum abstract ImGuiCol(Int) from Int to Int {
-	var Text : Int = 0;
-	var TextDisabled : Int = 1;
-	var WindowBg : Int = 2;
-	var ChildBg : Int = 3;
-	var PopupBg : Int = 4;
-	var Border : Int = 5;
-	var BorderShadow : Int = 6;
-	var FrameBg : Int = 7;
-	var FrameBgHovered : Int = 8;
-	var FrameBgActive : Int = 9;
-	var TitleBg : Int = 10;
-	var TitleBgActive : Int = 11;
-	var TitleBgCollapsed : Int = 12;
-	var MenuBarBg : Int = 13;
-	var ScrollbarBg : Int = 14;
-	var ScrollbarGrab : Int = 15;
-	var ScrollbarGrabHovered : Int = 16;
-	var ScrollbarGrabActive : Int = 17;
-	var CheckMark : Int = 18;
-	var SliderGrab : Int = 19;
-	var SliderGrabActive : Int = 20;
-	var Button : Int = 21;
-	var ButtonHovered : Int = 22;
-	var ButtonActive : Int = 23;
-	var Header : Int = 24;
-	var HeaderHovered : Int = 25;
-	var HeaderActive : Int = 26;
-	var Separator : Int = 27;
-	var SeparatorHovered : Int = 28;
-	var SeparatorActive : Int = 29;
-	var ResizeGrip : Int = 30;
-	var ResizeGripHovered : Int = 31;
-	var ResizeGripActive : Int = 32;
-	var Tab : Int = 33;
-	var TabHovered : Int = 34;
-	var TabActive : Int = 35;
-	var TabUnfocused : Int = 36;
-	var TabUnfocusedActive : Int = 37;
-	var PlotLines : Int = 38;
-	var PlotLinesHovered : Int = 39;
-	var PlotHistogram : Int = 40;
-	var PlotHistogramHovered : Int = 41;
-	var TextSelectedBg : Int = 42;
-	var DragDropTarget : Int = 43;
-	var NavHighlight : Int = 44;
-	var NavWindowingHighlight : Int = 45;
-	var NavWindowingDimBg : Int = 46;
-	var ModalWindowDimBg : Int = 47;
-	var COUNT : Int = 48;
+	var Text = 0;
+	var TextDisabled;
+	var WindowBg;
+	var ChildBg;
+	var PopupBg;
+	var Border;
+	var BorderShadow;
+	var FrameBg;
+	var FrameBgHovered;
+	var FrameBgActive;
+	var TitleBg;
+	var TitleBgActive;
+	var TitleBgCollapsed;
+	var MenuBarBg;
+	var ScrollbarBg;
+	var ScrollbarGrab;
+	var ScrollbarGrabHovered;
+	var ScrollbarGrabActive;
+	var CheckMark;
+	var SliderGrab;
+	var SliderGrabActive;
+	var Button;
+	var ButtonHovered;
+	var ButtonActive;
+	var Header;
+	var HeaderHovered;
+	var HeaderActive;
+	var Separator;
+	var SeparatorHovered;
+	var SeparatorActive;
+	var ResizeGrip;
+	var ResizeGripHovered;
+	var ResizeGripActive;
+	var Tab;
+	var TabHovered;
+	var TabActive;
+	var TabUnfocused;
+	var TabUnfocusedActive;
+	var DockingPreview;
+	var DockingEmptyBg;
+	var PlotLines;
+	var PlotLinesHovered;
+	var PlotHistogram;
+	var PlotHistogramHovered;
+	var TableHeaderBg;
+	var TableBorderStrong;
+	var TableBorderLight;
+	var TableRowBg;
+	var TableRowBgAlt;
+	var TextSelectedBg;
+	var DragDropTarget;
+	var NavHighlight;
+	var NavWindowingHighlight;
+	var NavWindowingDimBg;
+	var ModalWindowDimBg;
+	var COUNT;
 }
 
 @:enum abstract ImGuiBackendFlags(Int) from Int to Int {
@@ -605,45 +612,58 @@ typedef ImVec4 = {
 	w : Single
 }
 
-typedef ImGuiStyle = {
-    Alpha : Single,
-    WindowPadding : ImVec2,
-    WindowRounding : Single,
-    WindowBorderSize : Single,
-    WindowMinSize : ImVec2,
-    WindowTitleAlign : ImVec2,
-    WindowMenuButtonPosition : ImGuiDir,
-    ChildRounding : Single,
-    ChildBorderSize : Single,
-    PopupRounding : Single,
-    PopupBorderSize : Single,
-    FramePadding : ImVec2,
-    FrameRounding : Single,
-    FrameBorderSize : Single,
-    ItemSpacing : ImVec2,
-    ItemInnerSpacing : ImVec2,
-    TouchExtraPadding : ImVec2,
-    IndentSpacing : Single,
-    ColumnsMinSpacing : Single,
-    ScrollbarSize : Single,
-    ScrollbarRounding : Single,
-    GrabMinSize : Single,
-    GrabRounding : Single,
-    TabRounding : Single,
-    TabBorderSize : Single,
-    TabMinWidthForCloseButton : Single,
-    ColorButtonPosition : ImGuiDir,
-    ButtonTextAlign : ImVec2,
-    SelectableTextAlign : ImVec2,
-    DisplayWindowPadding : ImVec2,
-    DisplaySafeAreaPadding : ImVec2,
-    MouseCursorScale : Single,
-    AntiAliasedLines : Bool,
-    AntiAliasedFill : Bool,
-    CurveTessellationTol : Single,
-    CircleSegmentMaxError : Single,
-    Colors : hl.NativeArray<ImVec4>
-};
+@:build(imgui._ImGuiInternalMacro.buildFlatStruct())
+@:hlNative("hlimgui")
+@:struct class ImGuiStyle {
+	var Alpha: Single;                      // Global alpha applies to everything in Dear ImGui.
+	var DisabledAlpha: Single;              // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
+	@:flatten var WindowPadding: ImVec2;              // Padding within a window.
+	var WindowRounding: Single;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
+	var WindowBorderSize: Single;           // Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+	@:flatten var WindowMinSize: ImVec2;              // Minimum window size. This is a global setting. If you want to constraint individual windows, use SetNextWindowSizeConstraints().
+	@:flatten var WindowTitleAlign: ImVec2;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
+	var WindowMenuButtonPosition: ImGuiDir;   // Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.
+	var ChildRounding: Single;              // Radius of child window corners rounding. Set to 0.0f to have rectangular windows.
+	var ChildBorderSize: Single;            // Thickness of border around child windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+	var PopupRounding: Single;              // Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)
+	var PopupBorderSize: Single;            // Thickness of border around popup/tooltip windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+	@:flatten var FramePadding: ImVec2;               // Padding within a framed rectangle (used by most widgets).
+	var FrameRounding: Single;              // Radius of frame corners rounding. Set to 0.0f to have rectangular frame (used by most widgets).
+	var FrameBorderSize: Single;            // Thickness of border around frames. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+	@:flatten var ItemSpacing: ImVec2;                // Horizontal and vertical spacing between widgets/lines.
+	@:flatten var ItemInnerSpacing: ImVec2;           // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).
+	@:flatten var CellPadding: ImVec2;                // Padding within a table cell
+	@:flatten var TouchExtraPadding: ImVec2;          // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
+	var IndentSpacing: Single;              // Horizontal indentation when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).
+	var ColumnsMinSpacing: Single;          // Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).
+	var ScrollbarSize: Single;              // Width of the vertical scrollbar, Height of the horizontal scrollbar.
+	var ScrollbarRounding: Single;          // Radius of grab corners for scrollbar.
+	var GrabMinSize: Single;                // Minimum width/height of a grab box for slider/scrollbar.
+	var GrabRounding: Single;               // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
+	var LogSliderDeadzone: Single;          // The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.
+	var TabRounding: Single;                // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
+	var TabBorderSize: Single;              // Thickness of border around tabs.
+	var TabMinWidthForCloseButton: Single;  // Minimum width for close button to appears on an unselected tab when hovered. Set to 0.0f to always show when hovering, set to FLT_MAX to never show close button unless selected.
+	var ColorButtonPosition: ImGuiDir;        // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
+	@:flatten var ButtonTextAlign: ImVec2;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
+	@:flatten var SelectableTextAlign: ImVec2;        // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
+	@:flatten var DisplayWindowPadding: ImVec2;       // Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.
+	@:flatten var DisplaySafeAreaPadding: ImVec2;     // If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!
+	var MouseCursorScale: Single;           // Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). We apply per-monitor DPI scaling over this scale. May be removed later.
+	var AntiAliasedLines: Bool;           // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
+	var AntiAliasedLinesUseTex: Bool;     // Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering. Latched at the beginning of the frame (copied to ImDrawList).
+	var AntiAliasedFill: Bool;            // Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
+	var CurveTessellationTol: Single;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
+	var CircleTessellationMaxError: Single; // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
+	@:flattenMap(ImGuiCol) var Colors : ImVec4;
+	
+	public function new() {
+		// Match allocation via C: Set default values andn use default colors.
+		init_style(this);
+	}
+	
+	static function init_style(style: ImGuiStyle) {}
+}
 
 /**
  * ImFontConfig
@@ -842,8 +862,8 @@ class ImGui
 
 	// Main
 	// TODO: GetIO()
-	public static function getStyle() : ExtDynamic<ImGuiStyle> {return null;}
-	public static function setStyle(style : ExtDynamic<ImGuiStyle>) {}
+	public static function getStyle() : ImGuiStyle {return null;}
+	public static function setStyle(style : ImGuiStyle) {}
 	public static function newFrame() {}
 	public static function endFrame() {}
 	public static function render() {}
@@ -853,7 +873,7 @@ class ImGui
 	public static function showMetricsWindow(open : hl.Ref<Bool> = null) {}
 	public static function showStackToolWindow(open : hl.Ref<Bool> = null) {}
 	public static function showAboutWindow(open : hl.Ref<Bool> = null) {}
-	public static function showStyleEditor(style : ExtDynamic<ImGuiStyle> = null) {}
+	public static function showStyleEditor(style : ImGuiStyle = null) {}
 	public static function showStyleSelector(label : String) : Bool {return false;}
 	public static function showFontSelector(label : String) {}
 	public static function showUserGuide() {}
@@ -863,9 +883,9 @@ class ImGui
 	}
 
 	// Styles
-	public static function styleColorsDark(style : ExtDynamic<ImGuiStyle> = null) {}
-	public static function styleColorsClassic(style : ExtDynamic<ImGuiStyle> = null) {}
-	public static function styleColorsLight(style : ExtDynamic<ImGuiStyle> = null) {}
+	public static function styleColorsDark(style : ImGuiStyle = null) {}
+	public static function styleColorsClassic(style : ImGuiStyle = null) {}
+	public static function styleColorsLight(style : ImGuiStyle = null) {}
 
 	// Windows
 	public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
