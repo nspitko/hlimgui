@@ -3,72 +3,6 @@
 
 namespace NodeEditor = ax::NodeEditor;
 
-//------------------------------------------------------------------------------
-// Style structs
-//------------------------------------------------------------------------------
-
-void setNodeEditorStyleFromHL(NodeEditor::Style& imgui_style, vdynamic* style)
-{
-
-	getStructImVec4(style, "NodePadding", imgui_style.NodePadding);
-	getStructFloat(style, "NodeRounding", imgui_style.NodeRounding);
-	getStructFloat(style, "NodeBorderWidth", imgui_style.NodeBorderWidth);
-	getStructFloat(style, "HoveredNodeBorderWidth", imgui_style.HoveredNodeBorderWidth);
-	getStructFloat(style, "SelectedNodeBorderWidth", imgui_style.SelectedNodeBorderWidth);
-	getStructFloat(style, "PinRounding", imgui_style.PinRounding);
-	getStructFloat(style, "PinBorderWidth", imgui_style.PinBorderWidth);
-	getStructFloat(style, "LinkStrength", imgui_style.LinkStrength);
-	getStructImVec2(style, "SourceDirection", imgui_style.SourceDirection);
-	getStructImVec2(style, "TargetDirection", imgui_style.TargetDirection);
-	getStructFloat(style, "ScrollDuration", imgui_style.ScrollDuration);
-	getStructFloat(style, "FlowMarkerDistance", imgui_style.FlowMarkerDistance);
-	getStructFloat(style, "FlowSpeed", imgui_style.FlowSpeed);
-	getStructFloat(style, "FlowDuration", imgui_style.FlowDuration);
-	getStructImVec2(style, "PivotAlignment", imgui_style.PivotAlignment);
-	getStructImVec2(style, "PivotSize", imgui_style.PivotSize);
-	getStructImVec2(style, "PivotScale", imgui_style.PivotScale);
-	getStructFloat(style, "PinCorners", imgui_style.PinCorners);
-	getStructFloat(style, "PinRadius", imgui_style.PinRadius);
-	getStructFloat(style, "PinArrowSize", imgui_style.PinArrowSize);
-	getStructFloat(style, "PinArrowWidth", imgui_style.PinArrowWidth);
-	getStructFloat(style, "GroupRounding", imgui_style.GroupRounding);
-	getStructFloat(style, "GroupBorderWidth", imgui_style.GroupBorderWidth);
-	getStructArrayImVec4(style, "Colors", imgui_style.Colors, NodeEditor::StyleColor_Count);
-
-}
-
-vdynamic* getHLFromNodeEditorStyle(const NodeEditor::Style& imgui_style)
-{
-	vdynamic* style = (vdynamic*)hl_alloc_dynobj();
-
-	setStructImVec4(style, "NodePadding", imgui_style.NodePadding);
-	setStructFloat(style, "NodeRounding", imgui_style.NodeRounding);
-	setStructFloat(style, "NodeBorderWidth", imgui_style.NodeBorderWidth);
-	setStructFloat(style, "HoveredNodeBorderWidth", imgui_style.HoveredNodeBorderWidth);
-	setStructFloat(style, "SelectedNodeBorderWidth", imgui_style.SelectedNodeBorderWidth);
-	setStructFloat(style, "PinRounding", imgui_style.PinRounding);
-	setStructFloat(style, "PinBorderWidth", imgui_style.PinBorderWidth);
-	setStructFloat(style, "LinkStrength", imgui_style.LinkStrength);
-	setStructImVec2(style, "SourceDirection", imgui_style.SourceDirection);
-	setStructImVec2(style, "TargetDirection", imgui_style.TargetDirection);
-	setStructFloat(style, "ScrollDuration", imgui_style.ScrollDuration);
-	setStructFloat(style, "FlowMarkerDistance", imgui_style.FlowMarkerDistance);
-	setStructFloat(style, "FlowSpeed", imgui_style.FlowSpeed);
-	setStructFloat(style, "FlowDuration", imgui_style.FlowDuration);
-	setStructImVec2(style, "PivotAlignment", imgui_style.PivotAlignment);
-	setStructImVec2(style, "PivotSize", imgui_style.PivotSize);
-	setStructImVec2(style, "PivotScale", imgui_style.PivotScale);
-	setStructFloat(style, "PinCorners", imgui_style.PinCorners);
-	setStructFloat(style, "PinRadius", imgui_style.PinRadius);
-	setStructFloat(style, "PinArrowSize", imgui_style.PinArrowSize);
-	setStructFloat(style, "PinArrowWidth", imgui_style.PinArrowWidth);
-	setStructFloat(style, "GroupRounding", imgui_style.GroupRounding);
-	setStructFloat(style, "GroupBorderWidth", imgui_style.GroupBorderWidth);
-	setStructArrayImVec4(style, "Colors", imgui_style.Colors, NodeEditor::StyleColor_Count);
-
-	return style;
-}
-
 
 //------------------------------------------------------------------------------
 // Editor Context management
@@ -96,14 +30,26 @@ HL_PRIM void HL_NAME(nodeeditor_destroy_editor)(NodeEditor::EditorContext* ctx)
 //------------------------------------------------------------------------------
 // Style
 //------------------------------------------------------------------------------
-HL_PRIM vdynamic* HL_NAME(nodeeditor_get_style)()
+HL_PRIM NodeEditor::Style* HL_NAME(nodeeditor_get_style)()
 {
-	return getHLFromNodeEditorStyle( NodeEditor::GetStyle() );
+	return &NodeEditor::GetStyle();
 }
 
-HL_PRIM void HL_NAME(nodeeditor_set_style)( vdynamic *style )
+HL_PRIM void HL_NAME(nodeeditor_set_style)( NodeEditor::Style *hlStyle )
 {
-	setNodeEditorStyleFromHL( NodeEditor::GetStyle(), style );
+	if (hlStyle != nullptr)
+	{
+		NodeEditor::GetStyle() = *hlStyle;
+	}
+}
+
+// Cursed code to call C-side constructor to a style we allocated in HL
+HL_PRIM void HL_NAME(nodeeditor_init_style)(NodeEditor::Style* hlStyle)
+{
+	if (hlStyle != nullptr)
+	{
+		new (hlStyle)NodeEditor::Style();
+	}
 }
 
 HL_PRIM vbyte* HL_NAME(nodeeditor_get_style_color_name)( NodeEditor::StyleColor colorIndex )
@@ -683,8 +629,9 @@ DEFINE_PRIM(_TNODECTX, nodeeditor_get_current_editor, _NO_ARG );
 DEFINE_PRIM(_TNODECTX, nodeeditor_create_editor, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_destroy_editor, _TNODECTX );
 //
-DEFINE_PRIM(_DYN, nodeeditor_get_style, _NO_ARG );
-DEFINE_PRIM(_VOID, nodeeditor_set_style, _DYN );
+DEFINE_PRIM(_STRUCT, nodeeditor_get_style, _NO_ARG );
+DEFINE_PRIM(_VOID, nodeeditor_set_style, _STRUCT );
+DEFINE_PRIM(_VOID, nodeeditor_init_style, _STRUCT );
 DEFINE_PRIM(_VOID, nodeeditor_push_style_var, _I32 _F32 );
 DEFINE_PRIM(_VOID, nodeeditor_push_style_var2, _I32 _DYN );
 DEFINE_PRIM(_VOID, nodeeditor_push_style_var3, _I32 _DYN );
