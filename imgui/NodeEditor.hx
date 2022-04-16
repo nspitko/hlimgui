@@ -65,61 +65,18 @@ typedef EditorContext = hl.Abstract<"imnecontext">;
 
     var Count = 23;
 }
-/*
-// Struct variants. This might work some day.
 
-abstract ArrayStruct<T>(hl.Bytes) {
-}
-
-@:struct
-class ImVec2S
-{
-	public var x: Single;
-	public var y: Single;
-}
-
-@:struct
-class ImVec4S
-{
-	public var x: Single;
-	public var y: Single;
-	public var z: Single;
-	public var w: Single;
-}
-
+/**
+ * Node editor style.
+ *
+ * Unlike imgui style, there's no "set" function, so there is no constructor.
+ */
+@:build(imgui._ImGuiInternalMacro.buildFlatStruct())
+@:hlNative("hlimgui","nodeeditor_")
 @:struct
 class Style
 {
-	public var nodePadding: ImVec4;
-	public var nodeRounding: Single;
-	public var nodeBorderWidth: Single;
-	public var hoveredNodeBorderWidth: Single;
-	public var selectedNodeBorderWidth: Single;
-	public var pinRounding: Single;
-	public var pinBorderWidth: Single;
-	public var linkStrength: Single;
-	public var sourceDirection: ImVec2;
-	public var targetDirection: ImVec2;
-	public var scrollDuration: Single;
-	public var flowMarkerDistance: Single;
-	public var flowSpeed: Single;
-	public var flowDuration: Single;
-	public var pivotAlignment: ImVec2;
-	public var pivotSize: ImVec2;
-	public var pivotScale: ImVec2;
-	public var pinCorners: Single;
-	public var pinRadius: Single;
-	public var pinArrowSize: Single;
-	public var pinArrowWidth: Single;
-	public var groupRounding: Single;
-	public var groupBorderWidth: Single;
-	public var colors: hl.NativeArray<ImVec4>;
-}
-*/
-
-typedef Style =
-{
-	public var NodePadding: ImVec4;
+	@:flatten var NodePadding: ImVec4;
 	public var NodeRounding: Single;
 	public var NodeBorderWidth: Single;
 	public var HoveredNodeBorderWidth: Single;
@@ -127,23 +84,31 @@ typedef Style =
 	public var PinRounding: Single;
 	public var PinBorderWidth: Single;
 	public var LinkStrength: Single;
-	public var SourceDirection: ImVec2;
-	public var TargetDirection: ImVec2;
+	@:flatten var SourceDirection: ImVec2;
+	@:flatten var TargetDirection: ImVec2;
 	public var ScrollDuration: Single;
 	public var FlowMarkerDistance: Single;
 	public var FlowSpeed: Single;
 	public var FlowDuration: Single;
-	public var PivotAlignment: ImVec2;
-	public var PivotSize: ImVec2;
-	public var PivotScale: ImVec2;
+	@:flatten var PivotAlignment: ImVec2;
+	@:flatten var PivotSize: ImVec2;
+	@:flatten var PivotScale: ImVec2;
 	public var PinCorners: Single;
 	public var PinRadius: Single;
 	public var PinArrowSize: Single;
 	public var PinArrowWidth: Single;
 	public var GroupRounding: Single;
 	public var GroupBorderWidth: Single;
-	public var Colors: hl.NativeArray<ExtDynamic<ImVec4>>;
+	@:flattenMap(StyleColor) var NodeColors: ImVec4;
+
+	public function new()
+	{
+		init_style(this);
+	}
+
+	static function init_style(style: Style) {}
 }
+
 
 @:enum abstract PinKind(Int) from Int to Int {
 	var Input : Int = 0;
@@ -165,8 +130,8 @@ class NodeEditor
 	public static function destroyEditor( context: EditorContext ) : Void { }
 
 	// Style
-	public static function getStyle( ) : Dynamic { return null; }
-	public static function setStyle( style: Dynamic ) { }
+	public static function getStyle( ) : Style { return null; }
+	public static function setStyle( style: Style ) { }
 
 	public static function pushStyleVar( varIndex: StyleVar, val: Single ) { }
 	public static function pushStyleVar2( varIndex: StyleVar, vec2: ExtDynamic<ImVec2> ) { }
