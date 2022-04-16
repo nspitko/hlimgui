@@ -14,7 +14,7 @@ class _ImGuiInternalMacro {
     var nfields = [];
     var props = [];
     var local = Context.getLocalType().toComplexType();
-    var prefix = Context.getLocalClass().get().name + "_Flat_";
+    var prefix = Context.getLocalClass().get().name.toLowerCase();
     var module:Array<TypeDefinition> = [];
     
     for (field in fields) {
@@ -52,9 +52,9 @@ class _ImGuiInternalMacro {
                     for (f in inject.fields) nfields.push(f);
                     for (f in inject.props) subFields.push(f);
                   }
-                  var subType: ComplexType = TPath({ pack: ["imgui", "_internal"], name: prefix, sub: subName });
-                  Context.defineType({
-                    pack: ["imgui", "_internal", prefix],
+                  var subType: ComplexType = TPath({ pack: ["imgui", "_internal", prefix], name: "FlatImpl", sub: subName });
+                  module.push({
+                    pack: ["imgui", "_internal", prefix, "FlatImpl"],
                     name: subName,
                     fields: subFields,
                     pos: field.pos,
@@ -82,10 +82,13 @@ class _ImGuiInternalMacro {
           }
         }
       }
-      if (!flattened) nfields.push(field);
+      if (!flattened) {
+        if (!field.access.contains(APublic) && !field.access.contains(AStatic)) field.access.push(APublic);
+        nfields.push(field);
+      }
     }
     var pos = Context.getLocalClass().get().pos;
-    Context.defineModule("imgui._internal." + prefix, module, [
+    Context.defineModule("imgui._internal." + prefix + ".FlatImpl", module, [
       {
         path: [{ pos: pos, name: "imgui" }, { pos: pos, name: "ImGui" }],
         mode: INormal
@@ -180,10 +183,10 @@ class _ImGuiInternalMacro {
       default: throw "assert";
     }
     
-    var wrapperType = ComplexType.TPath({ pack: ["imgui", "_internal"], name: prefix, sub: baseName+postfix });
+    var wrapperType = ComplexType.TPath({ pack: ["imgui", "_internal", prefix], name: "FlatImpl", sub: baseName+postfix });
     
     var type: TypeDefinition = {
-      pack: ["imgui", "_internal", prefix],
+      pack: ["imgui", "_internal", prefix, "FlatImpl"],
       fields: localFields,
       kind: TDAbstract(cl.toComplexType(), [cl.toComplexType()]),
       pos: base.pos,
