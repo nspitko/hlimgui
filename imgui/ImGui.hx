@@ -241,16 +241,20 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
 }
 
 @:enum abstract ImGuiHoveredFlags(Int) from Int to Int {
-	var None : Int = 0;
-	var ChildWindows : Int = 1;
-	var RootWindow : Int = 2;
-	var AnyWindow : Int = 4;
-	var AllowWhenBlockedByPopup : Int = 8;
-	var AllowWhenBlockedByActiveItem : Int = 32;
-	var AllowWhenOverlapped : Int = 64;
-	var AllowWhenDisabled : Int = 128;
-	var RectOnly : Int = 104;
-	var RootAndChildWindows : Int = 3;
+	var None                          = 0;        // Return true if directly over the item/window; not obstructed by another window; not obstructed by an active popup or modal blocking inputs under them.
+	var ChildWindows                  = 1 << 0;   // IsWindowHovered() only: Return true if any children of the window is hovered
+	var RootWindow                    = 1 << 1;   // IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)
+	var AnyWindow                     = 1 << 2;   // IsWindowHovered() only: Return true if any window is hovered
+	var NoPopupHierarchy              = 1 << 3;   // IsWindowHovered() only: Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)
+	var DockHierarchy                 = 1 << 4;   // IsWindowHovered() only: Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)
+	var AllowWhenBlockedByPopup       = 1 << 5;   // Return true even if a popup window is normally blocking access to this item/window
+	//var AllowWhenBlockedByModal     = 1 << 6;   // Return true even if a modal popup window is normally blocking access to this item/window. FIXME-TODO: Unavailable yet.
+	var AllowWhenBlockedByActiveItem  = 1 << 7;   // Return true even if an active item is blocking access to this item/window. Useful for Drag and Drop patterns.
+	var AllowWhenOverlapped           = 1 << 8;   // IsItemHovered() only: Return true even if the position is obstructed or overlapped by another window
+	var AllowWhenDisabled             = 1 << 9;   // IsItemHovered() only: Return true even if the item is disabled
+	var NoNavOverride                 = 1 << 10;  // Disable using gamepad/keyboard navigation state when active; always query mouse.
+	var RectOnly                      = AllowWhenBlockedByPopup | AllowWhenBlockedByActiveItem | AllowWhenOverlapped;
+	var RootAndChildWindows           = RootWindow | ChildWindows;
 }
 
 @:enum abstract ImGuiFocusedFlags(Int) from Int to Int {
@@ -300,17 +304,26 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
 }
 
 @:enum abstract ImGuiConfigFlags(Int) from Int to Int {
-	var None : Int = 0;
-	var NavEnableKeyboard : Int = 1;
-	var NavEnableGamepad : Int = 2;
-	var NavEnableSetMousePos : Int = 4;
-	var NavNoCaptureKeyboard : Int = 8;
-	var NoMouse : Int = 16;
-	var NoMouseCursorChange : Int = 32;
-	var DockingEnable : Int = 64;
-	var ViewportsEnable : Int = 1024;
-	var IsSRGB : Int = 1048576;
-	var IsTouchScreen : Int = 2097152;
+    var None                   = 0;
+    var NavEnableKeyboard      = 1 << 0;   // Master keyboard navigation enable flag. NewFrame() will automatically fill io.NavInputs[] based on io.AddKeyEvent() calls
+    var NavEnableGamepad       = 1 << 1;   // Master gamepad navigation enable flag. This is mostly to instruct your imgui backend to fill io.NavInputs[]. Backend also needs to set ImGuiBackendFlags_HasGamepad.
+    var NavEnableSetMousePos   = 1 << 2;   // Instruct navigation to move the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is awkward. Will update io.MousePos and set io.WantSetMousePos=true. If enabled you MUST honor io.WantSetMousePos requests in your backend, otherwise ImGui will react as if the mouse is jumping around back and forth.
+    var NavNoCaptureKeyboard   = 1 << 3;   // Instruct navigation to not set the io.WantCaptureKeyboard flag when io.NavActive is set.
+    var NoMouse                = 1 << 4;   // Instruct imgui to clear mouse position/buttons in NewFrame(). This allows ignoring the mouse information set by the backend.
+    var NoMouseCursorChange    = 1 << 5;   // Instruct backend to not alter mouse cursor shape and visibility. Use if the backend cursor changes are interfering with yours and you don't want to use SetMouseCursor() to change mouse cursor. You may want to honor requests from imgui by reading GetMouseCursor() yourself instead.
+
+    // [BETA] Docking
+    var DockingEnable          = 1 << 6;   // Docking enable flags.
+
+    // [BETA] Viewports
+    // When using viewports it is recommended that your default value for ImGuiCol_WindowBg is opaque (Alpha=1.0) so transition to a viewport won't be noticeable.
+    var ViewportsEnable        = 1 << 10;  // Viewport enable flags (require both ImGuiBackendFlags_PlatformHasViewports + ImGuiBackendFlags_RendererHasViewports set by the respective backends)
+    var DpiEnableScaleViewports= 1 << 14;  // [BETA: Don't use] FIXME-DPI: Reposition and resize imgui windows when the DpiScale of a viewport changed (mostly useful for the main viewport hosting other window). Note that resizing the main window itself is up to your application.
+    var DpiEnableScaleFonts    = 1 << 15;  // [BETA: Don't use] FIXME-DPI: Request bitmap-scaled fonts to match DpiScale. This is a very low-quality workaround. The correct way to handle DPI is _currently_ to replace the atlas and/or fonts in the Platform_OnChangedViewport callback, but this is all early work in progress.
+
+    // User storage (to allow your backend/engine to communicate to code that may be shared between multiple projects. Those flags are not used by core Dear ImGui)
+    var IsSRGB                 = 1 << 20;  // Application is SRGB-aware.
+    var IsTouchScreen          = 1 << 21;   // Application is using a touch screen instead of a mouse.
 }
 
 @:enum abstract ImGuiCond(Int) from Int to Int {
@@ -656,12 +669,12 @@ typedef ImVec4 = {
 	var CurveTessellationTol: Single;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
 	var CircleTessellationMaxError: Single; // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
 	@:flattenMap(ImGuiCol) var Colors : ImVec4;
-	
+
 	public function new() {
 		// Match allocation via C: Set default values andn use default colors.
 		init_style(this);
 	}
-	
+
 	static function init_style(style: ImGuiStyle) {}
 }
 
@@ -695,6 +708,32 @@ private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
 private typedef ImContextPtr = hl.Abstract<"imcontext">;
 private typedef ImDragDropPayloadPtr = hl.Abstract<"imdnd">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
+
+// Callbacks
+typedef ImGuiInputTextCallbackDataFunc = ( ImGuiInputTextCallbackData ) -> Void;
+
+@:struct
+class ImGuiInputTextCallbackData
+{
+
+	public var eventFlag: ImGuiInputTextFlags;	// One ImGuiInputTextFlags_Callback*    // Read-only
+	public var flags: ImGuiInputTextFlags;		// What user passed to InputText()      // Read-only
+	public var unused: Int;						// Used internally for callback
+	public var eventChar: Int;					// Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;
+	public var eventKey: Int;					// Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]
+	public var buf: hl.Bytes; 					// Text buffer                          // Read-write   // [Resize] Can replace pointer / [Completion,History,Always] Only write to pointed data, don't replace the actual pointer!
+	public var bufTextLen: Int;					// Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1
+	public var bufSize: Int;					// Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]
+	public var bufDirty: Bool;					//                                      // Read-write   // [Completion,History,Always]
+	public var cursorPos: Int;					//                                      // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)
+	public var selectionStart: Int;				//                                      // Read-write   // [Completion,History,Always]
+	public var selectionEnd: Int;
+
+	public function selectAll()			{ selectionStart = 0; selectionEnd = bufTextLen; }
+	public function clearSelection() 	{ selectionStart = selectionEnd = bufTextLen; }
+	public function hasSelection() 		{ return selectionStart != selectionEnd; }
+}
+
 
 @:hlNative("hlimgui")
 abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
@@ -1096,9 +1135,9 @@ class ImGui
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<Dynamic>, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
 	// Widgets: Input with Keyboard
-	public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-	public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-	public static function inputTextWithHint(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextWithHint(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
