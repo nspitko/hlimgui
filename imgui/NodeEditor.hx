@@ -99,7 +99,7 @@ class Style
 	public var PinArrowWidth: Single;
 	public var GroupRounding: Single;
 	public var GroupBorderWidth: Single;
-	@:flattenMap(StyleColor) var NodeColors: ImVec4;
+	@:flattenMap(StyleColor) var Colors: ImVec4;
 
 	public function new()
 	{
