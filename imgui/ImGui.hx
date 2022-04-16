@@ -675,7 +675,10 @@ typedef ImVec4 = {
 		init_style(this);
 	}
 
+	public function scaleAllSizes( scaleFactor: Single ) { style_scale_all_sizes(this, scaleFactor); }
+
 	static function init_style(style: ImGuiStyle) {}
+	static function style_scale_all_sizes(style: ImGuiStyle, scaleFactor: Single): Void {}
 }
 
 /**
