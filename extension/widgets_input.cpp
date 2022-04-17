@@ -1,35 +1,104 @@
 #include "utils.h"
 
-HL_PRIM hl_type hlt_struct = { HSTRUCT };
-
-
 int TextInputCallback(ImGuiInputTextCallbackData* data)
 {
     vclosure* vcallback = (vclosure*)data->UserData;
     if( vcallback == nullptr ) return 0;
 
-    if (vcallback->hasValue) {
-        ((void(*)(vdynamic*,ImGuiInputTextCallbackData*))vcallback->fun)((vdynamic*)vcallback->value,data);
-    } else {
-        ((void(*)(ImGuiInputTextCallbackData*))vcallback->fun)(data);
+    if (vcallback->hasValue)
+    {
+        return ((int(*)(vdynamic*,ImGuiInputTextCallbackData*))vcallback->fun)((vdynamic*)vcallback->value,data);
     }
-
-    return 0;
+    else
+    {
+        return ((int(*)(ImGuiInputTextCallbackData*))vcallback->fun)(data);
+    }
 }
 
-HL_PRIM bool HL_NAME(input_text)(vstring* label, vbyte* buf, int buf_size, ImGuiInputTextFlags* flags, vclosure* callback)
+#define BUFFER_RESIZE_STEP 256
+static char* textBuffer = NULL;
+static int textBufferSize = 0;
+
+void stringToBuffer(vstring* str)
+{
+    int len = unicodeSizeInUTF8(str) + 1;
+    if (len >= textBufferSize)
+    {
+        textBufferSize = (len / BUFFER_RESIZE_STEP) * BUFFER_RESIZE_STEP + BUFFER_RESIZE_STEP;
+        textBuffer = (char*)realloc(textBuffer, textBufferSize);
+    }
+    unicodeToUTF8Buffer(str, textBuffer);
+    textBuffer[len-1] = 0;
+}
+
+void bufferToString(vstring* str)
+{
+    int ulen = hl_utf8_length((vbyte*)textBuffer, 0);
+    uchar *s = (uchar*)hl_gc_alloc_noptr((ulen + 1)*sizeof(uchar));
+    hl_from_utf8(s,ulen,(char*)(textBuffer));
+    str->bytes = s;
+    str->length = ulen;
+}
+
+int TextInputCallbackWithResize(ImGuiInputTextCallbackData* data)
+{
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+    {
+        // Always resize at minimum of BUFFER_RESIZE_STEP and if required data->BufferSize larger than one step - increment buffer size in steps.
+        textBufferSize = (data->BufSize / BUFFER_RESIZE_STEP) * BUFFER_RESIZE_STEP + BUFFER_RESIZE_STEP;
+        textBuffer = (char*)realloc(textBuffer, textBufferSize);
+        data->Buf = textBuffer;
+    }
+    return TextInputCallback(data);
+}
+
+HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring* string, ImGuiInputTextFlags* flags, vclosure* callback)
+{
+    stringToBuffer(string);
+    bool result = ImGui::InputText(convertString(label), textBuffer, textBufferSize, convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback);
+    if (result || ImGui::IsItemEdited()) bufferToString(string); // Avoid unnecessary reallocations.
+    return result;
+}
+
+HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring* string, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
+{
+    stringToBuffer(string);
+    bool result = ImGui::InputTextMultiline(convertString(label), textBuffer, textBufferSize, getImVec2(size), convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback );
+    if (result || ImGui::IsItemEdited()) bufferToString(string);
+    return result;
+}
+
+HL_PRIM bool HL_NAME(input_text_with_hint)(vstring* label, vstring* hint, vstring* string, ImGuiInputTextFlags* flags, vclosure* callback)
+{
+    stringToBuffer(string);
+    bool result = ImGui::InputTextWithHint(convertString(label), convertString(hint), textBuffer, textBufferSize, convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback );
+    if (result || ImGui::IsItemEdited()) bufferToString(string);
+    return result;
+}
+
+HL_PRIM bool HL_NAME(input_text_buf)(vstring* label, vbyte* buf, int buf_size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     return ImGui::InputText(convertString(label), (char*)buf, buf_size, convertPtr(flags, 0), TextInputCallback, callback);
 }
 
-HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vbyte* buf, int buf_size, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text_multiline_buf)(vstring* label, vbyte* buf, int buf_size, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     return ImGui::InputTextMultiline(convertString(label), (char*)buf, buf_size, getImVec2(size), convertPtr(flags, 0), TextInputCallback, callback );
 }
 
-HL_PRIM bool HL_NAME(input_text_with_hint)(vstring* label, vstring* hint, vbyte* buf, int buf_size, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text_with_hint_buf)(vstring* label, vstring* hint, vbyte* buf, int buf_size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     return ImGui::InputTextWithHint(convertString(label), convertString(hint), (char*)buf, buf_size, convertPtr(flags, 0), TextInputCallback, callback );
+}
+
+HL_PRIM void HL_NAME(input_text_callback_delete_chars)(ImGuiInputTextCallbackData* data, int pos, int bytes_count)
+{
+    data->DeleteChars(pos, bytes_count);
+}
+
+HL_PRIM void HL_NAME(input_text_callback_insert_chars)(ImGuiInputTextCallbackData* data, int pos, vstring* text)
+{
+    data->InsertChars(pos, convertString(text));
 }
 
 HL_PRIM bool HL_NAME(input_float)(vstring* label, float* v, float* step, float* step_fast, vstring* format, ImGuiInputTextFlags* flags)
@@ -67,10 +136,18 @@ HL_PRIM bool HL_NAME(input_scalar_n)(vstring* label, int type, varray* v, vdynam
 }
 //const char* label, ImGuiDataType data_type, void* p_data, int components, const void* p_step, const void* p_step_fast, const char* format, ImGuiInputTextFlags flags)
 
-DEFINE_PRIM(_BOOL, input_text, _STRING _BYTES _I32 _REF(_I32) _FUN(_VOID, _STRUCT));
-DEFINE_PRIM(_BOOL, input_text_multiline, _STRING _BYTES _I32 _DYN _REF(_I32) _FUN(_VOID, _STRUCT));
-DEFINE_PRIM(_BOOL, input_text_with_hint, _STRING _STRING _BYTES _I32 _REF(_I32) _FUN(_VOID, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text, _STRING _STRING _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_multiline, _STRING _STRING _DYN _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_with_hint, _STRING _STRING _STRING _REF(_I32) _FUN(_I32, _STRUCT));
+
+DEFINE_PRIM(_BOOL, input_text_buf, _STRING _BYTES _I32 _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_multiline_buf, _STRING _BYTES _I32 _DYN _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_with_hint_buf, _STRING _STRING _BYTES _I32 _REF(_I32) _FUN(_I32, _STRUCT));
+
 DEFINE_PRIM(_BOOL, input_float, _STRING _REF(_F32) _REF(_F32) _REF(_F32) _STRING _REF(_I32));
 DEFINE_PRIM(_BOOL, input_int, _STRING _REF(_I32) _REF(_I32) _REF(_I32) _REF(_I32));
 DEFINE_PRIM(_BOOL, input_double, _STRING _REF(_F64) _REF(_F64) _REF(_F64) _STRING _REF(_I32));
 DEFINE_PRIM(_BOOL, input_scalar_n, _STRING _I32 _ARR _DYN _DYN _STRING _I32);
+
+DEFINE_PRIM(_VOID, input_text_callback_delete_chars, _STRUCT _I32 _I32);
+DEFINE_PRIM(_VOID, input_text_callback_insert_chars, _STRUCT _STRING);

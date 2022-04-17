@@ -713,28 +713,96 @@ private typedef ImDragDropPayloadPtr = hl.Abstract<"imdnd">;
 private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
 
 // Callbacks
-typedef ImGuiInputTextCallbackDataFunc = ( ImGuiInputTextCallbackData ) -> Void;
 
-@:struct
+/**
+	@return `0` for success of the callback.
+**/
+typedef ImGuiInputTextCallbackDataFunc = ( ImGuiInputTextCallbackData ) -> Int;
+
+@:struct @:hlNative("hlimgui")
 class ImGuiInputTextCallbackData
 {
 
-	public var eventFlag: ImGuiInputTextFlags;	// One ImGuiInputTextFlags_Callback*    // Read-only
-	public var flags: ImGuiInputTextFlags;		// What user passed to InputText()      // Read-only
-	public var unused: Int;						// Used internally for callback
-	public var eventChar: Int;					// Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;
-	public var eventKey: Int;					// Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]
-	public var buf: hl.Bytes; 					// Text buffer                          // Read-write   // [Resize] Can replace pointer / [Completion,History,Always] Only write to pointed data, don't replace the actual pointer!
-	public var bufTextLen: Int;					// Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1
-	public var bufSize: Int;					// Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]
-	public var bufDirty: Bool;					//                                      // Read-write   // [Completion,History,Always]
-	public var cursorPos: Int;					//                                      // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)
-	public var selectionStart: Int;				//                                      // Read-write   // [Completion,History,Always]
-	public var selectionEnd: Int;
-
+	public var eventFlag: ImGuiInputTextFlags; // One ImGuiInputTextFlags_Callback*    // Read-only
+	public var flags: ImGuiInputTextFlags;     // What user passed to InputText()      // Read-only
+	public var unused: Int;                    // Used internally for callback
+	
+	public var eventChar: hl.UI16;             // Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;
+	public var eventKey: Int;                  // Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]
+	public var buf: hl.Bytes;                  // Text buffer                          // Read-write   // [Resize] Can replace pointer / [Completion,History,Always] Only write to pointed data, don't replace the actual pointer!
+	public var bufTextLen: Int;                // Text length (in bytes)               // Read-write   // [Resize,Completion,History,Always] Exclude zero-terminator storage. In C land: == strlen(some_text), in C++ land: string.length()
+	public var bufSize: Int;                   // Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1
+	public var bufDirty: Bool;                 // Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]
+	public var cursorPos: Int;                 //                                      // Read-write   // [Completion,History,Always]
+	public var selectionStart: Int;            //                                      // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)
+	public var selectionEnd: Int;              //                                      // Read-write   // [Completion,History,Always]
+	
+	/** Helper method to calculate byte position of a character at position `pos` in Unicode string.**/
+	public function utfCharPos(pos: Int, startAt: Int = 0): Int
+	{
+		var i = startAt;
+		var p = 0;
+		while (++p < pos)
+		{
+			var c = buf[i];
+			if (c < 0x80)
+			{
+				if (c == 0) return i;
+				i++;
+			}
+			else if (c < 0xC0) return i;
+			else if (c < 0xE0)
+			{
+				if ((buf[i+1]&0x80) == 0) return i;
+				i += 2;
+			}
+			else if (c < 0xF0)
+			{
+				if ((buf[i+1]&buf[i+2]&0x80) == 0) return i;
+				i += 3;
+			}
+			else if (c < 0xF8)
+			{
+				if ((buf[i+1]&buf[i+2]&buf[i+3]&0x80) == 0) return i;
+				p++;
+				i += 4;
+			} else return i;
+		}
+		return i;
+	}
+	/**
+		Helper method to delete N UTF-8 characters instead of N bytes
+		@param pos The character position inside the string. (Not byte position)
+		@param charCount The amount of UTF-8 character to delete. Pass -1 to delete everything past `pos`.
+	**/
+	public function deleteCharsUnicode(pos: Int, charCount: Int)
+	{
+		pos = utfCharPos(pos);
+		if (charCount == -1)
+		{
+			deleteChars(pos, bufTextLen - pos);
+			return;
+		}
+		deleteChars(pos, utfCharPos(charCount, pos));
+	}
+	
+	/**
+		Helper method to insert `text` at the UTF-8 character position instead of byte position.
+	**/
+	public function insertCharsUnicode(pos: Int, text: String)
+	{
+		insertChars(utfCharPos(pos), text);
+	}
+	/** Deletes `bytesCount` bytes starting at `pos` position from the text buffer. **/
+	public inline function deleteChars(pos: Int, bytesCount: Int) input_text_callback_delete_chars(this, pos, bytesCount);
+	/** Inserts `text` at `pos` byte position in the text buffer. **/
+	public inline function insertChars(pos: Int, text: String) input_text_callback_insert_chars(this, pos, text);
 	public function selectAll()			{ selectionStart = 0; selectionEnd = bufTextLen; }
 	public function clearSelection() 	{ selectionStart = selectionEnd = bufTextLen; }
 	public function hasSelection() 		{ return selectionStart != selectionEnd; }
+	
+	static function input_text_callback_delete_chars(data:ImGuiInputTextCallbackData, pos: Int, bytes_count: Int) {}
+	static function input_text_callback_insert_chars(data:ImGuiInputTextCallbackData, pos: Int, text: String) {}
 }
 
 
@@ -1138,9 +1206,14 @@ class ImGui
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<Dynamic>, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
 	// Widgets: Input with Keyboard
-	public static function inputText(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultiline(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
-	public static function inputTextWithHint(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputText(label : String, value: String, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputTextMultiline(label : String, value: String, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextWithHint(label : String, hint : String, value: String, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	
+	public static function inputTextBuf(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextWithHintBuf(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	
 	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}

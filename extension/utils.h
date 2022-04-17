@@ -26,6 +26,8 @@
     DEFINE_PRIM(_VOID,set_##name,args)
 
 void convertColor(ImU32 color, float& r, float& g, float& b, float& a);
+int unicodeSizeInUTF8(vstring* hl_string);
+void unicodeToUTF8Buffer(vstring* hl_string, char* out);
 std::string unicodeToUTF8(vstring* hl_string);
 
 void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config);
