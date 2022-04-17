@@ -150,4 +150,4 @@ DEFINE_PRIM(_BOOL, input_double, _STRING _REF(_F64) _REF(_F64) _REF(_F64) _STRIN
 DEFINE_PRIM(_BOOL, input_scalar_n, _STRING _I32 _ARR _DYN _DYN _STRING _I32);
 
 DEFINE_PRIM(_VOID, input_text_callback_delete_chars, _STRUCT _I32 _I32);
-DEFINE_PRIM(_VOID, input_text_callback_insert_chars, _STRUCT _STRING);
+DEFINE_PRIM(_VOID, input_text_callback_insert_chars, _STRUCT _I32 _STRING);
