@@ -19,25 +19,28 @@ int TextInputCallback(ImGuiInputTextCallbackData* data)
 static char* textBuffer = NULL;
 static int textBufferSize = 0;
 
-void stringToBuffer(vstring* str)
+void stringToBuffer(vstring** str)
 {
-    int len = unicodeSizeInUTF8(str) + 1;
+    int len = unicodeSizeInUTF8(*str) + 1;
     if (len >= textBufferSize)
     {
         textBufferSize = (len / BUFFER_RESIZE_STEP) * BUFFER_RESIZE_STEP + BUFFER_RESIZE_STEP;
         textBuffer = (char*)realloc(textBuffer, textBufferSize);
     }
-    unicodeToUTF8Buffer(str, textBuffer);
+    unicodeToUTF8Buffer(*str, textBuffer);
     textBuffer[len-1] = 0;
 }
 
-void bufferToString(vstring* str)
+void bufferToString(vstring** str)
 {
     int ulen = hl_utf8_length((vbyte*)textBuffer, 0);
     uchar *s = (uchar*)hl_gc_alloc_noptr((ulen + 1)*sizeof(uchar));
     hl_from_utf8(s,ulen,(char*)(textBuffer));
-    str->bytes = s;
-    str->length = ulen;
+    // Due to instance reuse we can't just edit the vstring* in-place and forced to reallocate it.
+    vstring* ret = (vstring*)hl_alloc_obj((*str)->t);
+    ret->bytes = s;
+    ret->length = ulen;
+    *str = ret;
 }
 
 int TextInputCallbackWithResize(ImGuiInputTextCallbackData* data)
@@ -52,7 +55,7 @@ int TextInputCallbackWithResize(ImGuiInputTextCallbackData* data)
     return TextInputCallback(data);
 }
 
-HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring* string, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring** string, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     stringToBuffer(string);
     bool result = ImGui::InputText(convertString(label), textBuffer, textBufferSize, convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback);
@@ -60,7 +63,7 @@ HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring* string, ImGuiInputText
     return result;
 }
 
-HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring* string, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring** string, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     stringToBuffer(string);
     bool result = ImGui::InputTextMultiline(convertString(label), textBuffer, textBufferSize, getImVec2(size), convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback );
@@ -68,7 +71,7 @@ HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring* string, vdyn
     return result;
 }
 
-HL_PRIM bool HL_NAME(input_text_with_hint)(vstring* label, vstring* hint, vstring* string, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text_with_hint)(vstring* label, vstring* hint, vstring** string, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     stringToBuffer(string);
     bool result = ImGui::InputTextWithHint(convertString(label), convertString(hint), textBuffer, textBufferSize, convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback );
@@ -136,9 +139,9 @@ HL_PRIM bool HL_NAME(input_scalar_n)(vstring* label, int type, varray* v, vdynam
 }
 //const char* label, ImGuiDataType data_type, void* p_data, int components, const void* p_step, const void* p_step_fast, const char* format, ImGuiInputTextFlags flags)
 
-DEFINE_PRIM(_BOOL, input_text, _STRING _STRING _REF(_I32) _FUN(_I32, _STRUCT));
-DEFINE_PRIM(_BOOL, input_text_multiline, _STRING _STRING _DYN _REF(_I32) _FUN(_I32, _STRUCT));
-DEFINE_PRIM(_BOOL, input_text_with_hint, _STRING _STRING _STRING _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text, _STRING _REF(_STRING) _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_multiline, _STRING _REF(_STRING) _DYN _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_with_hint, _STRING _STRING _REF(_STRING) _REF(_I32) _FUN(_I32, _STRUCT));
 
 DEFINE_PRIM(_BOOL, input_text_buf, _STRING _BYTES _I32 _REF(_I32) _FUN(_I32, _STRUCT));
 DEFINE_PRIM(_BOOL, input_text_multiline_buf, _STRING _BYTES _I32 _DYN _REF(_I32) _FUN(_I32, _STRUCT));

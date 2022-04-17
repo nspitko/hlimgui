@@ -1206,9 +1206,9 @@ class ImGui
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<Dynamic>, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
 	// Widgets: Input with Keyboard
-	public static function inputText(label : String, value: String, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultiline(label : String, value: String, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
-	public static function inputTextWithHint(label : String, hint : String, value: String, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputText(label : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputTextMultiline(label : String, value: hl.Ref<String>, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextWithHint(label : String, hint : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 	
 	public static function inputTextBuf(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
