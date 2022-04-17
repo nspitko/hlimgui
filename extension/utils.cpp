@@ -8,6 +8,59 @@ void convertColor(ImU32 color, float& r, float& g, float& b, float& a)
 	a = ((color >> IM_COL32_A_SHIFT) & 0xFF) / 255.0f;
 }
 
+int unicodeSizeInUTF8(vstring* hl_string)
+{
+	uchar *c = hl_string->bytes;
+	uchar *end = c + hl_string->length;
+	int utf8bytes = 0;
+	while(c != end)
+	{
+		auto v = *c;
+		if(v < 0x80) utf8bytes++;
+		else if(v < 0x800) utf8bytes += 2;
+		else if(v >= 0xD800 && v <= 0xDFFF)
+		{
+			utf8bytes += 4;
+			c++;
+		}
+		else utf8bytes += 3;
+		c++;
+	}
+	return utf8bytes;
+}
+// UNSAFE API - no size checks are done! Use `unicodeSizeInUTF8` to estimate the output buffer size and alloc accordingly!
+void unicodeToUTF8Buffer(vstring* hl_string, char* out)
+{
+	uchar *c = hl_string->bytes;
+	uchar *end = c + hl_string->length;
+	int p = 0;
+	while (c != end)
+	{
+		unsigned int v = (unsigned int)*c;
+		if (v <= 0x7F) out[p++] = (char)v;
+		else if (v <= 0x7FF)
+		{
+			out[p++] = (char)(0xC0 | (v >> 6));
+			out[p++] = (char)(0x80 | (v & 0x3F));
+		}
+		else if (v >= 0xD800 && v <= 0xDFFF)
+		{
+			int k = ((((int)v - 0xD800) << 10) | (((int)*++c) - 0xDC00)) + 0x10000;
+			out[p++] = (char)(0xF0 | (k >> 18));
+			out[p++] = (char)(0x80 | ((k >> 12) & 0x3F));
+			out[p++] = (char)(0x80 | ((k >> 6) & 0x3F));
+			out[p++] = (char)(0x80 | (k & 0x3F));
+		}
+		else
+		{
+			out[p++] = (char)(0xE0 | (v >> 12));
+			out[p++] = (char)(0x80 | ((v >> 6) & 0x3F));
+			out[p++] = (char)(0x80 | (v & 0x3F));
+		}
+		c++;
+	}
+}
+
 std::string unicodeToUTF8(vstring* hl_string)
 {
 	std::string result;
