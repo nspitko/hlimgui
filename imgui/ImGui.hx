@@ -725,8 +725,8 @@ class ImGuiInputTextCallbackData
 
 	public var eventFlag: ImGuiInputTextFlags; // One ImGuiInputTextFlags_Callback*    // Read-only
 	public var flags: ImGuiInputTextFlags;     // What user passed to InputText()      // Read-only
-	public var unused: Int;                    // Used internally for callback
-	
+	var unused: hl.Bytes;	                   // Internally used pointer to the callback func.
+
 	public var eventChar: hl.UI16;             // Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;
 	public var eventKey: Int;                  // Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]
 	public var buf: hl.Bytes;                  // Text buffer                          // Read-write   // [Resize] Can replace pointer / [Completion,History,Always] Only write to pointed data, don't replace the actual pointer!
@@ -736,7 +736,7 @@ class ImGuiInputTextCallbackData
 	public var cursorPos: Int;                 //                                      // Read-write   // [Completion,History,Always]
 	public var selectionStart: Int;            //                                      // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)
 	public var selectionEnd: Int;              //                                      // Read-write   // [Completion,History,Always]
-	
+
 	/** Helper method to calculate byte position of a character at position `pos` in Unicode string.**/
 	public function utfCharPos(pos: Int, startAt: Int = 0): Int
 	{
@@ -785,7 +785,7 @@ class ImGuiInputTextCallbackData
 		}
 		deleteChars(pos, utfCharPos(charCount, pos));
 	}
-	
+
 	/**
 		Helper method to insert `text` at the UTF-8 character position instead of byte position.
 	**/
@@ -800,7 +800,7 @@ class ImGuiInputTextCallbackData
 	public function selectAll()			{ selectionStart = 0; selectionEnd = bufTextLen; }
 	public function clearSelection() 	{ selectionStart = selectionEnd = bufTextLen; }
 	public function hasSelection() 		{ return selectionStart != selectionEnd; }
-	
+
 	static function input_text_callback_delete_chars(data:ImGuiInputTextCallbackData, pos: Int, bytes_count: Int) {}
 	static function input_text_callback_insert_chars(data:ImGuiInputTextCallbackData, pos: Int, text: String) {}
 }
@@ -1209,11 +1209,11 @@ class ImGui
 	public static function inputText(label : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 	public static function inputTextMultiline(label : String, value: hl.Ref<String>, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHint(label : String, hint : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	
+
 	public static function inputTextBuf(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHintBuf(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	
+
 	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
