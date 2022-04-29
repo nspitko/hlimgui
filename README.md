@@ -22,6 +22,8 @@ To add this library to your project, you need to include these files:
 - The previously compiled `hlimgui.hdll` file.
 - `imgui/ImGuiDrawable.hx`: this class derives from the standard Heaps `Drawable` class and contains/displays all ImGui widgets.
 - `imgui/ImGui.hx`: interface to the native extension.
+- `imgui/ImGuiMacro.hx`: Useful helper macros for wrapping `hl.Ref`.
+- `imgui/NodeEditor.hx`: Wrapper for the imgui-node-editor extension.
 
 See `Main.hx` to see how to implement this library.
 
@@ -30,7 +32,21 @@ Most of the ImGui functionalities are supported and binded. Look at  [https://gi
 
 Here is a list of unsupported features and changes:
 
-- Custom fonts aren't implemented.
+- Custom font API is non-standard at the moment.
+```haxe
+var font = ImGui.addFontFromFileTtf("path/to/font.ttf", 14);
+ImGui.buildFont();
+var fontInfo:{buffer:hl.Bytes, width:Int, height:Int} = ImGui.getTexDataAsRgba32();
+
+// create font texture
+var textureSize = fontInfo.width * fontInfo.height * 4;
+var fontTexture = Texture.fromPixels(new hxd.Pixels(
+	fontInfo.width,
+	fontInfo.height,
+	fontInfo.buffer.toBytes(textureSize),
+	hxd.PixelFormat.RGBA));
+ImGui.setFontTexture(fontTexture);
+```
 - As Haxe doesn't support function overloading, so if two original functions have the same name, the second one in Haxe has a suffix `2` to disguish it. For example:
 ```haxe
 public static function treeNode(label : String) : Bool {return false;}
@@ -38,22 +54,15 @@ public static function treeNode2(str_id : String, label : String) : Bool {return
 ```
 - ImGui has several functions which take a variable number of parameters in order to format strings. This feature isn't supported in Haxe, so all string formatting must be done in Haxe before passing it to ImGui.
 
-- `InputText` function takes a byte buffer as parameter. This needs to be converted to a string like this example:
-```haxe
-var input_text_buffer = new hl.Bytes(128);
-if (ImGui.inputText('Text', input_text_buffer, 128)) {
-    var st = @:privateAccess String.fromUTF8(input_text_buffer);
-    trace(st);
-}
-```
 - The function `setIniFilename` doesn't exist in ImGui, it has been added to modify the filename of the default ini file saved by ImGui (pass null to turn off this feature).
 
-- Due to type conversions between Haxe and ImGui, editing the object returned from `getStyle` does not immediately update the default styles. The `setStyle` method has been added to provide that functionality. For example:
+- Input functions often take an `hl.Ref`. We have provided some simple macros to wrap these functions if you don't wish to create the ref manually each use.
 ```haxe
-var style:ImGuiStyle = ImGui.getStyle();
-style.WindowBorderSize = 0;
-style.WindowRounding = 0;
-ImGui.setStyle(style);
+import imgui.ImGuiMacro.wref;
+
+var myString = "Hello!"
+wref( ImGui.inputText( 'Text Input', _), myString );
+trace(myString);
 ```
 
 ## Bugs
