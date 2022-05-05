@@ -1,5 +1,7 @@
 package imgui;
 
+import imgui.types.ImFontAtlas;
+import imgui.types.Pointers;
 import haxe.io.Bytes;
 
 @:forward
@@ -724,31 +726,8 @@ typedef ImVec4 = {
 	static function style_scale_all_sizes(style: ImGuiStyle, scaleFactor: Single): Void {}
 }
 
-/**
- * ImFontConfig
- * Currently we don't support passing this struct back into haxe on creation; so it's current definition
- * and use cases are limited to configuring a font you're about to create.
- *
- * As a technical note, glypgRanges will currently leak memory, so avoid paths which use this feature per frame.
- */
- @:structInit
-class ImFontConfig
-{
-	var OversampleH: Int = 3;						// Rasterize at higher quality for sub-pixel positioning. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.
-	var OversampleV: Int = 1;						// Rasterize at higher quality for sub-pixel positioning. We don't use sub-pixel positions on the Y axis.// Rasterize at higher quality for sub-pixel positioning. We don't use sub-pixel positions on the Y axis.
-	var PixelSnapH: Bool = false;					// Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.
-	var GlyphExtraSpacing: ImVec2 = {x: 0, y:0};	// Extra spacing (in pixels) between glyphs. Only X axis is supported for now.
-	var GlyphOffset: ImVec2 =  {x: 0, y:0};			// Offset all glyphs from this font input.
-	var GlyphRanges: hl.NativeArray<hl.UI16> = null;// Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE, currently this will just leak.
-	var GlyphMinAdvanceX: Single = 0;				// Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font
-	var GlyphMaxAdvanceX: Single = 3.402823E+38;	// FLT_MAX  // Maximum AdvanceX for glyphs
-	var MergeMode: Bool = false;					// Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.
-	var RasterizerFlags: Int = 0;					// Settings for custom font rasterizer (e.g. ImGuiFreeType). Leave as zero if you aren't using one.
-	var RasterizerMultiply: Single = 1;				// Brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable.
-	var EllipsisChar: Int = -1;						// Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.
-}
+typedef ImFontConfig = imgui.types.ImFontAtlas.ImFontConfig;
 
-private typedef ImFontPtr = hl.Abstract<"imfont">;
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
 private typedef ImContextPtr = hl.Abstract<"imcontext">;
@@ -948,16 +927,8 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 	static function drawlist_add_image_rounded( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
 }
 
-
-@:hlNative("hlimgui")
-abstract ImFont(ImFontPtr) from ImFontPtr to ImFontPtr
-{
-	// For backwards compatibility
-	var ptr(get, never): ImFontPtr;
-	inline function get_ptr() return this;
-
-	public function new(ptr: ImFontPtr) { this = ptr; }
-}
+typedef ImFont = imgui.types.ImFont;
+typedef ImFontAtlas = imgui.types.ImFontAtlas;
 
 @:hlNative("hlimgui")
 abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStoragePtr
@@ -1665,7 +1636,6 @@ class ImGui
 	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
 
 	// GetIO()->... wrappers
-	public static function setFontTexture(texture_id : ImTextureID) {} // Fonts->SetTexID
 	public static function setIniFilename(filename : String) {} // IniFilename
 	public static function addKeyChar(c : Int) {} // AddInputCharacter
 	public static function addKeyEvent(c : Int, down: Bool) {} // AddKeyEvent
@@ -1678,16 +1648,43 @@ class ImGui
 	public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
 	public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
 	public static function getUserData() : Dynamic {return null;} // UserData
+	public static function getFontAtlas(): ImFontAtlas { return null; }
 
 
 	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
-	public static function addFontDefault(?config:ExtDynamic<ImFontConfig>) : ImFont { return null; }
-	public static function addFontFromFileTtf( filename: String, size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
-	public static function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
-	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
+	@:deprecated("Use getFontAtlas().setTexId()")
+	public static inline function setFontTexture(texture_id : ImTextureID) { getFontAtlas().setTexId(texture_id); }
+	@:deprecated("Use getFontAtlas().addFontDefault()")
+	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return getFontAtlas().addFontDefault(config); }
+	@:deprecated("Use getFontAtlas().addFontFromFileTTF()")
+	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromFileTTF(filename, size, config, glyphRanges); }
+	@:deprecated("Use getFontAtlas().addFontFromMemoryTTF()")
+	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromMemoryTTF(bytes, size, font_size, config, glyphRanges); }
+	@:deprecated("Use getFontAtlas().build()")
+	public static inline function buildFont(): Bool { return getFontAtlas().build(); }
 
 	// internal functions
-	public static function initialize(render_fn:Dynamic->Void) : Dynamic {return null;}
-	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
+	public static function setRenderCallback(render_fn:Dynamic->Void) {}
+	@:deprecated("See ImGuiDrawable initialization code")
+	public static inline function initialize(render_fn:Dynamic->Void) : ImFontTexData {
+		createContext();
+		setRenderCallback(render_fn);
+		var fonts = getFontAtlas();
+		fonts.addFontDefault();
+		var output = new ImFontTexData();
+		fonts.getTexDataAsRGBA32(output);
+		fonts.clearTexData();
+		return output;
+	}
+	
+	
+	@:deprecated("Use getFontAtlas().getTexDataAsRGBA32() + getFontAtlas().clearTexData()")
+	public static inline function getTexDataAsRgba32(): ImFontTexData {
+		var atlas = getFontAtlas();
+		var output = new ImFontTexData();
+		atlas.getTexDataAsRGBA32(output);
+		atlas.clearTexData();
+		return output;
+	}
 
 }

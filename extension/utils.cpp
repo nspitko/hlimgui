@@ -184,28 +184,6 @@ void setStructArrayImVec4(vdynamic* dyn, const char* name, const ImVec4* values,
 	hl_dyn_setp(dyn, hl_hash_utf8(name), &hlt_array, array);
 }
 
-void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config)
-{
-
-	getStructInt(config, "OversampleH", imgui_font_config->OversampleH);
-	getStructInt(config, "OversampleV", imgui_font_config->OversampleV);
-	getStructBool(config, "PixelSnapH", imgui_font_config->PixelSnapH);
-	getStructImVec2(config, "GlyphExtraSpacing", imgui_font_config->GlyphExtraSpacing);
-	getStructImVec2(config, "GlyphOffset", imgui_font_config->GlyphOffset);
-
-	getStructFloat(config, "GlyphMinAdvanceX", imgui_font_config->GlyphMinAdvanceX);
-	getStructFloat(config, "GlyphMaxAdvanceX", imgui_font_config->GlyphMaxAdvanceX);
-	getStructBool(config, "MergeMode", imgui_font_config->MergeMode);
-	getStructInt(config, "FontBuilderFlags", (int&)imgui_font_config->FontBuilderFlags);
-	getStructFloat(config, "RasterizerMultiply", imgui_font_config->RasterizerMultiply);
-	getStructInt(config, "EllipsisChar", (int&)imgui_font_config->EllipsisChar);
-
-	varray* ranges = (varray*)hl_dyn_getp(config, hl_hash_utf8("GlyphRanges"), &hlt_array);
-	ImWchar *glyph_ranges = ranges != nullptr ? hl_aptr(ranges,ImWchar) : nullptr;
-
-	imgui_font_config->GlyphRanges = glyph_ranges;
-}
-
 // ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value)
 // {
 // 	ImVec2 result = default_value;

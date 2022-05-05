@@ -1,6 +1,9 @@
 #pragma once
 
 #define HL_NAME(n) hlimgui_##n
+#define _IMVEC2 _STRUCT
+#define _IMVEC4 _STRUCT
+#define _IMTEXID _DYN
 
 #include <string>
 #include <hl.h>
@@ -10,6 +13,7 @@
 #define convertString(st) st != nullptr ? unicodeToUTF8(st).c_str() : NULL
 #define convertStringNullAsEmpty(st) st != nullptr ? unicodeToUTF8(st).c_str() : ""
 #define convertPtr(ptr,default_value) ptr != nullptr ? *ptr : default_value
+#define convertArray(arr,type) arr != nullptr ? hl_aptr(arr,type) : nullptr
 
 #ifdef __APPLE__
 #define throw_error(err) hl_throw(hl_alloc_strbytes((const uchar*)(USTR(err))))
@@ -29,8 +33,6 @@ void convertColor(ImU32 color, float& r, float& g, float& b, float& a);
 int unicodeSizeInUTF8(vstring* hl_string);
 void unicodeToUTF8Buffer(vstring* hl_string, char* out);
 std::string unicodeToUTF8(vstring* hl_string);
-
-void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config);
 
 // Replaced by imconfig.h extra converters
 inline ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value : vec2; }
