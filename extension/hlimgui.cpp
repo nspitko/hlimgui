@@ -13,6 +13,8 @@ typedef struct
 } HeapVertex;
 
 static vclosure* s_render_function = nullptr;
+hl_type* hlt_imvec2;
+hl_type* hlt_imvec4;
 
 void renderDrawLists(ImDrawData* draw_data)
 {
@@ -158,6 +160,16 @@ HL_PRIM void HL_NAME(render)()
 	renderDrawLists(draw_data);
 }
 
+/**
+	Hack: Because we want to allocate ImVec2/4 classes on HL side, we need to hijack the hl_type of those classes somehow.
+	And there's no API to obtain said classes. So we steal them from live instances.
+**/
+HL_PRIM void HL_NAME(initialize)(vimvec2* hl_vec2, vimvec4* hl_vec4) {
+	hlt_imvec2 = hl_vec2->t;
+	hlt_imvec4 = hl_vec4->t;
+}
+
+DEFINE_PRIM(_VOID, initialize, _IMVEC2 _IMVEC4);
 DEFINE_PRIM(_VOID, set_render_callback, _FUN(_VOID, _DYN));
 DEFINE_PRIM(_VOID, add_key_char, _I32);
 DEFINE_PRIM(_VOID, add_key_event, _I32 _BOOL);

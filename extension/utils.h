@@ -1,14 +1,15 @@
 #pragma once
 
 #define HL_NAME(n) hlimgui_##n
-#define _IMVEC2 _STRUCT
-#define _IMVEC4 _STRUCT
+#define _IMVEC2 _OBJ(_F32 _F32)
+#define _IMVEC4 _OBJ(_F32 _F32 _F32 _F32)
 #define _IMTEXID _DYN
 
 #include <string>
 #include <hl.h>
 #include <vector>
 #include "lib/imgui/imgui.h"
+#include "types.h"
 
 #define convertString(st) st != nullptr ? unicodeToUTF8(st).c_str() : NULL
 #define convertStringNullAsEmpty(st) st != nullptr ? unicodeToUTF8(st).c_str() : ""
@@ -27,7 +28,7 @@
 // DEFINE_PRIM(_I32,get_prop_name,_NO_ARG)
 // DEFINE_PRIM(_VOID,set_prop_name,_REF(_I32))
 #define DEFINE_PRIM_PROP(t,name,args) DEFINE_PRIM(t,get_##name,_NO_ARG)\
-    DEFINE_PRIM(_VOID,set_##name,args)
+	DEFINE_PRIM(_VOID,set_##name,args)
 
 void convertColor(ImU32 color, float& r, float& g, float& b, float& a);
 int unicodeSizeInUTF8(vstring* hl_string);

@@ -108,9 +108,9 @@ HL_PRIM int F_NAME(add_custom_rect_regular)(ImFontAtlas* fonts, int width, int h
 	return fonts->AddCustomRectRegular(width, height);
 }
 
-HL_PRIM int F_NAME(add_custom_rect_font_glyph)(ImFontAtlas* fonts, ImFont* font, ImWchar id, int width, int height, float advance_x, ImVec2* offset)
+HL_PRIM int F_NAME(add_custom_rect_font_glyph)(ImFontAtlas* fonts, ImFont* font, ImWchar id, int width, int height, float advance_x, vimvec2* offset)
 {
-	return fonts->AddCustomRectFontGlyph(font, id, width, height, advance_x, offset == nullptr ? ImVec2(0, 0) : *offset);
+	return fonts->AddCustomRectFontGlyph(font, id, width, height, advance_x, offset != nullptr ? offset->v : ImVec2(0, 0));
 }
 
 HL_PRIM ImFontAtlasCustomRect* F_NAME(get_custom_rect_by_index)(ImFontAtlas* fonts, int index)
@@ -118,23 +118,23 @@ HL_PRIM ImFontAtlasCustomRect* F_NAME(get_custom_rect_by_index)(ImFontAtlas* fon
 	return fonts->GetCustomRectByIndex(index);
 }
 
-HL_PRIM void F_NAME(calc_custom_rect_uv)(ImFontAtlas* fonts, ImFontAtlasCustomRect* rect, ImVec2* out_uv_min, ImVec2* out_uv_max)
+HL_PRIM void F_NAME(calc_custom_rect_uv)(ImFontAtlas* fonts, ImFontAtlasCustomRect* rect, vimvec2* out_uv_min, vimvec2* out_uv_max)
 {
-	return fonts->CalcCustomRectUV(rect, out_uv_min, out_uv_max);
+	return fonts->CalcCustomRectUV(rect, &out_uv_min->v, &out_uv_max->v);
 }
 
 typedef struct {
 	hl_type* t;
-	ImVec2* offset;
-	ImVec2* size;
-	ImVec4* uv_border; // xy = min, zw = max
-	ImVec4* uv_fill; // xy = min, zw = max
+	vimvec2* offset;
+	vimvec2* size;
+	vimvec4* uv_border; // xy = min, zw = max
+	vimvec4* uv_fill; // xy = min, zw = max
 } vcursordata;
 #define _CURSORDATA _OBJ(_IMVEC2 _IMVEC2 _IMVEC4 _IMVEC4)
 
 HL_PRIM bool F_NAME(get_mouse_cursor_tex_data)(ImFontAtlas* fonts, ImGuiMouseCursor cursor, vcursordata* output)
 {
-	return fonts->GetMouseCursorTexData(cursor, output->offset, output->size, (ImVec2*)output->uv_border, (ImVec2*)output->uv_fill);
+	return fonts->GetMouseCursorTexData(cursor, &output->offset->v, &output->size->v, (&output->uv_border->min), (&output->uv_fill->min));
 }
 
 HL_PRIM void HL_NAME(push_font)(ImFont *font)

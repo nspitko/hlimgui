@@ -29,6 +29,7 @@ class ImGuiDrawableBuffers {
 			return;
 		}
 		
+		ImGui.provideTypes();
 		ImGui.createContext();
 		ImGui.setRenderCallback(renderDrawListsFromExternal);
 		
