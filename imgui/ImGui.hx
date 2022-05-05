@@ -569,7 +569,7 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
     var RoundCornersLeft            = RoundCornersBottomLeft | RoundCornersTopLeft;
     var RoundCornersRight           = RoundCornersBottomRight | RoundCornersTopRight;
     var RoundCornersAll             = RoundCornersTopLeft | RoundCornersTopRight | RoundCornersBottomLeft | RoundCornersBottomRight;
-    var RoundCornersDefault_        = RoundCornersAll; // Default to ALL corners if none of the _RoundCornersXX flags are specified.
+    var RoundCornersDefault_        = (1 << 4 | 1 << 5 | 1 << 6 | 1 << 7); // Default to ALL corners if none of the _RoundCornersXX flags are specified.
     var RoundCornersMask_           = RoundCornersAll | RoundCornersNone;
 }
 

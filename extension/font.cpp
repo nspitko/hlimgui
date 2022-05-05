@@ -110,7 +110,7 @@ HL_PRIM int F_NAME(add_custom_rect_regular)(ImFontAtlas* fonts, int width, int h
 
 HL_PRIM int F_NAME(add_custom_rect_font_glyph)(ImFontAtlas* fonts, ImFont* font, ImWchar id, int width, int height, float advance_x, vimvec2* offset)
 {
-	return fonts->AddCustomRectFontGlyph(font, id, width, height, advance_x, offset != nullptr ? offset->v : ImVec2(0, 0));
+	return fonts->AddCustomRectFontGlyph(font, id, width, height, advance_x, offset != nullptr ? *offset->v() : ImVec2(0, 0));
 }
 
 HL_PRIM ImFontAtlasCustomRect* F_NAME(get_custom_rect_by_index)(ImFontAtlas* fonts, int index)
@@ -120,7 +120,7 @@ HL_PRIM ImFontAtlasCustomRect* F_NAME(get_custom_rect_by_index)(ImFontAtlas* fon
 
 HL_PRIM void F_NAME(calc_custom_rect_uv)(ImFontAtlas* fonts, ImFontAtlasCustomRect* rect, vimvec2* out_uv_min, vimvec2* out_uv_max)
 {
-	return fonts->CalcCustomRectUV(rect, &out_uv_min->v, &out_uv_max->v);
+	return fonts->CalcCustomRectUV(rect, out_uv_min->v(), out_uv_max->v());
 }
 
 typedef struct {
@@ -134,7 +134,7 @@ typedef struct {
 
 HL_PRIM bool F_NAME(get_mouse_cursor_tex_data)(ImFontAtlas* fonts, ImGuiMouseCursor cursor, vcursordata* output)
 {
-	return fonts->GetMouseCursorTexData(cursor, &output->offset->v, &output->size->v, (&output->uv_border->min), (&output->uv_fill->min));
+	return fonts->GetMouseCursorTexData(cursor, output->offset->v(), output->size->v(), output->uv_border->vmin(), output->uv_fill->vmin());
 }
 
 HL_PRIM void HL_NAME(push_font)(ImFont *font)

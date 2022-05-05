@@ -72,13 +72,19 @@
 // #include "../utils.h"
 
 #include <hl.h>
+#include "types.h"
+
 #define IM_VEC2_CLASS_EXTRA                                                 \
         ImVec2(vdynamic* dyn) { x = hl_dyn_getf(dyn, hl_hash_utf8("x")); y = hl_dyn_getf(dyn, hl_hash_utf8("y")); } \
-        operator vdynamic*() const { vdynamic* vec2 = (vdynamic*)hl_alloc_dynobj(); hl_dyn_setf(vec2, hl_hash_utf8("x"), x); hl_dyn_setf(vec2, hl_hash_utf8("y"), y); return vec2; }
+        operator vdynamic*() const { vdynamic* vec2 = (vdynamic*)hl_alloc_dynobj(); hl_dyn_setf(vec2, hl_hash_utf8("x"), x); hl_dyn_setf(vec2, hl_hash_utf8("y"), y); return vec2; }\
+        ImVec2(vimvec2* vec) { x = vec->x; y = vec->y; }\
+        operator vimvec2*() const { vimvec2* vec = (vimvec2*)hl_alloc_obj(hlt_imvec2); vec->x = x; vec->y = y; return vec; }
 
 #define IM_VEC4_CLASS_EXTRA                                                 \
         ImVec4(vdynamic* dyn) { x = hl_dyn_getf(dyn, hl_hash_utf8("x")); y = hl_dyn_getf(dyn, hl_hash_utf8("y")); z = hl_dyn_getf(dyn, hl_hash_utf8("z")); w = hl_dyn_getf(dyn, hl_hash_utf8("w")); }     \
-        operator vdynamic*() const { vdynamic* vec4 = (vdynamic*)hl_alloc_dynobj(); hl_dyn_setf(vec4, hl_hash_utf8("x"), x); hl_dyn_setf(vec4, hl_hash_utf8("y"), y); hl_dyn_setf(vec4, hl_hash_utf8("z"), z); hl_dyn_setf(vec4, hl_hash_utf8("w"), w); return vec4; }
+        operator vdynamic*() const { vdynamic* vec4 = (vdynamic*)hl_alloc_dynobj(); hl_dyn_setf(vec4, hl_hash_utf8("x"), x); hl_dyn_setf(vec4, hl_hash_utf8("y"), y); hl_dyn_setf(vec4, hl_hash_utf8("z"), z); hl_dyn_setf(vec4, hl_hash_utf8("w"), w); return vec4; }\
+        ImVec4(vimvec4* vec) { x = vec->x; y = vec->y; z = vec->z; w = vec->w; }\
+        operator vimvec4*() const { vimvec4* vec = (vimvec4*)hl_alloc_obj(hlt_imvec4); vec->x = x; vec->y = y; vec->z = z; vec->w = w; return vec; }
 
 //---- Use 32-bit vertex indices (default is 16-bit) is one way to allow large meshes with more than 64K vertices.
 // Your renderer backend will need to support it (most example renderer backends support both 16/32-bit indices).

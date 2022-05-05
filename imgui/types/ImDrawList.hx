@@ -8,45 +8,65 @@ import imgui.types.Pointers;
 abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 {
 	public inline function new(ptr: ImDrawListPtr) { this = ptr; }
-  
-  // TODO: Migrate to ImVec2S/ImVec4S
+	
+	// Note: Because how HL interprets optional values (i.e. `_REF(_T)`)
+	// and default value given to them is silently ignored, instead providing a nullptr,
+	// all calls that have default values that are not nulls are inline wrappers.
 
-	public inline function pushClipRect(clipRectMin: ImVec2, clipRectMax: ImVec2, intersectWithCurrentClipRect: Bool = false) { push_clip_rect(clipRectMin, clipRectMax, intersectWithCurrentClipRect); }
-	public function pushClipRectFullScreen() {}
-	public function popClipRect() {}
-	public function pushTextureId(textureId: ImTextureID) {}
-	public function popTextureId() {}
-	public inline function getClipRectMin(): ImVec2 { return get_clip_rect_min(); }
-	public inline function getClipRectMax(): ImVec2 { return get_clip_rect_max(); }
+	public inline function pushClipRect(clipRectMin: ImVec2S, clipRectMax: ImVec2S, intersectWithCurrentClipRect: Bool = false) { push_clip_rect(clipRectMin, clipRectMax, intersectWithCurrentClipRect); }
+	public        function pushClipRectFullScreen() {}
+	public        function popClipRect() {}
+	public        function pushTextureId(textureId: ImTextureID) {}
+	public        function popTextureId() {}
+	public        function getClipRectMin(): ImVec2S { return null; }
+	public        function getClipRectMax(): ImVec2S { return null; }
 
-	public inline function addLine( p1: ImVec2, p2: ImVec2, col: ImU32, thickness: Single = 1.0 ) { add_line( this, p1, p2, col, thickness ); }
-	public inline function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None, thickness: Single = 1.0 ) { add_rect( this, pMin, pMax, col, rounding, roundingCorners, thickness ); }
-	public inline function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None ) { add_rect_filled( this, pMin, pMax, col, rounding, roundingCorners); }
-	public inline function addRectFilledMultiColor( pMin: ImVec2, pMax: ImVec2, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) { add_rect_filled_multicolor( this, pMin, pMax, col_upr_left, col_upr_right, col_bot_right, col_bot_left ); }
-	public inline function addQuad( p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32, thickness: Single = 1.0 ) { add_quad(this, p1, p2, p3, p4, col, thickness ); }
-	public inline function addQuadFilled( p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32 ) { add_quad_filled( this, p1, p2, p3, p4, col ); }
-	public inline function addTriangle( p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32, thickness: Single = 1.0 ) { add_triangle(this, p1, p2, p3, col, thickness ); }
-	public inline function addTriangleFilled( p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32 ) { add_triangle_filled(this, p1, p2, p3, col ); }
-	public inline function addCircle( center: ImVec2, radius: Single, col: ImU32, num_segments: Int = 0, thickness: Single = 1.0 ) { add_circle( this, center, radius, col, num_segments, thickness ); }
-	public inline function addCircleFilled( center: ImVec2, radius: Single, col: ImU32, num_segments: Int = 0) { add_circle_filled(this, center, radius, col, num_segments ); }
-	public inline function addNgon( center: ImVec2, radius: Single, col: ImU32, num_segments: Int, thickness: Single = 1.0 ) { add_ngon(this, center, radius, col, num_segments, thickness ); }
-	public inline function addNgonFilled( center: ImVec2, radius: Single, col: ImU32, num_segments: Int = 0) { add_ngon_filled(this, center, radius, col, num_segments ); }
-	public inline function addPolyLine( points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { add_poly_line(this, points, col, closed, thickness ); }
-	public inline function addConvexPolyFilled( points: hl.NativeArray<ImVec2>, col: ImU32 ) { add_convex_poly_filled(this, points, col ); }
-	public inline function addBezierCurve( p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { add_bezier_curve(this, p1, p2, p3, p4, col, thickness, num_segments ); }
+	public inline function addLine( p1: ImVec2S, p2: ImVec2S, col: ImU32, thickness: Single = 1.0 ) { add_line( p1, p2, col, thickness ); }
+	public inline function addRect( pMin: ImVec2S, pMax: ImVec2S, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None, thickness: Single = 1.0 ) { add_rect( pMin, pMax, col, rounding, roundingCorners, thickness ); }
+	public inline function addRectFilled( pMin: ImVec2S, pMax: ImVec2S, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None ) { add_rect_filled( pMin, pMax, col, rounding, roundingCorners); }
+	public        function addRectFilledMultiColor( pMin: ImVec2S, pMax: ImVec2S, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) {}
+	public inline function addQuad( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, col: ImU32, thickness: Single = 1.0 ) { add_quad(p1, p2, p3, p4, col, thickness ); }
+	public        function addQuadFilled( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, col: ImU32 ) {}
+	public inline function addTriangle( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, col: ImU32, thickness: Single = 1.0 ) { add_triangle(p1, p2, p3, col, thickness ); }
+	public        function addTriangleFilled( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, col: ImU32 ) {}
+	public inline function addCircle( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int = 0, thickness: Single = 1.0 ) { add_circle( center, radius, col, num_segments, thickness ); }
+	public inline function addCircleFilled( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int = 0) { add_circle_filled(center, radius, col, num_segments ); }
+	public inline function addNgon( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int, thickness: Single = 1.0 ) { add_ngon(center, radius, col, num_segments, thickness ); }
+	public inline function addNgonFilled( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int = 0) { add_ngon_filled(center, radius, col, num_segments ); }
+	public inline function addPolyLine( points: hl.NativeArray<ImVec2S>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { add_poly_line(points, col, closed, thickness ); }
+	public        function addConvexPolyFilled( points: hl.NativeArray<ImVec2S>, col: ImU32 ) {}
+	public inline function addBezierCurve( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { add_bezier_curve(p1, p2, p3, p4, col, thickness, num_segments ); }
 	//
-	public inline function addText( pos: ImVec2, col: ImU32, text: String ) { add_text(this, pos, col, text); }
-	public inline function addText2( font: ImFont, fontSize: Single, pos: ImVec2, col: ImU32, text: String, wrapWidth: Single = 0.0, ?cpuFineClipRect: ImVec4 ) { add_text2(this, font==null?null:(@:privateAccess font), fontSize, pos, col, text, wrapWidth, cpuFineClipRect); }
+	public        function addText( pos: ImVec2S, col: ImU32, text: String ) {}
+	public inline function addText2( font: ImFont, fontSize: Single, pos: ImVec2S, col: ImU32, text: String, wrapWidth: Single = 0.0, ?cpuFineClipRect: ImVec4S ) { add_text2(font, fontSize, pos, col, text, wrapWidth, cpuFineClipRect); }
 
-	public inline function addImage( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int = 0xffffffff ) { add_image(this, userTextureId, pMin, pMax, uvMin, uvMax, col); }
-	public inline function addImageQuad( userTextureId: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, ?uv1: ImVec2, ?uv2: ImVec2, ?uv3: ImVec2, ?uv4: ImVec2, col: Int = 0xffffffff ) { add_image_quad(this, userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
-	// Due to Haxe limitation on defualt parameters being "constant" and enum abstract values that rely on previous enum abstract value (A | B) are not "constant" - hack with -1
-	public inline function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1 ) { add_image_rounded(this, userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners == -1 ? ImDrawFlags.RoundCornersDefault_ : roundingCorners); }
+	public inline function addImage( userTextureId: ImTextureID, pMin: ImVec2S, pMax: ImVec2S, ?uvMin: ImVec2S, ?uvMax: ImVec2S, col: Int = 0xffffffff ) { add_image(userTextureId, pMin, pMax, uvMin, uvMax, col); }
+	public inline function addImageQuad( userTextureId: ImTextureID, p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, ?uv1: ImVec2S, ?uv2: ImVec2S, ?uv3: ImVec2S, ?uv4: ImVec2S, col: Int = 0xffffffff ) { add_image_quad(userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
+	public inline function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2S, pMax: ImVec2S, uvMin: ImVec2S, uvMax: ImVec2S, col: Int, rounding: Single, roundingCorners: ImDrawFlags = RoundCornersDefault_ ) { add_image_rounded(userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners); }
 
+	// Stateful path API, add points then finish with pathFillConvex() or pathStroke()
+
+	public        function pathClear() {}
+	public        function pathLineTo(pos: ImVec2S) {}
+	public        function pathLineToMergeDuplicate(pos: ImVec2S) {}
+	public        function pathFillConvex(col: Int) {}
+	public inline function pathStroke(col: Int, flags: ImDrawFlags = 0, thickness: Single = 1.0) { path_stroke(col, flags, thickness); }
+	              function path_stroke(col: Int, flags: ImDrawFlags, thickness: Single) {}
+	public inline function pathArcTo(center: ImVec2S, radius: Single, a_min: Single, a_max: Single, num_segments: Int = 0) { path_arc_to(center, radius, a_min, a_max, num_segments); }
+	              function path_arc_to(center: ImVec2S, radius: Single, a_min: Single, a_max: Single, num_segments: Int) {}
+	/* Use precomputed angles for a 12 steps circle */
+	public        function pathArcToFast(center: ImVec2S, radius: Single, a_min_of_12: Int, a_max_of_12: Int) {}
+	public inline function pathBezierCubicCurveTo(p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, num_segments: Int = 0) { path_bezier_cubic_curve_to(p2, p3, p4, num_segments); }
+	              function path_bezier_cubic_curve_to(p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, num_segments: Int) {}
+	public inline function pathBezierQuadraticCurveTo(p2: ImVec2S, p3: ImVec2S, num_segments: Int = 0) { path_bezier_quadratic_curve_to(p2, p3, num_segments); }
+	              function path_bezier_quadratic_curve_to(p2: ImVec2S, p3: ImVec2S, num_segments: Int) {}
+	public inline function pathRect(rect_min: ImVec2S, rect_max: ImVec2S, rounding: Single = 0.0, flags: ImDrawFlags = 0) { path_rect(rect_min, rect_max, rounding, flags); }
+	              function path_rect(rect_min: ImVec2S, rect_max: ImVec2S, rounding: Single, flags: ImDrawFlags) {}
+	
 	#if heaps
 	// Helper methods for Heaps: Use Tile instead of Texture to pass image segments easily.
 
-	public inline function addTile( tile: h2d.Tile, pMin: ImVec2, ?pMax: ImVec2, col: Int = 0xffffffff, honorDxDy = false) @:privateAccess {
+	public inline function addTile( tile: h2d.Tile, pMin: ImVec2S, ?pMax: ImVec2S, col: Int = 0xffffffff, honorDxDy = false) @:privateAccess {
 		if (pMax == null) pMax = ImTypeCache.vec2(pMin.x + tile.width, pMin.y + tile.height);
 		if (honorDxDy) {
 			pMin.x += tile.dx;
@@ -57,14 +77,14 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 		addImage(tile.getTexture(), pMin, pMax, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), col);
 	}
 
-	public inline function addTileQuad( tile: h2d.Tile, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: Int = 0xffffffff) @:privateAccess {
+	public inline function addTileQuad( tile: h2d.Tile, p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, col: Int = 0xffffffff) @:privateAccess {
 		addImageQuad( tile.getTexture(), p1, p2, p3, p4,
 			ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), ImTypeCache.vec2(tile.u2, tile.v),
 			col
 		);
 	}
 
-	public inline function addTileRounded( tile: h2d.Tile, pMin: ImVec2, ?pMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1, honorDxDy = false ) @:privateAccess {
+	public inline function addTileRounded( tile: h2d.Tile, pMin: ImVec2S, ?pMax: ImVec2S, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1, honorDxDy = false ) @:privateAccess {
 		if (pMax == null) pMax = ImTypeCache.vec2(pMin.x + tile.width, pMin.y + tile.height);
 		if (honorDxDy) {
 			pMin.x += tile.dx;
@@ -76,29 +96,23 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 	}
 	#end
 
-	function push_clip_rect(clip_rect_min: ExtDynamic<ImVec2>, clip_rect_max: ExtDynamic<ImVec2>, intersect_with_current_clip_rect: Bool ) {}
-	function get_clip_rect_min(): ExtDynamic<ImVec2> { return null; }
-	function get_clip_rect_max(): ExtDynamic<ImVec2> { return null; }
+	function push_clip_rect(clip_rect_min: ImVec2S, clip_rect_max: ImVec2S, intersect_with_current_clip_rect: Bool ) {}
 	
-	static function add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
-	static function add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
-	static function add_rect_filled_multicolor( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) {}
-	static function add_quad( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function add_quad_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function add_triangle( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function add_triangle_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function add_circle( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
-	static function add_circle_filled( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int) {}
-	static function add_ngon( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
-	static function add_ngon_filled( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int) {}
-	static function add_poly_line( drawlist: ImDrawListPtr, points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single ) {}
-	static function add_convex_poly_filled( drawlist: ImDrawListPtr, points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) {}
-	static function add_bezier_curve( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single, num_segments: Int ) {}
-	static function add_text( drawlist: ImDrawListPtr, pos: ExtDynamic<ImVec2>, col: ImU32, text: String ) {}
-	static function add_text2( drawlist: ImDrawListPtr, font: ImFontPtr, font_size: Single, pos: ExtDynamic<ImVec2>, col: ImU32, text: String, wrap_width: Single, cpu_fine_clip_rect: ExtDynamic<ImVec4> ) {}
+	function add_line( p1: ImVec2S, p2: ImVec2S, col: ImU32, thickness: Single ) {}
+	function add_rect( pMin: ImVec2S, pMax: ImVec2S, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
+	function add_rect_filled( pMin: ImVec2S, pMax: ImVec2S, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
+	function add_quad( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, col: ImU32, thickness: Single ) {}
+	function add_triangle( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, col: ImU32, thickness: Single ) {}
+	function add_circle( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
+	function add_circle_filled( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int) {}
+	function add_ngon( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
+	function add_ngon_filled( center: ImVec2S, radius: Single, col: ImU32, num_segments: Int) {}
+	function add_poly_line( points: hl.NativeArray<ImVec2S>, col: ImU32, closed: Bool, thickness: Single ) {}
+	function add_bezier_curve( p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, col: ImU32, thickness: Single, num_segments: Int ) {}
+	
+	function add_text2( font: ImFontPtr, font_size: Single, pos: ImVec2S, col: ImU32, text: String, wrap_width: Single, cpu_fine_clip_rect: ImVec4S ) {}
 
-	static function add_image( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function add_image_quad( drawlist: ImDrawListPtr, userTextureId: ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2>, uv2: ExtDynamic<ImVec2>, uv3: ExtDynamic<ImVec2>, uv4: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function add_image_rounded( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
+	function add_image( userTextureId: ImTextureID, pMin: ImVec2S, pMax: ImVec2S, uvMin: ImVec2S, uvMax: ImVec2S, col: ImU32 ) {}
+	function add_image_quad( userTextureId: ImTextureID, p1: ImVec2S, p2: ImVec2S, p3: ImVec2S, p4: ImVec2S, uv1: ImVec2S, uv2: ImVec2S, uv3: ImVec2S, uv4: ImVec2S, col: ImU32 ) {}
+	function add_image_rounded( userTextureId: ImTextureID, pMin: ImVec2S, pMax: ImVec2S, uvMin: ImVec2S, uvMax: ImVec2S, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
 }
