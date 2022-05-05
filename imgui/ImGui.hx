@@ -613,6 +613,49 @@ typedef ImTextureID = Dynamic;
 typedef ImU32 = Int;
 typedef ImGuiID = Int;
 
+/** The raw memory ImVec2 **/
+@:struct @:structInit class ImVec2S {
+	public var x: Single;
+	public var y: Single;
+	
+	public static inline function get(x: Single = 0, y: Single = 0): ImVec2S { return { x: x, y: y }; };
+	// TODO: Math operations
+}
+
+/** The raw memory ImVec2 **/
+@:struct @:structInit class ImVec4S {
+	public var x: Single;
+	public var y: Single;
+	public var z: Single;
+	public var w: Single;
+	
+	public static inline function get(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4S { return { x: x, y: y, z: z, w: w }; }
+	public static inline function getColor(colWAlpha: Int): ImVec4S {
+		return {
+			x: ((colWAlpha      ) & 0xff) / 0xff,
+			y: ((colWAlpha >> 8 ) & 0xff) / 0xff,
+			z: ((colWAlpha >> 16) & 0xff) / 0xff,
+			w: ((colWAlpha >> 24) & 0xff) / 0xff
+		};
+	}
+	public static inline function getColorRGB(col: Int, alpha: Float = 1.0): ImVec4S {
+		return {
+			x: ((col      ) & 0xff) / 0xff,
+			y: ((col >> 8 ) & 0xff) / 0xff,
+			z: ((col >> 16) & 0xff) / 0xff,
+			w: alpha
+		};
+	}
+	
+	public inline function toColor():Int {
+		return ((Std.int(x * 0xff) & 0xff)      ) +
+		       ((Std.int(y * 0xff) & 0xff) << 8 ) +
+		       ((Std.int(z * 0xff) & 0xff) << 16) +
+		       ((Std.int(w * 0xff) & 0xff) << 24);
+	}
+	// TODO: Math opeartion
+}
+
 typedef ImVec2 = {
 	x : Single,
 	y : Single
