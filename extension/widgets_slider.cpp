@@ -13,15 +13,17 @@ HL_PRIM bool HL_NAME(slider_int)(vstring* label, int* v, int v_min, int v_max, v
     return ImGui::SliderInt(convertString(label), v, v_min, v_max, convertString(format), convertPtr(flags, 0));
 }
 
-HL_PRIM bool HL_NAME(v_slider_float)(vstring* label, vdynamic* size, float* v, float v_min, float v_max, vstring* format, ImGuiSliderFlags* flags)
+HL_PRIM bool HL_NAME(v_slider_float)(vstring* label, vimvec2* size, float* v, float v_min, float v_max, vstring* format, ImGuiSliderFlags* flags)
 {
-    return ImGui::VSliderFloat(convertString(label), getImVec2(size), v, v_min, v_max, convertString(format), convertPtr(flags, 0));
+    return ImGui::VSliderFloat(convertString(label), size, v, v_min, v_max, convertString(format), convertPtr(flags, 0));
 }
 
-HL_PRIM bool HL_NAME(v_slider_int)(vstring* label, vdynamic* size, int* v, int v_min, int v_max, vstring* format, ImGuiSliderFlags* flags)
+HL_PRIM bool HL_NAME(v_slider_int)(vstring* label, vimvec2* size, int* v, int v_min, int v_max, vstring* format, ImGuiSliderFlags* flags)
 {
-    return ImGui::VSliderInt(convertString(label), getImVec2(size), v, v_min, v_max, convertString(format), convertPtr(flags, 0));
+    return ImGui::VSliderInt(convertString(label), size, v, v_min, v_max, convertString(format), convertPtr(flags, 0));
 }
+
+// TODO: VSliderScalar
 
 
 HL_PRIM bool HL_NAME(slider_double)(vstring* label, double* v, double v_min, double v_max, vstring* format, ImGuiSliderFlags* flags) {
@@ -47,7 +49,7 @@ HL_PRIM bool HL_NAME(slider_scalar_n)(vstring* label, int type, varray* v, vdyna
 DEFINE_PRIM(_BOOL, slider_float, _STRING _REF(_F32) _F32 _F32 _STRING _REF(_I32));
 DEFINE_PRIM(_BOOL, slider_angle, _STRING _REF(_F32) _REF(_F32) _REF(_F32) _STRING _REF(_I32));
 DEFINE_PRIM(_BOOL, slider_int, _STRING _REF(_I32) _I32 _I32 _STRING _REF(_I32));
-DEFINE_PRIM(_BOOL, v_slider_float, _STRING _DYN _REF(_F32) _F32 _F32 _STRING _REF(_I32));
-DEFINE_PRIM(_BOOL, v_slider_int, _STRING _DYN _REF(_I32) _I32 _I32 _STRING _REF(_I32));
+DEFINE_PRIM(_BOOL, v_slider_float, _STRING _IMVEC2 _REF(_F32) _F32 _F32 _STRING _REF(_I32));
+DEFINE_PRIM(_BOOL, v_slider_int, _STRING _IMVEC2 _REF(_I32) _I32 _I32 _STRING _REF(_I32));
 DEFINE_PRIM(_BOOL, slider_double, _STRING _REF(_F64) _F64 _F64 _STRING _REF(_I32));
 DEFINE_PRIM(_BOOL, slider_scalar_n, _STRING _I32 _ARR _DYN _DYN _STRING _I32);

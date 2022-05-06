@@ -63,7 +63,7 @@ HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring** string, ImGuiInputTex
     return result;
 }
 
-HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring** string, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring** string, vimvec2* size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     stringToBuffer(string);
     bool result = ImGui::InputTextMultiline(convertString(label), textBuffer, textBufferSize, getImVec2(size), convertPtr(flags, 0) | ImGuiInputTextFlags_CallbackResize, TextInputCallbackWithResize, callback );
@@ -84,7 +84,7 @@ HL_PRIM bool HL_NAME(input_text_buf)(vstring* label, vbyte* buf, int buf_size, I
     return ImGui::InputText(convertString(label), (char*)buf, buf_size, convertPtr(flags, 0), TextInputCallback, callback);
 }
 
-HL_PRIM bool HL_NAME(input_text_multiline_buf)(vstring* label, vbyte* buf, int buf_size, vdynamic* size, ImGuiInputTextFlags* flags, vclosure* callback)
+HL_PRIM bool HL_NAME(input_text_multiline_buf)(vstring* label, vbyte* buf, int buf_size, vimvec2* size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     return ImGui::InputTextMultiline(convertString(label), (char*)buf, buf_size, getImVec2(size), convertPtr(flags, 0), TextInputCallback, callback );
 }
@@ -140,11 +140,11 @@ HL_PRIM bool HL_NAME(input_scalar_n)(vstring* label, int type, varray* v, vdynam
 //const char* label, ImGuiDataType data_type, void* p_data, int components, const void* p_step, const void* p_step_fast, const char* format, ImGuiInputTextFlags flags)
 
 DEFINE_PRIM(_BOOL, input_text, _STRING _REF(_STRING) _REF(_I32) _FUN(_I32, _STRUCT));
-DEFINE_PRIM(_BOOL, input_text_multiline, _STRING _REF(_STRING) _DYN _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_multiline, _STRING _REF(_STRING) _IMVEC2 _REF(_I32) _FUN(_I32, _STRUCT));
 DEFINE_PRIM(_BOOL, input_text_with_hint, _STRING _STRING _REF(_STRING) _REF(_I32) _FUN(_I32, _STRUCT));
 
 DEFINE_PRIM(_BOOL, input_text_buf, _STRING _BYTES _I32 _REF(_I32) _FUN(_I32, _STRUCT));
-DEFINE_PRIM(_BOOL, input_text_multiline_buf, _STRING _BYTES _I32 _DYN _REF(_I32) _FUN(_I32, _STRUCT));
+DEFINE_PRIM(_BOOL, input_text_multiline_buf, _STRING _BYTES _I32 _IMVEC2 _REF(_I32) _FUN(_I32, _STRUCT));
 DEFINE_PRIM(_BOOL, input_text_with_hint_buf, _STRING _STRING _BYTES _I32 _REF(_I32) _FUN(_I32, _STRUCT));
 
 DEFINE_PRIM(_BOOL, input_float, _STRING _REF(_F32) _REF(_F32) _REF(_F32) _STRING _REF(_I32));

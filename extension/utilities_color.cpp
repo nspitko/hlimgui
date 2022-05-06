@@ -1,13 +1,13 @@
 #include "utils.h"
 
-HL_PRIM vdynamic* HL_NAME(color_convert_u32_to_float4)(ImU32 in)
+HL_PRIM vimvec4* HL_NAME(color_convert_u32_to_float4)(ImU32 in)
 {
-    return getHLFromImVec4(ImGui::ColorConvertU32ToFloat4(in));
+    return ImGui::ColorConvertU32ToFloat4(in);
 }
 
-HL_PRIM ImU32 HL_NAME(color_convert_float4_to_u32)(vdynamic* in)
+HL_PRIM ImU32 HL_NAME(color_convert_float4_to_u32)(vimvec4* in)
 {
-    return ImGui::ColorConvertFloat4ToU32(getImVec4(in));
+    return ImGui::ColorConvertFloat4ToU32(in);
 }
 
 HL_PRIM void HL_NAME(color_convert_rgbto_hsv)(float r, float g, float b, float* out_h, float* out_s, float* out_v)
@@ -20,7 +20,9 @@ HL_PRIM void HL_NAME(color_convert_hsvto_rgb)(float h, float s, float v, float* 
     ImGui::ColorConvertHSVtoRGB(h, s, v, *out_r, *out_g, *out_b);
 }
 
-DEFINE_PRIM(_DYN, color_convert_u32_to_float4, _I32);
-DEFINE_PRIM(_I32, color_convert_float4_to_u32, _DYN);
+// TODO: ImVec4 helpers for HSV<->RGB
+
+DEFINE_PRIM(_IMVEC4, color_convert_u32_to_float4, _I32);
+DEFINE_PRIM(_I32, color_convert_float4_to_u32, _IMVEC4);
 DEFINE_PRIM(_VOID, color_convert_rgbto_hsv, _F32 _F32 _F32 _REF(_F32) _REF(_F32) _REF(_F32));
 DEFINE_PRIM(_VOID, color_convert_hsvto_rgb, _F32 _F32 _F32 _REF(_F32) _REF(_F32) _REF(_F32));

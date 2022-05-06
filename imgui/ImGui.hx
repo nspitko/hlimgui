@@ -5,16 +5,6 @@ import imgui.types.ImFontAtlas;
 import imgui.types.Pointers;
 import haxe.io.Bytes;
 
-@:forward
-@:forward.variance
-abstract ExtDynamic<T>(Dynamic) from T to T {
-	// Helper methods to cconvert away from vdynamic.
-	public var v(get, never):T;
-	inline function get_v():T return (this:T);
-	public inline function to():T return (this:T);
-
-}
-
 @:enum abstract ImGuiWindowFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var NoTitleBar : Int = 1;
@@ -600,6 +590,12 @@ typedef ImGuiID = Int;
 	public var x: Single;
 	public var y: Single;
 	
+	@:deprecated("Remainder of ExtDynamic")
+	public var v(get, never): ImVec2S;
+	inline function get_v() return this;
+	@:deprecated("Remainder of ExtDynamic")
+	public inline function to(): ImVec2S return this;
+	
 	public inline function set(x: Single = 0, y: Single = 0): ImVec2S
 	{
 		this.x = x;
@@ -623,6 +619,12 @@ typedef ImGuiID = Int;
 	public var y: Single;
 	public var z: Single;
 	public var w: Single;
+	
+	@:deprecated("Remainder of ExtDynamic")
+	public var v(get, never): ImVec4S;
+	inline function get_v() return this;
+	@:deprecated("Remainder of ExtDynamic")
+	public inline function to(): ImVec4S return this;
 	
 	public inline function set(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4S
 	{
@@ -681,40 +683,43 @@ typedef ImGuiID = Int;
 	// TODO: Math opeartions
 }
 
-typedef ImVec2 = {
-	x : Single,
-	y : Single
-}
+// TODO: rename them back into ImVec2/4.
+typedef ImVec2 = ImVec2S;
+typedef ImVec4 = ImVec4S;
+// typedef ImVec2 = {
+// 	x : Single,
+// 	y : Single
+// }
 
-typedef ImVec4 = {
-	x : Single,
-	y : Single,
-	z : Single,
-	w : Single
-}
+// typedef ImVec4 = {
+// 	x : Single,
+// 	y : Single,
+// 	z : Single,
+// 	w : Single
+// }
 
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
 @:hlNative("hlimgui")
 @:struct class ImGuiStyle {
 	var Alpha: Single;                      // Global alpha applies to everything in Dear ImGui.
 	var DisabledAlpha: Single;              // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
-	@:flatten var WindowPadding: ImVec2;              // Padding within a window.
+	@:flatten var WindowPadding: ImVec2S;              // Padding within a window.
 	var WindowRounding: Single;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
 	var WindowBorderSize: Single;           // Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
-	@:flatten var WindowMinSize: ImVec2;              // Minimum window size. This is a global setting. If you want to constraint individual windows, use SetNextWindowSizeConstraints().
-	@:flatten var WindowTitleAlign: ImVec2;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
+	@:flatten var WindowMinSize: ImVec2S;              // Minimum window size. This is a global setting. If you want to constraint individual windows, use SetNextWindowSizeConstraints().
+	@:flatten var WindowTitleAlign: ImVec2S;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
 	var WindowMenuButtonPosition: ImGuiDir;   // Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.
 	var ChildRounding: Single;              // Radius of child window corners rounding. Set to 0.0f to have rectangular windows.
 	var ChildBorderSize: Single;            // Thickness of border around child windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
 	var PopupRounding: Single;              // Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)
 	var PopupBorderSize: Single;            // Thickness of border around popup/tooltip windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
-	@:flatten var FramePadding: ImVec2;               // Padding within a framed rectangle (used by most widgets).
+	@:flatten var FramePadding: ImVec2S;               // Padding within a framed rectangle (used by most widgets).
 	var FrameRounding: Single;              // Radius of frame corners rounding. Set to 0.0f to have rectangular frame (used by most widgets).
 	var FrameBorderSize: Single;            // Thickness of border around frames. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
-	@:flatten var ItemSpacing: ImVec2;                // Horizontal and vertical spacing between widgets/lines.
-	@:flatten var ItemInnerSpacing: ImVec2;           // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).
-	@:flatten var CellPadding: ImVec2;                // Padding within a table cell
-	@:flatten var TouchExtraPadding: ImVec2;          // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
+	@:flatten var ItemSpacing: ImVec2S;                // Horizontal and vertical spacing between widgets/lines.
+	@:flatten var ItemInnerSpacing: ImVec2S;           // Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).
+	@:flatten var CellPadding: ImVec2S;                // Padding within a table cell
+	@:flatten var TouchExtraPadding: ImVec2S;          // Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!
 	var IndentSpacing: Single;              // Horizontal indentation when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).
 	var ColumnsMinSpacing: Single;          // Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).
 	var ScrollbarSize: Single;              // Width of the vertical scrollbar, Height of the horizontal scrollbar.
@@ -726,17 +731,17 @@ typedef ImVec4 = {
 	var TabBorderSize: Single;              // Thickness of border around tabs.
 	var TabMinWidthForCloseButton: Single;  // Minimum width for close button to appears on an unselected tab when hovered. Set to 0.0f to always show when hovering, set to FLT_MAX to never show close button unless selected.
 	var ColorButtonPosition: ImGuiDir;        // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
-	@:flatten var ButtonTextAlign: ImVec2;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
-	@:flatten var SelectableTextAlign: ImVec2;        // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
-	@:flatten var DisplayWindowPadding: ImVec2;       // Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.
-	@:flatten var DisplaySafeAreaPadding: ImVec2;     // If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!
+	@:flatten var ButtonTextAlign: ImVec2S;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
+	@:flatten var SelectableTextAlign: ImVec2S;        // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
+	@:flatten var DisplayWindowPadding: ImVec2S;       // Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.
+	@:flatten var DisplaySafeAreaPadding: ImVec2S;     // If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!
 	var MouseCursorScale: Single;           // Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). We apply per-monitor DPI scaling over this scale. May be removed later.
 	var AntiAliasedLines: Bool;           // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
 	var AntiAliasedLinesUseTex: Bool;     // Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering. Latched at the beginning of the frame (copied to ImDrawList).
 	var AntiAliasedFill: Bool;            // Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
 	var CurveTessellationTol: Single;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
 	var CircleTessellationMaxError: Single; // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
-	@:flattenMap(ImGuiCol) var Colors : ImVec4;
+	@:flattenMap(ImGuiCol) var Colors : ImVec4S;
 
 	public function new() {
 		// Match allocation via C: Set default values andn use default colors.
@@ -951,8 +956,8 @@ class ImGui
 	public static function end() {}
 
 	// Child Windows
-	public static function beginChild(str_id : String, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	public static function beginChild2(id : Int, size : ExtDynamic<ImVec2> = null, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild(str_id : String, ?size : ImVec2S, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild2(id : Int, ?size : ImVec2S, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChild() {}
 
 	// Windows Utilities
@@ -962,34 +967,34 @@ class ImGui
 	public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
 	public static function getWindowDrawList() : ImDrawList {return null;}
 	public static function getWindowDpiScale(): Single { return 0; }
-	public static function getWindowPos() : ExtDynamic<ImVec2> {return null;}
-	public static function getWindowSize() : ExtDynamic<ImVec2> {return null;}
+	public static function getWindowPos() : ImVec2S {return null;}
+	public static function getWindowSize() : ImVec2S {return null;}
 	public static function getWindowWidth() : Single {return 0;}
 	public static function getWindowHeight(): Single {return 0;}
 
 	// Window manipulation
-	public static function setNextWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0, pivot : ExtDynamic<ImVec2> = null) {}
-	public static function setNextWindowSize(size: ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-	public static function setNextWindowSizeConstraints(size_min : ExtDynamic<ImVec2>, size_max : ExtDynamic<ImVec2>) {}
-	public static function setNextWindowContentSize(size : ExtDynamic<ImVec2>) {}
+	public static function setNextWindowPos(pos: ImVec2S, cond: ImGuiCond = 0, ?pivot: ImVec2S) {}
+	public static function setNextWindowSize(size: ImVec2S, cond : ImGuiCond = 0) {}
+	public static function setNextWindowSizeConstraints(size_min : ImVec2S, size_max : ImVec2S) {}
+	public static function setNextWindowContentSize(size : ImVec2S) {}
 	public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setNextWindowFocus() {}
 	public static function setNextWindowBgAlpha(alpha : Single) {}
-	public static function setWindowPos(pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-	public static function setWindowSize(size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowPos(pos : ImVec2S, cond : ImGuiCond = 0) {}
+	public static function setWindowSize(size : ImVec2S, cond : ImGuiCond = 0) {}
 	public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus() {}
 	public static function setWindowFontScale(scale : Single) {}
-	public static function setWindowPos2(name : String, pos : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
-	public static function setWindowSize2(name : String, size : ExtDynamic<ImVec2>, cond : ImGuiCond = 0) {}
+	public static function setWindowPos2(name : String, pos : ImVec2S, cond : ImGuiCond = 0) {}
+	public static function setWindowSize2(name : String, size : ImVec2S, cond : ImGuiCond = 0) {}
 	public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus2(name : String) {}
 
 	// Content region
-	public static function getContentRegionMax() : ExtDynamic<ImVec2> {return null;}
-	public static function getContentRegionAvail() : ExtDynamic<ImVec2> {return null;}
-	public static function getWindowContentRegionMin() : ExtDynamic<ImVec2> {return null;}
-	public static function getWindowContentRegionMax() : ExtDynamic<ImVec2> {return null;}
+	public static function getContentRegionMax() : ImVec2S {return null;}
+	public static function getContentRegionAvail() : ImVec2S {return null;}
+	public static function getWindowContentRegionMin() : ImVec2S {return null;}
+	public static function getWindowContentRegionMax() : ImVec2S {return null;}
 	@:deprecated // Obsoleted in latest imgui
 	public static function getWindowContentRegionWidth() : Single {return 0;}
 
@@ -1009,10 +1014,10 @@ class ImGui
 	public static function pushFont( font: ImFont ) {}
 	public static function popFont() {}
 	public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
-	public static function pushStyleColor2(idx : ImGuiCol, col : ExtDynamic<ImVec4>) {}
+	public static function pushStyleColor2(idx : ImGuiCol, col : ImVec4S) {}
 	public static function popStyleColor(count : Int = 1) {}
 	public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
-	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ExtDynamic<ImVec2>) {}
+	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ImVec2S) {}
 	public static function popStyleVar(count : Int = 1) {}
 	public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
 	public static function popAllowKeyboardFocus() {}
@@ -1030,31 +1035,31 @@ class ImGui
 	// Style read access
 	public static function getFont(): ImFont {return null;}
 	public static function getFontSize() : Single {return 0;}
-	public static function getFontTexUvWhitePixel() : ExtDynamic<ImVec2> {return null;}
+	public static function getFontTexUvWhitePixel() : ImVec2S {return null;}
 	public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
-	public static function getColorU322(col : ExtDynamic<ImVec4>) : ImU32 {return 0;}
+	public static function getColorU322(col : ImVec4S) : ImU32 {return 0;}
 	public static function getColorU323(col : ImU32) : ImU32 {return 0;}
-	public static function getStyleColorVec4(idx : ImGuiCol) : ExtDynamic<ImVec4> {return null;}
+	public static function getStyleColorVec4(idx : ImGuiCol) : ImVec4S {return null;}
 
 	// Cursor / Layout
 	public static function separator() {}
 	public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
 	public static function newLine() {}
 	public static function spacing() {}
-	public static function dummy(size : ExtDynamic<ImVec2>) {}
+	public static function dummy(size : ImVec2S) {}
 	public static function indent(indent_w : Single = 0.0) {}
 	public static function unindent(indent_w : Single = 0.0) {}
 	public static function beginGroup() {}
 	public static function endGroup() {}
-	public static function getCursorPos() : ExtDynamic<ImVec2> {return null;}
+	public static function getCursorPos() : ImVec2S {return null;}
 	public static function getCursorPosX() : Single {return 0;}
 	public static function getCursorPosY() : Single {return 0;}
-	public static function setCursorPos(local_pos : ExtDynamic<ImVec2>) {}
+	public static function setCursorPos(local_pos : ImVec2S) {}
 	public static function setCursorPosX(local_x : Single) {}
 	public static function setCursorPosY(local_y : Single) {}
-	public static function getCursorStartPos() : ExtDynamic<ImVec2> {return null;}
-	public static function getCursorScreenPos() : ExtDynamic<ImVec2> {return null;}
-	public static function setCursorScreenPos(pos : ExtDynamic<ImVec2>) {}
+	public static function getCursorStartPos() : ImVec2S {return null;}
+	public static function getCursorScreenPos() : ImVec2S {return null;}
+	public static function setCursorScreenPos(pos : ImVec2S) {}
 	public static function alignTextToFramePadding() {}
 	public static function getTextLineHeight() : Single {return 0;}
 	public static function getTextLineHeightWithSpacing() : Single {return 0;}
@@ -1079,25 +1084,25 @@ class ImGui
 	// TODO: TextUnformatted(text: String, ?start: Int, ?end: Int)
 	// TODO: Allow format arguments to be passed
 	public static function text(text : String) {}
-	public static function textColored(col : ExtDynamic<ImVec4>, fmt : String) {}
+	public static function textColored(col : ImVec4S, fmt : String) {}
 	public static function textDisabled(text : String) {}
 	public static function textWrapped(text : String) {}
 	public static function labelText(label : String, text : String) {}
 	public static function bulletText(text : String) {}
 
 	// Widgets: Main
-	public static function button(name : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function button(name : String, ?size : ImVec2S) : Bool {return false;}
 	public static function smallButton(label : String) : Bool {return false;}
-	public static function invisibleButton(str_id : String, ?size : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function invisibleButton(str_id : String, ?size : ImVec2S) : Bool {return false;}
 	public static function arrowButton(str_id : String, dir : ImGuiDir) : Bool {return false;}
-	public static function image(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null, uv1 : ExtDynamic<ImVec2> = null, tint_col : ExtDynamic<ImVec4> = null, border_col : ExtDynamic<ImVec4> = null) {}
-	public static function imageButton(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null,  uv1 : ExtDynamic<ImVec2> = null, frame_padding : Int = -1, bg_col : ExtDynamic<ImVec4> = null, tint_col : ExtDynamic<ImVec4> = null) : Bool {return false;}
+	public static function image(user_texture_id: ImTextureID, size: ImVec2S, ?uv0: ImVec2S, ?uv1: ImVec2S, ?tint_col: ImVec4S, ?border_col: ImVec4S) {}
+	public static function imageButton(user_texture_id: ImTextureID, size: ImVec2S, ?uv0: ImVec2S, ?uv1: ImVec2S, frame_padding: Int = -1, ?bg_col: ImVec4S, ?tint_col: ImVec4S) : Bool {return false;}
 	#if heaps
-	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2, ?tint_col: ImVec4, ?border_col: ImVec4) @:privateAccess {
+	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2S, ?tint_col: ImVec4S, ?border_col: ImVec4S) @:privateAccess {
 		image(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), tint_col, border_col);
 	}
 
-	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2, frame_padding: Int = -1, ?bg_col: ImVec4, ?tint_col: ImVec4): Bool @:privateAccess {
+	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2S, frame_padding: Int = -1, ?bg_col: ImVec4S, ?tint_col: ImVec4S): Bool @:privateAccess {
 		return imageButton(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
 	}
 	#end
@@ -1105,7 +1110,7 @@ class ImGui
 	public static function checkboxFlags(label : String, flags : hl.Ref<Int>, flags_value : Int) : Bool {return false;}
 	public static function radioButton(label : String, active : Bool) : Bool {return false;}
 	public static function radioButton2(label : String, v : hl.Ref<Int>, v_button : Int) : Bool {return false;}
-	public static function progressBar(fraction : Single, size_arg : ExtDynamic<ImVec2> = null, overlay : String = null) {}
+	public static function progressBar(fraction: Single, ?size_arg: ImVec2S, ?overlay: String) {}
 	public static function bullet() {}
 
 	// Widgets: Combo Box
@@ -1139,8 +1144,8 @@ class ImGui
 	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
-	public static function vSliderFloat(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function vSliderInt(label : String, size : ExtDynamic<ImVec2>, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderFloat(label : String, size : ImVec2S, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderInt(label : String, size : ImVec2S, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static inline function sliderFloatN(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
@@ -1156,11 +1161,11 @@ class ImGui
 
 	// Widgets: Input with Keyboard
 	public static function inputText(label : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultiline(label : String, value: hl.Ref<String>, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextMultiline(label : String, value: hl.Ref<String>, ?size: ImVec2S, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHint(label : String, hint : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 
 	public static function inputTextBuf(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, size : ExtDynamic<ImVec2> = null, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, ?size: ImVec2S, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHintBuf(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 
 	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
@@ -1208,7 +1213,7 @@ class ImGui
     public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorPicker3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : hl.Ref<Single> = null) : Bool {return false;}
-    public static function colorButton(desc_id : String, col : ExtDynamic<ImVec4> = null, flags : ImGuiColorEditFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
+    public static function colorButton(desc_id: String, ?col: ImVec4S, flags: ImGuiColorEditFlags = 0, ?size: ImVec2S) : Bool {return false;}
 	public static function setColorEditOptions(flags : ImGuiColorEditFlags) {}
 
 	// Widgets: Trees
@@ -1224,30 +1229,30 @@ class ImGui
 	public static function setNextItemOpen(is_open : Bool, cond : ImGuiCond = 0) {}
 
 	// Widgets: Selectables
-    public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
-	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, size : ExtDynamic<ImVec2> = null) : Bool {return false;}
+    public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, size: ImVec2S) : Bool {return false;}
+	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, size: ImVec2S) : Bool {return false;}
 
 	// Widgets: List Boxes
 	/**
 		- Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
 		- Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
 	**/
-	public static function beginListBox(label: String, size: ExtDynamic<ImVec2> = null): Bool { return false; }
+	public static function beginListBox(label: String, ?size: ImVec2S): Bool { return false; }
 	/** Only call if beginListBox returns true! **/
 	public static function endListBox() {}
 
 	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
 	// TODO: Callback variant
 	@:deprecated("Use beginListBox")
-	public static inline function listBoxHeader(label : String, size : ExtDynamic<ImVec2> = null) : Bool {return beginListBox(label, size);}
+	public static inline function listBoxHeader(label: String, ?size: ImVec2S) : Bool {return beginListBox(label, size);}
 	@:deprecated("Obsolete")
 	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
 	@:deprecated("Use endListBox")
 	public static inline function listBoxFooter() { endListBox(); }
 
 	// Widgets: Data Plotting
-    public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
-	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, graph_size : ExtDynamic<ImVec2>) {}
+	public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2S) {}
+	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2S) {}
 
 	// Widgets: Value() Helpers.
 	public static function valueBool(prefix : String, b : Bool) {}
@@ -1295,7 +1300,7 @@ class ImGui
 	public static function isPopupOpen(str_id : String) : Bool {return false;}
 
 	// Tables
-	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, outer_size: ExtDynamic<ImVec2> = null, inner_width = 0 ): Bool { return false; }
+	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, ?outer_size: ImVec2S, inner_width = 0 ): Bool { return false; }
 	public static function endTable() {}
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
 	public static function tableNextColumn() {}
@@ -1338,7 +1343,7 @@ class ImGui
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
 
 	// Docking
-	public static function dockSpace(id : ImGuiID, size : ExtDynamic<ImVec2> = null, flags : ImGuiDockNodeFlags = 0) {}
+	public static function dockSpace(id : ImGuiID, ?size : ImVec2S, flags : ImGuiDockNodeFlags = 0) {}
 	// dockSpaceOverViewport // Viewport API
 	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
 	// setNextWindowClass // Viewport API
@@ -1353,8 +1358,8 @@ class ImGui
 	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
 	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
 	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
-	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ExtDynamic<ImVec2> ) {}
-	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ExtDynamic<ImVec2> ) {}
+	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ImVec2S ) {}
+	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ImVec2S ) {}
 	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
 	// DockBuilderCopyDockSpace
 	// DockBuilderCopyNode
@@ -1432,7 +1437,7 @@ class ImGui
 	// public static function endDisabled() {}
 
 	// Clipping
-	public static function pushClipRect(clip_rect_min : ExtDynamic<ImVec2>, clip_rect_max : ExtDynamic<ImVec2>, intersect_with_current_clip_rect : Bool) {}
+	public static function pushClipRect(clip_rect_min : ImVec2S, clip_rect_max : ImVec2S, intersect_with_current_clip_rect : Bool) {}
 	public static function popClipRect() {}
 
 	// Focus, Activation
@@ -1453,17 +1458,17 @@ class ImGui
 	public static function isAnyItemHovered() : Bool {return false;}
 	public static function isAnyItemActive() : Bool {return false;}
 	public static function isAnyItemFocused() : Bool {return false;}
-	public static function getItemRectMin() : ExtDynamic<ImVec2> {return null;}
-	public static function getItemRectMax() : ExtDynamic<ImVec2> {return null;}
-	public static function getItemRectSize() : ExtDynamic<ImVec2> {return null;}
+	public static function getItemRectMin() : ImVec2S {return null;}
+	public static function getItemRectMax() : ImVec2S {return null;}
+	public static function getItemRectSize() : ImVec2S {return null;}
 	public static function setItemAllowOverlap() {}
 
 	// Viewports
 	// public static function getMainViewport(): IMViewport
 
 	// Miscellaneous Utilities
-	public static function isRectVisible(size : ExtDynamic<ImVec2>) : Bool {return false;}
-	public static function isRectVisible2(rect_min : ExtDynamic<ImVec2>, rect_max : ExtDynamic<ImVec2>) : Bool {return false;}
+	public static function isRectVisible(size : ImVec2S) : Bool {return false;}
+	public static function isRectVisible2(rect_min : ImVec2S, rect_max : ImVec2S) : Bool {return false;}
 	public static function getTime() : Float {return 0;}
 	public static function getFrameCount() : Int {return 0;}
 	public static function getForegroundDrawList() : ImDrawList {return null;}
@@ -1477,17 +1482,17 @@ class ImGui
 	}
 	public static function getStateStorage() : ImStateStorage {return null;}
 	//setStateStorage
-	public static function beginChildFrame(id : ImGuiID, size : ExtDynamic<ImVec2>, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChildFrame(id : ImGuiID, size : ImVec2S, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function endChildFrame() {}
 	@:deprecated("Obsolete: Use ImGuiListClipper")
 	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
 
 	// Text Utilities
-	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
+	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0): ImVec2S {return null;}
 
 	// Color Utilities
-	public static function colorConvertU32ToFloat4(color : ImU32) : ExtDynamic<ImVec4> {return null;}
-	public static function colorConvertFloat4ToU32(color : ExtDynamic<ImVec4>) : ImU32 {return 0;}
+	public static function colorConvertU32ToFloat4(color : ImU32) : ImVec4S {return null;}
+	public static function colorConvertFloat4ToU32(color : ImVec4S) : ImU32 {return 0;}
 	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
 	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
 
@@ -1507,13 +1512,13 @@ class ImGui
 	public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
 	public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
 	//TODO: getMouseClickedCount
-	public static function isMouseHoveringRect(r_min : ExtDynamic<ImVec2>, r_max : ExtDynamic<ImVec2>, clip : Bool = true) : Bool {return false;}
-	public static function isMousePosValid(mouse_pos : ExtDynamic<ImVec2> = null) : Bool {return false;}
+	public static function isMouseHoveringRect(r_min : ImVec2S, r_max : ImVec2S, clip : Bool = true) : Bool {return false;}
+	public static function isMousePosValid(?mouse_pos : ImVec2S) : Bool {return false;}
 	public static function isAnyMouseDown() : Bool {return false;}
-	public static function getMousePos() : ExtDynamic<ImVec2> {return null;}
-	public static function getMousePosOnOpeningCurrentPopup() : ExtDynamic<ImVec2> {return null;}
+	public static function getMousePos() : ImVec2S {return null;}
+	public static function getMousePosOnOpeningCurrentPopup() : ImVec2S {return null;}
 	public static function isMouseDragging(button : ImGuiMouseButton, lock_threshold : Single = -1.0) : Bool {return false;}
-	public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ExtDynamic<ImVec2> {return null;}
+	public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ImVec2S {return null;}
 	public static function resetMouseDragDelta(button : ImGuiMouseButton = 0) {}
 	public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
 	public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}

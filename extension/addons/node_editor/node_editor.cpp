@@ -62,12 +62,12 @@ HL_PRIM void HL_NAME(nodeeditor_push_style_var)(NodeEditor::StyleVar varIndex, f
 	NodeEditor::PushStyleVar( varIndex, value );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_push_style_var2)(NodeEditor::StyleVar varIndex, vdynamic* val)
+HL_PRIM void HL_NAME(nodeeditor_push_style_var2)(NodeEditor::StyleVar varIndex, vimvec2* val)
 {
 	NodeEditor::PushStyleVar(varIndex, getImVec2(val));
 }
 
-HL_PRIM void HL_NAME(nodeeditor_push_style_var3)(NodeEditor::StyleVar varIndex, vdynamic* val)
+HL_PRIM void HL_NAME(nodeeditor_push_style_var3)(NodeEditor::StyleVar varIndex, vimvec4* val)
 {
 	NodeEditor::PushStyleVar(varIndex, getImVec4(val));
 }
@@ -77,7 +77,7 @@ HL_PRIM void HL_NAME(nodeeditor_pop_style_var)( int* count )
 	NodeEditor::PopStyleVar( convertPtr(count, 1) );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_push_style_color)(NodeEditor::StyleColor varIndex, vdynamic* color )
+HL_PRIM void HL_NAME(nodeeditor_push_style_color)(NodeEditor::StyleColor varIndex, vimvec4* color )
 {
 	NodeEditor::PushStyleColor( varIndex,  getImVec4(color) );
 }
@@ -92,7 +92,7 @@ HL_PRIM void HL_NAME(nodeeditor_pop_style_color)( int* count )
 // Creation
 //------------------------------------------------------------------------------
 
-HL_PRIM void HL_NAME(nodeeditor_begin)( vstring* id, vdynamic *size )
+HL_PRIM void HL_NAME(nodeeditor_begin)( vstring* id, vimvec2 *size )
 {
 	NodeEditor::Begin( convertString(id), getImVec2(size) );
 }
@@ -126,39 +126,36 @@ HL_PRIM void HL_NAME(nodeeditor_end_pin)()
 	NodeEditor::EndPin();
 }
 
-HL_PRIM void HL_NAME(nodeeditor_pin_rect)( vdynamic *a, vdynamic *b)
+HL_PRIM void HL_NAME(nodeeditor_pin_rect)( vimvec2 *a, vimvec2 *b)
 {
 	NodeEditor::PinRect( getImVec2(a), getImVec2(b) );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_pin_pivot_rect)( vdynamic *a, vdynamic *b)
+HL_PRIM void HL_NAME(nodeeditor_pin_pivot_rect)( vimvec2 *a, vimvec2 *b)
 {
 	NodeEditor::PinPivotRect( getImVec2(a), getImVec2(b) );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_pin_pivot_size)( vdynamic *size)
+HL_PRIM void HL_NAME(nodeeditor_pin_pivot_size)( vimvec2 *size)
 {
 	NodeEditor::PinPivotSize( getImVec2(size) );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_pin_pivot_scale)( vdynamic *scale)
+HL_PRIM void HL_NAME(nodeeditor_pin_pivot_scale)( vimvec2 *scale)
 {
 	NodeEditor::PinPivotScale( getImVec2(scale) );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_pin_pivot_alignment)( vdynamic *alignment)
+HL_PRIM void HL_NAME(nodeeditor_pin_pivot_alignment)( vimvec2 *alignment)
 {
 	NodeEditor::PinPivotAlignment( getImVec2(alignment) );
 }
 
 //------------------------------------------------------------------------------
 
-HL_PRIM void HL_NAME(nodeeditor_group)( vdynamic *size )
+HL_PRIM void HL_NAME(nodeeditor_group)( vimvec2 *size )
 {
-	ImVec2 vec = getImVec2(size);
-	NodeEditor::Group( vec );
-	hl_dyn_setf(size, hl_hash_utf8("x"), vec.x);
-	hl_dyn_setf(size, hl_hash_utf8("y"), vec.y);
+	NodeEditor::Group( *size->v() );
 }
 
 HL_PRIM bool HL_NAME(nodeeditor_begin_group_hint)( NodeEditor::NodeId nodeId )
@@ -166,14 +163,14 @@ HL_PRIM bool HL_NAME(nodeeditor_begin_group_hint)( NodeEditor::NodeId nodeId )
 	return NodeEditor::BeginGroupHint( nodeId );
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_get_group_min)( )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_get_group_min)( )
 {
-	return getHLFromImVec2( NodeEditor::GetGroupMin() );
+	return NodeEditor::GetGroupMin();
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_get_group_max)( )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_get_group_max)( )
 {
-	return getHLFromImVec2( NodeEditor::GetGroupMax() );
+	return NodeEditor::GetGroupMax();
 }
 
 HL_PRIM ImDrawList *HL_NAME(nodeeditor_get_hint_foreground_draw_list)( )
@@ -198,7 +195,7 @@ HL_PRIM ImDrawList *HL_NAME(nodeeditor_get_node_background_draw_list)( NodeEdito
 	return NodeEditor::GetNodeBackgroundDrawList( nodeId );
 }
 
-HL_PRIM bool HL_NAME(nodeeditor_link)( NodeEditor::LinkId linkId, NodeEditor::PinId startPinId, NodeEditor::PinId endPinId, vdynamic *color, float *thickness )
+HL_PRIM bool HL_NAME(nodeeditor_link)( NodeEditor::LinkId linkId, NodeEditor::PinId startPinId, NodeEditor::PinId endPinId, vimvec4 *color, float *thickness )
 {
 	return NodeEditor::Link( linkId, startPinId, endPinId, getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F ) );
 }
@@ -210,7 +207,7 @@ HL_PRIM void HL_NAME(nodeeditor_flow)( NodeEditor::LinkId linkId, NodeEditor::Fl
 
 //------------------------------------------------------------------------------
 
-HL_PRIM bool HL_NAME(nodeeditor_begin_create)( vdynamic *color, float *thickness )
+HL_PRIM bool HL_NAME(nodeeditor_begin_create)( vimvec4 *color, float *thickness )
 {
 	return NodeEditor::BeginCreate( getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F ) );
 }
@@ -221,7 +218,7 @@ HL_PRIM bool HL_NAME(nodeeditor_query_new_link)( NodeEditor::PinId *startPinId, 
 	return NodeEditor::QueryNewLink( startPinId, endPinId );
 }
 
-HL_PRIM bool HL_NAME(nodeeditor_query_new_link2)(  NodeEditor::PinId *startPinId, NodeEditor::PinId *endPinId, vdynamic *color, float *thickness )
+HL_PRIM bool HL_NAME(nodeeditor_query_new_link2)(  NodeEditor::PinId *startPinId, NodeEditor::PinId *endPinId, vimvec4 *color, float *thickness )
 {
 	return NodeEditor::QueryNewLink( startPinId, endPinId, getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F )  );
 }
@@ -231,7 +228,7 @@ HL_PRIM bool HL_NAME(nodeeditor_query_new_node)( NodeEditor::PinId *pinId )
 	return NodeEditor::QueryNewNode( pinId );
 }
 
-HL_PRIM bool HL_NAME(nodeeditor_query_new_node2)( NodeEditor::PinId *pinId, vdynamic *color, float *thickness )
+HL_PRIM bool HL_NAME(nodeeditor_query_new_node2)( NodeEditor::PinId *pinId, vimvec4 *color, float *thickness )
 {
 	return NodeEditor::QueryNewNode( pinId, getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F ) );
 }
@@ -241,7 +238,7 @@ HL_PRIM bool HL_NAME(nodeeditor_accept_new_item)( )
 	return NodeEditor::AcceptNewItem( );
 }
 
-HL_PRIM bool HL_NAME(nodeeditor_accept_new_item2)(vdynamic *color, float *thickness )
+HL_PRIM bool HL_NAME(nodeeditor_accept_new_item2)(vimvec4 *color, float *thickness )
 {
 	return NodeEditor::AcceptNewItem(getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F ) );
 }
@@ -251,7 +248,7 @@ HL_PRIM void HL_NAME(nodeeditor_reject_new_item)( )
 	NodeEditor::RejectNewItem( );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_reject_new_item2)(vdynamic *color, float *thickness )
+HL_PRIM void HL_NAME(nodeeditor_reject_new_item2)(vimvec4 *color, float *thickness )
 {
 	NodeEditor::RejectNewItem(getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F ) );
 }
@@ -295,24 +292,24 @@ HL_PRIM void HL_NAME(nodeeditor_end_delete)( )
 
 //------------------------------------------------------------------------------
 
-HL_PRIM void HL_NAME(nodeeditor_set_node_position)( NodeEditor::NodeId nodeId, vdynamic *editorPosition )
+HL_PRIM void HL_NAME(nodeeditor_set_node_position)( NodeEditor::NodeId nodeId, vimvec2 *editorPosition )
 {
 	NodeEditor::SetNodePosition( nodeId, getImVec2( editorPosition ) );
 }
 
-HL_PRIM void HL_NAME(nodeeditor_set_group_size)( NodeEditor::NodeId nodeId, vdynamic *size )
+HL_PRIM void HL_NAME(nodeeditor_set_group_size)( NodeEditor::NodeId nodeId, vimvec2 *size )
 {
 	NodeEditor::SetGroupSize( nodeId, getImVec2( size ) );
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_get_node_position)( NodeEditor::NodeId nodeId )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_get_node_position)( NodeEditor::NodeId nodeId )
 {
-	return getHLFromImVec2( NodeEditor::GetNodePosition( nodeId ) );
+	return NodeEditor::GetNodePosition( nodeId );
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_get_node_size)( NodeEditor::NodeId nodeId )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_get_node_size)( NodeEditor::NodeId nodeId )
 {
-	return getHLFromImVec2( NodeEditor::GetNodeSize( nodeId ) );
+	return NodeEditor::GetNodeSize( nodeId );
 }
 
 HL_PRIM void HL_NAME(nodeeditor_center_node_on_screen)( NodeEditor::NodeId nodeId )
@@ -593,19 +590,19 @@ HL_PRIM float HL_NAME(nodeeditor_get_current_zoom)(  )
 	return NodeEditor::GetCurrentZoom();
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_get_screen_size)(  )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_get_screen_size)(  )
 {
-	return getHLFromImVec2( NodeEditor::GetScreenSize() );
+	return NodeEditor::GetScreenSize();
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_screen_to_canvas)( vdynamic *pos )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_screen_to_canvas)( vimvec2 *pos )
 {
-	return getHLFromImVec2( NodeEditor::ScreenToCanvas( getImVec2( pos ) ) );
+	return NodeEditor::ScreenToCanvas( getImVec2( pos ) );
 }
 
-HL_PRIM vdynamic *HL_NAME(nodeeditor_canvas_to_screen)( vdynamic *pos )
+HL_PRIM vimvec2 *HL_NAME(nodeeditor_canvas_to_screen)( vimvec2 *pos )
 {
-	return getHLFromImVec2( NodeEditor::CanvasToScreen( getImVec2( pos ) ) );
+	return NodeEditor::CanvasToScreen( getImVec2( pos ) );
 }
 
 //------------------------------------------------------------------------------
@@ -633,47 +630,47 @@ DEFINE_PRIM(_STRUCT, nodeeditor_get_style, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_set_style, _STRUCT );
 DEFINE_PRIM(_VOID, nodeeditor_init_style, _STRUCT );
 DEFINE_PRIM(_VOID, nodeeditor_push_style_var, _I32 _F32 );
-DEFINE_PRIM(_VOID, nodeeditor_push_style_var2, _I32 _DYN );
-DEFINE_PRIM(_VOID, nodeeditor_push_style_var3, _I32 _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_var2, _I32 _IMVEC2 );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_var3, _I32 _IMVEC4 );
 DEFINE_PRIM(_VOID, nodeeditor_pop_style_var, _REF(_I32) );
-DEFINE_PRIM(_VOID, nodeeditor_push_style_color, _I32 _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_push_style_color, _I32 _IMVEC4 );
 DEFINE_PRIM(_VOID, nodeeditor_pop_style_color, _REF(_I32) );
 //
-DEFINE_PRIM(_VOID, nodeeditor_begin, _STRING _DYN);
+DEFINE_PRIM(_VOID, nodeeditor_begin, _STRING _IMVEC2);
 DEFINE_PRIM(_VOID, nodeeditor_end, _NO_ARG);
 DEFINE_PRIM(_VOID, nodeeditor_begin_node, _I32);
 DEFINE_PRIM(_VOID, nodeeditor_end_node, _NO_ARG);
 DEFINE_PRIM(_VOID, nodeeditor_begin_pin, _I32 _I32);
 DEFINE_PRIM(_VOID, nodeeditor_end_pin, _NO_ARG);
-DEFINE_PRIM(_VOID, nodeeditor_pin_rect, _DYN _DYN);
-DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_rect, _DYN _DYN);
-DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_size, _DYN);
-DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_scale, _DYN);
-DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_alignment, _DYN);
-DEFINE_PRIM(_VOID, nodeeditor_group, _DYN );
+DEFINE_PRIM(_VOID, nodeeditor_pin_rect, _IMVEC2 _IMVEC2);
+DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_rect, _IMVEC2 _IMVEC2);
+DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_size, _IMVEC2);
+DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_scale, _IMVEC2);
+DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_alignment, _IMVEC2);
+DEFINE_PRIM(_VOID, nodeeditor_group, _IMVEC2 );
 //
 DEFINE_PRIM(_BOOL, nodeeditor_begin_group_hint, _I32 );
-DEFINE_PRIM(_DYN, nodeeditor_get_group_min, _NO_ARG );
-DEFINE_PRIM(_DYN, nodeeditor_get_group_max, _NO_ARG );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_group_min, _NO_ARG );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_group_max, _NO_ARG );
 DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_hint_foreground_draw_list, _NO_ARG );
 DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_hint_background_draw_list, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_end_group_hint, _NO_ARG );
 //
 DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_node_background_draw_list, _I32 );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_link, _I32 _I32 _I32 _DYN _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_link, _I32 _I32 _I32 _IMVEC4 _REF(_F32) );
 //
 DEFINE_PRIM(_VOID, nodeeditor_flow, _I32 _REF(_I32) );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_begin_create, _DYN _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_begin_create, _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_BOOL, nodeeditor_query_new_link, _REF(_I32) _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_new_link2, _REF(_I32) _REF(_I32) _DYN _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_new_link2, _REF(_I32) _REF(_I32) _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_BOOL, nodeeditor_query_new_node, _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_new_node2, _REF(_I32) _DYN _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_new_node2, _REF(_I32) _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_BOOL, nodeeditor_accept_new_item, _NO_ARG );
-DEFINE_PRIM(_BOOL, nodeeditor_accept_new_item2, _DYN _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_accept_new_item2, _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_BOOL, nodeeditor_reject_new_item, _NO_ARG );
-DEFINE_PRIM(_BOOL, nodeeditor_reject_new_item2, _DYN _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_reject_new_item2, _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_VOID, nodeeditor_end_create, _NO_ARG );
 //
 DEFINE_PRIM(_BOOL, nodeeditor_begin_delete, _NO_ARG );
@@ -683,10 +680,10 @@ DEFINE_PRIM(_BOOL, nodeeditor_accept_deleted_item, _REF(_BOOL) );
 DEFINE_PRIM(_VOID, nodeeditor_reject_deleted_item, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_end_delete, _NO_ARG );
 //
-DEFINE_PRIM(_VOID, nodeeditor_set_node_position, _I32 _DYN );
-DEFINE_PRIM(_DYN, nodeeditor_get_node_position, _I32 );
-DEFINE_PRIM(_VOID, nodeeditor_set_group_size, _I32 _DYN );
-DEFINE_PRIM(_DYN, nodeeditor_get_node_size, _I32 );
+DEFINE_PRIM(_VOID, nodeeditor_set_node_position, _I32 _IMVEC2 );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_node_position, _I32 );
+DEFINE_PRIM(_VOID, nodeeditor_set_group_size, _I32 _IMVEC2 );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_node_size, _I32 );
 DEFINE_PRIM(_VOID, nodeeditor_center_node_on_screen, _I32 );
 DEFINE_PRIM(_VOID, nodeeditor_set_node_zposition, _I32 _F32 );
 DEFINE_PRIM(_F32, nodeeditor_get_node_zposition, _I32 );
@@ -744,9 +741,9 @@ DEFINE_PRIM(_BOOL, nodeeditor_is_background_double_clicked, _NO_ARG );
 DEFINE_PRIM(_BOOL, nodeeditor_get_link_pins, _I32 _REF(_I32) _REF(_I32) );
 DEFINE_PRIM(_BOOL, nodeeditor_pin_had_any_links, _I32 );
 //
-DEFINE_PRIM(_DYN, nodeeditor_get_screen_size, _NO_ARG );
-DEFINE_PRIM(_DYN, nodeeditor_screen_to_canvas, _DYN );
-DEFINE_PRIM(_DYN, nodeeditor_canvas_to_screen, _DYN );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_screen_size, _NO_ARG );
+DEFINE_PRIM(_IMVEC2, nodeeditor_screen_to_canvas, _IMVEC2 );
+DEFINE_PRIM(_IMVEC2, nodeeditor_canvas_to_screen, _IMVEC2 );
 //
 DEFINE_PRIM(_I32, nodeeditor_get_node_count, _NO_ARG );
 //DEFINE_PRIM(_I32, get_ordered_node_ids, _NO_ARG );

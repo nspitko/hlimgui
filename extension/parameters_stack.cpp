@@ -5,9 +5,9 @@ HL_PRIM void HL_NAME(push_style_color)(ImGuiCol idx, ImU32 col)
 	ImGui::PushStyleColor(idx, col);
 }
 
-HL_PRIM void HL_NAME(push_style_color2)(ImGuiCol idx, vdynamic* col)
+HL_PRIM void HL_NAME(push_style_color2)(ImGuiCol idx, vimvec4* col)
 {
-	ImGui::PushStyleColor(idx, getImVec4(col));
+	ImGui::PushStyleColor(idx, col);
 }
 
 HL_PRIM void HL_NAME(pop_style_color)(int* count)
@@ -20,9 +20,9 @@ HL_PRIM void HL_NAME(push_style_var)(ImGuiStyleVar idx, float val)
 	ImGui::PushStyleVar(idx, val);
 }
 
-HL_PRIM void HL_NAME(push_style_var2)(ImGuiStyleVar idx, vdynamic* val)
+HL_PRIM void HL_NAME(push_style_var2)(ImGuiStyleVar idx, vimvec2* val)
 {
-	ImGui::PushStyleVar(idx, getImVec2(val));
+	ImGui::PushStyleVar(idx, val);
 }
 
 HL_PRIM void HL_NAME(pop_style_var)(int* count)
@@ -30,9 +30,9 @@ HL_PRIM void HL_NAME(pop_style_var)(int* count)
 	ImGui::PopStyleVar(count != nullptr ? *count : 1);
 }
 
-HL_PRIM vdynamic* HL_NAME(get_style_color_vec4)(ImGuiCol idx)
+HL_PRIM vimvec4* HL_NAME(get_style_color_vec4)(ImGuiCol idx)
 {
-	return getHLFromImVec4(ImGui::GetStyleColorVec4(idx));
+	return ImGui::GetStyleColorVec4(idx);
 }
 
 HL_PRIM float HL_NAME(get_font_size)()
@@ -40,9 +40,9 @@ HL_PRIM float HL_NAME(get_font_size)()
 	return ImGui::GetFontSize();
 }
 
-HL_PRIM vdynamic* HL_NAME(get_font_tex_uv_white_pixel)()
+HL_PRIM vimvec2* HL_NAME(get_font_tex_uv_white_pixel)()
 {
-	return getHLFromImVec2(ImGui::GetFontTexUvWhitePixel());
+	return ImGui::GetFontTexUvWhitePixel();
 }
 
 HL_PRIM ImU32 HL_NAME(get_color_u32)(ImGuiCol idx, float* alpha_mul)
@@ -50,9 +50,9 @@ HL_PRIM ImU32 HL_NAME(get_color_u32)(ImGuiCol idx, float* alpha_mul)
 	return ImGui::GetColorU32(idx, convertPtr(alpha_mul, 1.0f));
 }
 
-HL_PRIM ImU32 HL_NAME(get_color_u322)(vdynamic* col)
+HL_PRIM ImU32 HL_NAME(get_color_u322)(vimvec4* col)
 {
-	return ImGui::GetColorU32(getImVec4(col));
+	return ImGui::GetColorU32(col);
 }
 
 HL_PRIM ImU32 HL_NAME(get_color_u323)(ImU32 col)
@@ -111,16 +111,16 @@ HL_PRIM void HL_NAME(pop_button_repeat)()
 }
 
 DEFINE_PRIM(_VOID, push_style_color, _I32 _I32);
-DEFINE_PRIM(_VOID, push_style_color2, _I32 _DYN);
+DEFINE_PRIM(_VOID, push_style_color2, _I32 _IMVEC4);
 DEFINE_PRIM(_VOID, pop_style_color, _REF(_I32));
 DEFINE_PRIM(_VOID, push_style_var, _I32 _F32);
-DEFINE_PRIM(_VOID, push_style_var2, _I32 _DYN);
+DEFINE_PRIM(_VOID, push_style_var2, _I32 _IMVEC2);
 DEFINE_PRIM(_VOID, pop_style_var, _REF(_I32));
-DEFINE_PRIM(_DYN, get_style_color_vec4, _I32);
+DEFINE_PRIM(_IMVEC4, get_style_color_vec4, _I32);
 DEFINE_PRIM(_F32, get_font_size, _NO_ARG);
-DEFINE_PRIM(_DYN, get_font_tex_uv_white_pixel, _NO_ARG);
+DEFINE_PRIM(_IMVEC2, get_font_tex_uv_white_pixel, _NO_ARG);
 DEFINE_PRIM(_I32, get_color_u32, _I32 _REF(_F32));
-DEFINE_PRIM(_I32, get_color_u322, _DYN);
+DEFINE_PRIM(_I32, get_color_u322, _IMVEC4);
 DEFINE_PRIM(_I32, get_color_u323, _I32);
 DEFINE_PRIM(_VOID, push_item_width, _F32);
 DEFINE_PRIM(_VOID, pop_item_width, _NO_ARG);

@@ -24,14 +24,14 @@ HL_PRIM float HL_NAME(get_window_dpi_scale)() {
 	return ImGui::GetWindowDpiScale();
 }
 
-HL_PRIM vdynamic* HL_NAME(get_window_pos)()
+HL_PRIM vimvec2* HL_NAME(get_window_pos)()
 {
-	return getHLFromImVec2(ImGui::GetWindowPos());
+	return ImGui::GetWindowPos();
 }
 
-HL_PRIM vdynamic* HL_NAME(get_window_size)()
+HL_PRIM vimvec2* HL_NAME(get_window_size)()
 {
-	return getHLFromImVec2(ImGui::GetWindowSize());
+	return ImGui::GetWindowSize();
 }
 
 HL_PRIM float HL_NAME(get_window_width)()
@@ -44,24 +44,24 @@ HL_PRIM float HL_NAME(get_window_height)()
 	return ImGui::GetWindowHeight();
 }
 
-HL_PRIM void HL_NAME(set_next_window_pos)(vdynamic* pos, ImGuiCond* cond, vdynamic* pivot)
+HL_PRIM void HL_NAME(set_next_window_pos)(vimvec2* pos, ImGuiCond* cond, vimvec2* pivot)
 {
-	ImGui::SetNextWindowPos(getImVec2(pos), convertPtr(cond, 0), getImVec2(pivot));
+	ImGui::SetNextWindowPos(pos, convertPtr(cond, 0), getImVec2(pivot));
 }
 
-HL_PRIM void HL_NAME(set_next_window_size)(vdynamic* size, ImGuiCond* cond)
+HL_PRIM void HL_NAME(set_next_window_size)(vimvec2* size, ImGuiCond* cond)
 {
-	ImGui::SetNextWindowSize(getImVec2(size), convertPtr(cond, 0));
+	ImGui::SetNextWindowSize(size, convertPtr(cond, 0));
 }
 
-HL_PRIM void HL_NAME(set_next_window_size_constraints)(vdynamic* size_min, vdynamic* size_max)
+HL_PRIM void HL_NAME(set_next_window_size_constraints)(vimvec2* size_min, vimvec2* size_max)
 {
-	ImGui::SetNextWindowSizeConstraints(getImVec2(size_min), getImVec2(size_max));
+	ImGui::SetNextWindowSizeConstraints(size_min, size_max);
 }
 
-HL_PRIM void HL_NAME(set_next_window_content_size)(vdynamic* size)
+HL_PRIM void HL_NAME(set_next_window_content_size)(vimvec2* size)
 {
-	ImGui::SetNextWindowContentSize(getImVec2(size));
+	ImGui::SetNextWindowContentSize(size);
 }
 
 HL_PRIM void HL_NAME(set_next_window_collapsed)(bool collapsed, ImGuiCond* cond)
@@ -79,14 +79,14 @@ HL_PRIM void HL_NAME(set_next_window_bg_alpha)(float alpha)
 	ImGui::SetNextWindowBgAlpha(alpha);
 }
 
-HL_PRIM void HL_NAME(set_window_pos)(vdynamic* pos, ImGuiCond* cond)
+HL_PRIM void HL_NAME(set_window_pos)(vimvec2* pos, ImGuiCond* cond)
 {
-	ImGui::SetWindowPos(getImVec2(pos), convertPtr(cond, 0));
+	ImGui::SetWindowPos(pos, convertPtr(cond, 0));
 }
 
-HL_PRIM void HL_NAME(set_window_size)(vdynamic* size, ImGuiCond* cond)
+HL_PRIM void HL_NAME(set_window_size)(vimvec2* size, ImGuiCond* cond)
 {
-	ImGui::SetWindowSize(getImVec2(size), convertPtr(cond, 0));
+	ImGui::SetWindowSize(size, convertPtr(cond, 0));
 }
 
 HL_PRIM void HL_NAME(set_window_collapsed)(bool collapsed, ImGuiCond* cond)
@@ -104,14 +104,14 @@ HL_PRIM void HL_NAME(set_window_font_scale)(float scale)
 	ImGui::SetWindowFontScale(scale);
 }
 
-HL_PRIM void HL_NAME(set_window_pos2)(vstring* name, vdynamic* pos, ImGuiCond* cond)
+HL_PRIM void HL_NAME(set_window_pos2)(vstring* name, vimvec2* pos, ImGuiCond* cond)
 {
-	ImGui::SetWindowPos(convertString(name), getImVec2(pos), convertPtr(cond, 0));
+	ImGui::SetWindowPos(convertString(name), pos, convertPtr(cond, 0));
 }
 
-HL_PRIM void HL_NAME(set_window_size2)(vstring* name, vdynamic* size, ImGuiCond* cond)
+HL_PRIM void HL_NAME(set_window_size2)(vstring* name, vimvec2* size, ImGuiCond* cond)
 {
-	ImGui::SetWindowSize(convertString(name), getImVec2(size), convertPtr(cond, 0));
+	ImGui::SetWindowSize(convertString(name), size, convertPtr(cond, 0));
 }
 
 HL_PRIM void HL_NAME(set_window_collapsed2)(vstring* name, bool collapsed, ImGuiCond* cond)
@@ -129,24 +129,24 @@ DEFINE_PRIM(_BOOL, is_window_collapsed, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_window_focused, _REF(_I32));
 DEFINE_PRIM(_BOOL, is_window_hovered, _REF(_I32));
 DEFINE_PRIM(_F32, get_window_dpi_scale, _NO_ARG);
-DEFINE_PRIM(_DYN, get_window_pos, _NO_ARG);
-DEFINE_PRIM(_DYN, get_window_size, _NO_ARG);
+DEFINE_PRIM(_IMVEC2, get_window_pos, _NO_ARG);
+DEFINE_PRIM(_IMVEC2, get_window_size, _NO_ARG);
 DEFINE_PRIM(_F32, get_window_width, _NO_ARG);
 DEFINE_PRIM(_F32, get_window_height, _NO_ARG);
-DEFINE_PRIM(_VOID, set_next_window_pos, _DYN _REF(_I32) _DYN);
-DEFINE_PRIM(_VOID, set_next_window_size, _DYN _REF(_I32));
-DEFINE_PRIM(_VOID, set_next_window_size_constraints, _DYN _DYN);
-DEFINE_PRIM(_VOID, set_next_window_content_size, _DYN);
+DEFINE_PRIM(_VOID, set_next_window_pos, _IMVEC2 _REF(_I32) _IMVEC2);
+DEFINE_PRIM(_VOID, set_next_window_size, _IMVEC2 _REF(_I32));
+DEFINE_PRIM(_VOID, set_next_window_size_constraints, _IMVEC2 _IMVEC2);
+DEFINE_PRIM(_VOID, set_next_window_content_size, _IMVEC2);
 DEFINE_PRIM(_VOID, set_next_window_collapsed, _BOOL _REF(_I32));
 DEFINE_PRIM(_VOID, set_next_window_focus, _NO_ARG);
 DEFINE_PRIM(_VOID, set_next_window_bg_alpha, _F32);
-DEFINE_PRIM(_VOID, set_window_pos, _DYN _REF(_I32));
-DEFINE_PRIM(_VOID, set_window_size, _DYN _REF(_I32));
+DEFINE_PRIM(_VOID, set_window_pos, _IMVEC2 _REF(_I32));
+DEFINE_PRIM(_VOID, set_window_size, _IMVEC2 _REF(_I32));
 DEFINE_PRIM(_VOID, set_window_collapsed, _BOOL _REF(_I32));
 DEFINE_PRIM(_VOID, set_window_focus, _NO_ARG);
 DEFINE_PRIM(_VOID, set_window_font_scale, _F32);
-DEFINE_PRIM(_VOID, set_window_pos2, _STRING _DYN _REF(_I32));
-DEFINE_PRIM(_VOID, set_window_size2, _STRING _DYN _REF(_I32));
+DEFINE_PRIM(_VOID, set_window_pos2, _STRING _IMVEC2 _REF(_I32));
+DEFINE_PRIM(_VOID, set_window_size2, _STRING _IMVEC2 _REF(_I32));
 DEFINE_PRIM(_VOID, set_window_collapsed2, _STRING _BOOL _REF(_I32));
 DEFINE_PRIM(_VOID, set_window_focus2, _STRING);
 

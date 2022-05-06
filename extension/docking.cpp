@@ -1,7 +1,7 @@
 #include "utils.h"
 #include "lib/imgui/imgui_internal.h"
 
-HL_PRIM void HL_NAME(dock_space)( ImGuiID id, vdynamic* size, ImGuiDockNodeFlags* flags )
+HL_PRIM void HL_NAME(dock_space)( ImGuiID id, vimvec2* size, ImGuiDockNodeFlags* flags )
 {
 	ImGui::DockSpace(id, getImVec2(size), convertPtr(flags, 0));
 }
@@ -57,14 +57,14 @@ HL_PRIM void HL_NAME(dock_builder_remove_node_child_nodes)( ImGuiID node_id )
 	ImGui::DockBuilderRemoveNodeChildNodes(node_id );
 }
 
-HL_PRIM void HL_NAME(dock_builder_set_node_pos)( ImGuiID node_id, vdynamic* pos )
+HL_PRIM void HL_NAME(dock_builder_set_node_pos)( ImGuiID node_id, vimvec2* pos )
 {
-	ImGui::DockBuilderSetNodePos(node_id, getImVec2( pos ) );
+	ImGui::DockBuilderSetNodePos(node_id, pos);
 }
 
-HL_PRIM void HL_NAME(dock_builder_set_node_size)( ImGuiID node_id, vdynamic* size )
+HL_PRIM void HL_NAME(dock_builder_set_node_size)( ImGuiID node_id, vimvec2* size )
 {
-	ImGui::DockBuilderSetNodeSize(node_id, getImVec2( size ) );
+	ImGui::DockBuilderSetNodeSize(node_id, size);
 }
 
 HL_PRIM ImGuiID HL_NAME(dock_builder_split_node)( ImGuiID node_id, ImGuiDir split_dir, float size_ratio_for_node_at_dir, ImGuiID* out_id_at_dir, ImGuiID* out_id_at_opposite_dir )
@@ -96,7 +96,7 @@ HL_PRIM void  HL_NAME(dock_builder_finish)( ImGuiID node_id )
 
 #define _TDOCKNODE _ABSTRACT(imguidocknode)
 
-DEFINE_PRIM(_VOID, dock_space, _I32 _DYN _REF(_I32));
+DEFINE_PRIM(_VOID, dock_space, _I32 _IMVEC2 _REF(_I32));
 DEFINE_PRIM(_VOID, set_next_window_dock_id, _I32 _REF(_I32));
 DEFINE_PRIM(_I32, get_window_dock_id, _NO_ARG );
 DEFINE_PRIM(_BOOL, is_window_docked, _NO_ARG );
@@ -108,8 +108,8 @@ DEFINE_PRIM(_I32, dock_builder_add_node, _I32 _I32 );
 DEFINE_PRIM(_VOID, dock_builder_remove_node, _I32 );
 DEFINE_PRIM(_VOID, dock_builder_remove_node_docked_windows, _I32 _BOOL );
 DEFINE_PRIM(_VOID, dock_builder_remove_node_child_nodes, _I32 );
-DEFINE_PRIM(_VOID, dock_builder_set_node_pos, _I32 _DYN );
-DEFINE_PRIM(_VOID, dock_builder_set_node_size, _I32 _DYN );
+DEFINE_PRIM(_VOID, dock_builder_set_node_pos, _I32 _IMVEC2 );
+DEFINE_PRIM(_VOID, dock_builder_set_node_size, _I32 _IMVEC2 );
 DEFINE_PRIM(_I32, dock_builder_split_node, _I32 _I32 _F32 _REF(_I32) _REF(_I32) );
 //DEFINE_PRIM(_VOID, dock_builder_copy_dock_space, _I32 _I32 );
 //DEFINE_PRIM(_VOID, dock_builder_copy_node, _I32 _I32 );

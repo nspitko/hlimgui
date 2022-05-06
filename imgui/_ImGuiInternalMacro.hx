@@ -106,14 +106,15 @@ class _ImGuiInternalMacro {
     switch (base.kind) {
       case FVar(t, _):
         switch (t.toType().followWithAbstracts()) {
-          case TAnonymous(a):
+            
+          case TAnonymous(_.get().fields => fields), TInst(_.get().fields.get() => fields, _):
             baseName = t.toString().split(".").pop() + "_" + base.name;
             baseType = t;
             var setExprs:Array<Expr> = [];
             var setArgs:Array<FunctionArg> = [];
             var copyExprs: Array<Expr> = [];
-            for (f in a.get().fields) {
-              if (!f.isPublic || !f.kind.match(FVar(_, _))) continue;
+            for (f in fields) {
+              if (!f.isPublic || f.meta.has(":deprecated") || !f.kind.match(FVar(_, _))) continue;
               var flatName = base.name + "_" + f.name;
               var ct = f.type.toComplexType();
               ret.push({

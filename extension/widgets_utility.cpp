@@ -65,19 +65,19 @@ HL_PRIM bool HL_NAME(is_any_item_focused)()
     return ImGui::IsAnyItemFocused();
 }
 
-HL_PRIM vdynamic* HL_NAME(get_item_rect_min)()
+HL_PRIM vimvec2* HL_NAME(get_item_rect_min)()
 {
-    return getHLFromImVec2(ImGui::GetItemRectMin());
+    return ImGui::GetItemRectMin();
 }
 
-HL_PRIM vdynamic* HL_NAME(get_item_rect_max)()
+HL_PRIM vimvec2* HL_NAME(get_item_rect_max)()
 {
-    return getHLFromImVec2(ImGui::GetItemRectMax());
+    return ImGui::GetItemRectMax();
 }
 
-HL_PRIM vdynamic* HL_NAME(get_item_rect_size)()
+HL_PRIM vimvec2* HL_NAME(get_item_rect_size)()
 {
-    return getHLFromImVec2(ImGui::GetItemRectSize());
+    return ImGui::GetItemRectSize();
 }
 
 HL_PRIM void HL_NAME(set_item_allow_overlap)()
@@ -98,7 +98,7 @@ DEFINE_PRIM(_BOOL, is_item_toggled_open, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_any_item_hovered, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_any_item_active, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_any_item_focused, _NO_ARG);
-DEFINE_PRIM(_DYN, get_item_rect_min, _NO_ARG);
-DEFINE_PRIM(_DYN, get_item_rect_max, _NO_ARG);
-DEFINE_PRIM(_DYN, get_item_rect_size, _NO_ARG);
+DEFINE_PRIM(_IMVEC2, get_item_rect_min, _NO_ARG);
+DEFINE_PRIM(_IMVEC2, get_item_rect_max, _NO_ARG);
+DEFINE_PRIM(_IMVEC2, get_item_rect_size, _NO_ARG);
 DEFINE_PRIM(_VOID, set_item_allow_overlap, _NO_ARG);

@@ -36,12 +36,9 @@ int unicodeSizeInUTF8(vstring* hl_string);
 void unicodeToUTF8Buffer(vstring* hl_string, char* out);
 std::string unicodeToUTF8(vstring* hl_string);
 
-// Replaced by imconfig.h extra converters
-inline ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value : vec2; }
-inline ImVec4 getImVec4(vdynamic* vec4, const ImVec4& default_value = ImVec4(0, 0, 0, 0)) { return vec4 == nullptr ? default_value : vec4; }
-
-inline vdynamic* getHLFromImVec2(ImVec2 value) { return value; }
-inline vdynamic* getHLFromImVec4(ImVec4 value) { return value; }
+// Converters that handle nullptr with default value
+inline ImVec2 getImVec2(vimvec2* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value : vec2; }
+inline ImVec4 getImVec4(vimvec4* vec4, const ImVec4& default_value = ImVec4(0, 0, 0, 0)) { return vec4 == nullptr ? default_value : vec4; }
 
 vbyte* getVByteFromCStr(const char* str);
 

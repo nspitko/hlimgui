@@ -4,7 +4,6 @@ import imgui.ImGui;
 import hl.NativeArray;
 import hl.Bytes;
 import imgui.types.Pointers;
-import imgui.ImGui.ImVec2;
 
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
 @:struct class ImFontConfig {
@@ -16,8 +15,8 @@ import imgui.ImGui.ImVec2;
 	var OversampleH: Int;                   // Rasterize at higher quality for sub-pixel positioning. Note the difference between 2 and 3 is minimal so you can reduce this to 2 to save memory. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.
 	var OversampleV: Int;                   // Rasterize at higher quality for sub-pixel positioning. This is not really useful as we don't use sub-pixel positions on the Y axis.
 	var PixelSnapH: Bool;                   // Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.
-	@:flatten var GlyphExtraSpacing: ImVec2;// Extra spacing (in pixels) between glyphs. Only X axis is supported for now.
-	@:flatten var GlyphOffset: ImVec2;      // Offset all glyphs from this font input.
+	@:flatten var GlyphExtraSpacing: ImVec2S;// Extra spacing (in pixels) between glyphs. Only X axis is supported for now.
+	@:flatten var GlyphOffset: ImVec2S;      // Offset all glyphs from this font input.
 	@:noCompletion var GlyphRanges: Bytes;  // Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE.
 	var GlyphMinAdvanceX: Single;           // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font
 	var GlyphMaxAdvanceY: Single;           // Maximum AdvanceX for glyphs

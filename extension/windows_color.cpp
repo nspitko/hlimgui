@@ -24,9 +24,9 @@ HL_PRIM bool HL_NAME(color_picker4)(vstring* label, varray* col, ImGuiColorEditF
     return ImGui::ColorPicker4(convertString(label), hl_aptr(col,float), convertPtr(flags, 0), ref_col);
 }
 
-HL_PRIM bool HL_NAME(color_button)(vstring* desc_id, vdynamic* col, ImGuiColorEditFlags* flags, vdynamic* size)
+HL_PRIM bool HL_NAME(color_button)(vstring* desc_id, vimvec4* col, ImGuiColorEditFlags* flags, vimvec2* size)
 {
-    return ImGui::ColorButton(convertString(desc_id), getImVec4(col), convertPtr(flags, 0), getImVec2(size));
+    return ImGui::ColorButton(convertString(desc_id), col, convertPtr(flags, 0), getImVec2(size));
 }
 
 HL_PRIM void HL_NAME(set_color_edit_options)(ImGuiColorEditFlags flags)
@@ -38,5 +38,5 @@ DEFINE_PRIM(_BOOL, color_edit3, _STRING _ARR _REF(_I32));
 DEFINE_PRIM(_BOOL, color_edit4, _STRING _ARR _REF(_I32));
 DEFINE_PRIM(_BOOL, color_picker3, _STRING _ARR _REF(_I32));
 DEFINE_PRIM(_BOOL, color_picker4, _STRING _ARR _REF(_I32) _REF(_F32));
-DEFINE_PRIM(_BOOL, color_button, _STRING _DYN _REF(_I32) _DYN);
+DEFINE_PRIM(_BOOL, color_button, _STRING _IMVEC4 _REF(_I32) _IMVEC2);
 DEFINE_PRIM(_VOID, set_color_edit_options, _I32);

@@ -16,7 +16,7 @@ HL_PRIM bool HL_NAME(list_box)(vstring* label, int* current_item, varray* items,
     return ImGui::ListBox(convertString(label), current_item, &cstr_items[0], convertPtr(height_in_items, -1));
 }
 
-HL_PRIM bool HL_NAME(begin_list_box)(vstring* label, vdynamic* size)
+HL_PRIM bool HL_NAME(begin_list_box)(vstring* label, vimvec2* size)
 {
     return ImGui::BeginListBox(convertString(label), getImVec2(size));
 }
@@ -32,6 +32,6 @@ HL_PRIM void HL_NAME(end_list_box)()
 }
 
 DEFINE_PRIM(_BOOL, list_box, _STRING _REF(_I32) _ARR _REF(_I32));
-DEFINE_PRIM(_BOOL, begin_list_box, _STRING _DYN);
+DEFINE_PRIM(_BOOL, begin_list_box, _STRING _IMVEC2);
 DEFINE_PRIM(_BOOL, list_box_header2, _STRING _I32 _REF(_I32));
 DEFINE_PRIM(_VOID, end_list_box, _NO_ARG);
