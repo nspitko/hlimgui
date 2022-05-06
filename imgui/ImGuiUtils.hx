@@ -31,6 +31,24 @@ class ImTypeCache {
 		if (vec4Slot == MAX_SLOTS) vec4Slot = 0;
 		return v.set(x, y, z, w);
 	}
+	
+	/**
+		Retreive a preallocated ImVec4 and set its values RGBA value of `col`.
+	**/
+	public static inline function vec4c(col: Int) {
+		var v = imVec4[vec4Slot++];
+		if (vec4Slot == MAX_SLOTS) vec4Slot = 0;
+		return v.setColor(col);
+	}
+	
+	/**
+		Retreive a preallocated ImVec4 and set its values RGB value of `col` and and A of `alpha`.
+	**/
+	public static inline function vec4ca(col: Int, alpha: Float = 1.0) {
+		var v = imVec4[vec4Slot++];
+		if (vec4Slot == MAX_SLOTS) vec4Slot = 0;
+		return v.setColorRGB(col, alpha);
+	}
 
 	public static var imVec2: Array<ImVec2S> = [for (i in 0...MAX_SLOTS) ({ x: 0, y: 0 })];
 	
