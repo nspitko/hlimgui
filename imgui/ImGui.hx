@@ -1230,8 +1230,8 @@ class ImGui
 	public static function setNextItemOpen(is_open : Bool, cond : ImGuiCond = 0) {}
 
 	// Widgets: Selectables
-    public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, size: ImVec2S) : Bool {return false;}
-	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, size: ImVec2S) : Bool {return false;}
+	public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2S) : Bool {return false;}
+	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2S) : Bool {return false;}
 
 	// Widgets: List Boxes
 	/**
