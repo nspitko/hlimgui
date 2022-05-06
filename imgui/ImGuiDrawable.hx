@@ -1,5 +1,7 @@
 package imgui;
 
+import h2d.Tile;
+import imgui.types.Renderer;
 import imgui.types.ImFontAtlas;
 #if heaps
 
@@ -12,12 +14,12 @@ class ImGuiDrawableBuffers {
 	public static final instance = new ImGuiDrawableBuffers();
 
 	public var vertex_buffers(default, null) : Array<h3d.Buffer> = [];
-	public var index_buffers(default, null) : Array<{
-		texture_id:ImTextureID,
-		vertex_buffer_id:Int,
-		clip_rect:{x:Int, y:Int, width:Int, height:Int},
-		buffer:h3d.Indexes}> = [];
+	public var index_buffers(default, null) : Array<h3d.Indexes> = [];
+	public var commands: Array<hl.NativeArray<RenderCommand>> = [];
+	public var bufferCount: Int;
 
+	var noTexture: Texture;
+	
 	private var initialized : Bool;
 	public var font_texture : Texture;
 	#if hlimgui_cursor
@@ -31,7 +33,7 @@ class ImGuiDrawableBuffers {
 		
 		ImGui.provideTypes();
 		ImGui.createContext();
-		ImGui.setRenderCallback(renderDrawListsFromExternal);
+		ImGui.setRenderCallback(renderDrawList);
 		
 		var fonts = ImGui.getFontAtlas();
 		var font_info = new ImFontTexData();
@@ -81,12 +83,13 @@ class ImGuiDrawableBuffers {
 		}
 		#end
 
+		noTexture = Tile.fromColor(0xffffff).getTexture();
 		this.initialized = true;
 	}
 
 	public function dispose() {
 		for (index_buffer in this.index_buffers) {
-			index_buffer.buffer.dispose();
+			index_buffer.dispose();
 		}
 		this.index_buffers = [];
 
@@ -94,6 +97,7 @@ class ImGuiDrawableBuffers {
 			vertex_buffer.dispose();
 		}
 		this.vertex_buffers = [];
+		this.commands = [];
 
 		this.initialized = false;
 	}
@@ -102,97 +106,50 @@ class ImGuiDrawableBuffers {
 		this.initialized = false;
 	}
 
-	private function renderDrawList(draw_list:{cmd_list:hl.NativeArray<Dynamic>}) {
-		var vertex_buffer_index = 0;
-		var index_buffer_index = 0;
+	private function renderDrawList(renderList: RenderList) {
+		bufferCount = 0;
 
-		for (cmd_index in 0...draw_list.cmd_list.length) {
-			var draw_item = draw_list.cmd_list[cmd_index];
-
-			var ext_vertex_buffer:hl.Bytes = draw_item.vertex_buffer;
-			var vertex_stride = 8;
-			var nb_vertices = Std.int(draw_item.vertex_buffer_size/(vertex_stride*4));
-
+		for (i in 0...renderList.size) {
+			var data = renderList.lists[i];
+			
+			final vertexStride = 8;
+			var vertexCount = Std.int(data.vertexBufferSize / (vertexStride * 4)); // data.vertexBufferSize>>5;
+			var indexCount = data.indexBufferSize>>1;
+			if (vertexCount == 0) continue;
+			
 			// create or reuse vertex buffer
-			if (vertex_buffer_index >= this.vertex_buffers.length) {
-				this.vertex_buffers[vertex_buffer_index] = new h3d.Buffer(nb_vertices, vertex_stride, [RawFormat, Dynamic]);
-			} else if (this.vertex_buffers[vertex_buffer_index].vertices < nb_vertices) {
-				this.vertex_buffers[vertex_buffer_index].dispose();
-				this.vertex_buffers[vertex_buffer_index] = new h3d.Buffer(nb_vertices, vertex_stride, [RawFormat, Dynamic]);
-			}
-
-			// update vertex buffer data
-			this.vertex_buffers[vertex_buffer_index].uploadBytes(ext_vertex_buffer.toBytes(draw_item.vertex_buffer_size), 0, nb_vertices);
-
-			var draw_objects:hl.NativeArray<Dynamic> = draw_item.draw_objects;
-
-			// read cmd buffers
-			for (draw_object_index in 0...draw_objects.length) {
-				var draw_object = draw_objects[draw_object_index];
-
-				var ext_index_buffer:hl.Bytes = draw_object.index_buffer;
-				var nb_indices = Std.int(draw_object.index_buffer_size/2);
-
-				// Some plugins generate empty buffers. Skip these.
-				if( nb_indices == 0 )
-					continue;
-
-				var clip_rect = {
-					x: draw_object.clip_left,
-					y: draw_object.clip_top,
-					width: draw_object.clip_width,
-					height: draw_object.clip_height
+			if (i == this.vertex_buffers.length) {
+				this.vertex_buffers[i] = new h3d.Buffer(vertexCount, vertexStride, [RawFormat, Dynamic]);
+				this.index_buffers[i] = new h3d.Indexes(indexCount);
+			} else {
+				if (this.vertex_buffers[i].vertices < vertexCount) {
+					this.vertex_buffers[i].dispose();
+					this.vertex_buffers[i] = new h3d.Buffer(vertexCount, vertexStride, [RawFormat, Dynamic]);
 				}
-
-				// create or reuse index buffer
-				if (index_buffer_index >= this.index_buffers.length) {
-					this.index_buffers[index_buffer_index] = {
-						buffer: new h3d.Indexes(nb_indices),
-						vertex_buffer_id: vertex_buffer_index,
-						clip_rect: clip_rect,
-						texture_id: draw_object.texture_id};
-				} else if (this.index_buffers[index_buffer_index].buffer.count != nb_indices) {
-					this.index_buffers[index_buffer_index].buffer.dispose();
-					this.index_buffers[index_buffer_index] = {
-						buffer: new h3d.Indexes(nb_indices),
-						vertex_buffer_id: vertex_buffer_index,
-						clip_rect: clip_rect,
-						texture_id: draw_object.texture_id
-					};
-				} else {
-					var index_buffer = this.index_buffers[index_buffer_index];
-					index_buffer.vertex_buffer_id = vertex_buffer_index;
-					index_buffer.texture_id = draw_object.texture_id;
-					index_buffer.clip_rect = clip_rect;
+				if (this.index_buffers[i].count < indexCount) {
+					this.index_buffers[i].dispose();
+					this.index_buffers[i] = new h3d.Indexes(indexCount);
 				}
-
-				// update index buffer data
-
-				this.index_buffers[index_buffer_index].buffer.uploadBytes(ext_index_buffer.toBytes(draw_object.index_buffer_size), 0, nb_indices);
-
-				index_buffer_index++;
- 			}
-
-			vertex_buffer_index++;
-		}
-
-		// remove unused buffers
-		if (index_buffer_index < this.index_buffers.length) {
-			for (i in index_buffer_index...this.index_buffers.length) {
-				this.index_buffers[i].buffer.dispose();
 			}
-			this.index_buffers.resize(index_buffer_index);
-		}
-		if (vertex_buffer_index < this.vertex_buffers.length) {
-			for (i in vertex_buffer_index...this.vertex_buffers.length) {
-				this.vertex_buffers[i].dispose();
-			}
-			this.vertex_buffers.resize(vertex_buffer_index);
+			this.vertex_buffers[i].uploadBytes(data.vertexBuffer.toBytes(data.vertexBufferSize), 0, vertexCount);
+			this.index_buffers[i].uploadBytes(data.indexBuffer.toBytes(data.indexBufferSize), 0, indexCount);
+			this.commands[i] = data.commands.sub(0, data.commandCount);
+			bufferCount++;
 		}
 	}
-
-    private static function renderDrawListsFromExternal(draw_list:{cmd_list:hl.NativeArray<Dynamic>}) {
-		instance.renderDrawList(draw_list);
+	
+	public function draw(ctx: h2d.RenderContext, obj: h2d.Drawable) {
+		var e = ctx.engine;
+		for (i in 0...bufferCount) {
+			var cmdList = commands[i];
+			for (cmd in cmdList) {
+				if (cmd.elemCount > 0 && ctx.beginDrawObject(obj, cmd.textureID == null ? noTexture : cmd.textureID)) {
+					e.setRenderZone(cmd.clipLeft, cmd.clipTop, cmd.clipWidth, cmd.clipHeight);
+					e.renderIndexed(vertex_buffers[i], index_buffers[i], Std.int(cmd.indexOffset / 3), Std.int(cmd.elemCount / 3));
+				}
+			}
+		}
+		e.setRenderZone();
 	}
 }
 
@@ -351,19 +308,7 @@ class ImGuiDrawable extends h2d.Drawable {
 	}
 
 	override function draw(ctx:h2d.RenderContext) {
-		var vertex_buffers = ImGuiDrawableBuffers.instance.vertex_buffers;
-		var index_buffers = ImGuiDrawableBuffers.instance.index_buffers;
-
-		for (i in 0...index_buffers.length) {
-			var index_buffer = index_buffers[i];
-			if (ctx.beginDrawObject(this,  index_buffer.texture_id == null ? this.empty_tile.getTexture() : index_buffer.texture_id)) {
-				var clip_rect = index_buffer.clip_rect;
-				ctx.engine.setRenderZone(clip_rect.x, clip_rect.y, clip_rect.width, clip_rect.height);
-				ctx.engine.renderIndexed(vertex_buffers[index_buffer.vertex_buffer_id], index_buffer.buffer);
-			}
-		}
-
-		ctx.engine.setRenderZone();
+		ImGuiDrawableBuffers.instance.draw(ctx, this);
 	}
 }
 

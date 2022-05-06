@@ -1,5 +1,6 @@
 package imgui;
 
+import imgui.types.Renderer;
 import imgui.ImGuiUtils;
 import imgui.types.ImFontAtlas;
 import imgui.types.Pointers;
@@ -1588,22 +1589,22 @@ class ImGui
 	public static inline function buildFont(): Bool { return getFontAtlas().build(); }
 
 	// internal functions
-	public static function setRenderCallback(render_fn:Dynamic->Void) {}
+	public static function setRenderCallback(render_fn:RenderList->Void) {}
 	
 	/**
 		Mandatory to call before anything else!
 		Provides C side the necessary hl_type references for data constructed on C side such as ImVec2 and ImVec4.
 	**/
-	public static inline function provideTypes() {
-		_init(ImVec2S.get(), ImVec4S.get());
+	public static inline function provideTypes() @:privateAccess {
+		_init(ImVec2S.get(), ImVec4S.get(), new RenderList(), new RenderData(), new RenderCommand());
 	}
 	@:hlNative("hlimgui", "initialize")
-	static function _init(vec2: ImVec2S, vec4: ImVec4S) {};
+	static function _init(vec2: ImVec2S, vec4: ImVec4S, renderlist: RenderList, renderdata: RenderData, rendercommand: RenderCommand) {};
 	
 	/**
 		Bootstrap helper to initialize Imgui.
 	**/
-	public static inline function initialize(render_fn:Dynamic->Void) : ImFontTexData {
+	public static inline function initialize(render_fn:RenderList->Void) : ImFontTexData {
 		provideTypes();
 		createContext();
 		setRenderCallback(render_fn);

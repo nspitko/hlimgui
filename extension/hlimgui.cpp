@@ -1,5 +1,9 @@
 #include "utils.h"
 
+// Fix for casting void* -> vdynamic*
+#define hl_call1fixed(ret,cl,t,v)\
+	(cl->hasValue ? ((ret(*)(vdynamic*,t))cl->fun)((vdynamic*)cl->value,v) : ((ret(*)(t))cl->fun)(v))
+
 typedef struct
 {
 	float x;
@@ -15,31 +19,88 @@ typedef struct
 static vclosure* s_render_function = nullptr;
 hl_type* hlt_imvec2;
 hl_type* hlt_imvec4;
+hl_type* hlt_rendercommand;
+hl_type* hlt_renderdata;
+
+typedef struct
+{
+	hl_type* t;
+	vdynamic* texture_id;
+	int index_offset;
+	int elem_count;
+	
+	int clip_left;
+	int clip_top;
+	int clip_width;
+	int clip_height;
+	
+	// vclosure* callback; // TODO
+} vrendercommand;
+#define _TRENDERCOMMAND _OBJ(_IMTEXID _I32 _I32 _I32 _I32 _I32 _I32)
+
+typedef struct
+{
+	hl_type* t;
+	HeapVertex* vertex_buffer;
+	int vertex_buffer_size;
+	vbyte* index_buffer;
+	int index_buffer_size;
+	varray* commands;
+	int command_count;
+} vrenderdata;
+#define _TRENDERDATA _OBJ(_BYTES _I32 _BYTES _I32 _ARR _I32)
+
+typedef struct
+{
+	hl_type* t;
+	varray* lists;
+	int size;
+} vrenderlist;
+#define _TRENDERLIST _OBJ(_ARR _I32)
+
+static vrenderlist* render_list = nullptr;
+
+// TODO: Also let data be provided as is.
 
 void renderDrawLists(ImDrawData* draw_data)
 {
-	if (s_render_function == nullptr)
+	if (s_render_function == nullptr || render_list == nullptr) return;
+
+	// Reallocate varray in case there's more draw lists than before.
+
+	if (render_list->lists->size < draw_data->CmdListsCount)
 	{
-		return;
+		varray* old = render_list->lists;
+		render_list->lists = hl_alloc_array(hlt_renderdata, draw_data->CmdListsCount);
+		// Copy over previously allocated data
+		int size = hl_type_size(hlt_renderdata);
+		memmove( (vbyte*)hl_aptr(render_list->lists,vbyte), (vbyte*)hl_aptr(old,vbyte), old->size * size);
 	}
-
-	// create the hl array passed to the hl render function
-	varray* hl_cmd_list = hl_alloc_array(&hlt_dynobj, draw_data->CmdListsCount);
-	vdynobj** hl_cmd_list_ptr = hl_aptr(hl_cmd_list, vdynobj*);
-
+	
+	// Store the amount draw lists to render, as varray is grow type and can contain invalid data if amount of draw lists shrink.
+	render_list->size = draw_data->CmdListsCount;
+	vrenderdata** hl_cmd_list_ptr = hl_aptr(render_list->lists, vrenderdata*);
+	
 	for (int n = 0; n < draw_data->CmdListsCount; n++)
 	{
 		const ImDrawList* cmd_list = draw_data->CmdLists[n];
-		const ImDrawIdx* idx_buffer = &cmd_list->IdxBuffer.front();
+		
+		// Allocate render data storage and command list if not allocated before.
+		if (hl_cmd_list_ptr[n] == nullptr) {
+			hl_cmd_list_ptr[n] = (vrenderdata*)hl_alloc_obj(hlt_renderdata);
+			hl_cmd_list_ptr[n]->commands = hl_alloc_array(hlt_rendercommand, cmd_list->CmdBuffer.size());
+		}
+		vrenderdata* hl_cmd_list = hl_cmd_list_ptr[n];
 
-		// create the hl dynamic
-		vdynobj* hl_cmd_list = hl_alloc_dynobj();
-		hl_cmd_list_ptr[n] = hl_cmd_list;
-
-		// create vertex buffer
+		// Process vertex buffer
+		// Bytes are grow-only type.
 		int nb_vertex = cmd_list->VtxBuffer.size();
 		int vertex_buffer_size = sizeof(HeapVertex) * nb_vertex;
-		HeapVertex* vertex_buffer = (HeapVertex*)hl_alloc_bytes(vertex_buffer_size);
+		if (hl_cmd_list->vertex_buffer_size < vertex_buffer_size)
+			hl_cmd_list->vertex_buffer = (HeapVertex*)hl_alloc_bytes(vertex_buffer_size);
+		hl_cmd_list->vertex_buffer_size = vertex_buffer_size;
+		HeapVertex* vertex_buffer = hl_cmd_list->vertex_buffer;
+
 		for (int v = 0; v < nb_vertex; v++)
 		{
 			auto& hl_vertex = vertex_buffer[v];
@@ -51,60 +112,49 @@ void renderDrawLists(ImDrawData* draw_data)
 			convertColor(imgui_vertex.col, hl_vertex.r, hl_vertex.g, hl_vertex.b, hl_vertex.a);
 		}
 
-		// store the vertex buffer in the dynamic
-		hl_dyn_setp((vdynamic*)hl_cmd_list, hl_hash_utf8("vertex_buffer"), &hlt_bytes, vertex_buffer);
-
-		// store the vertex buffer size
-		hl_dyn_seti((vdynamic*)hl_cmd_list, hl_hash_utf8("vertex_buffer_size"), &hlt_i32, vertex_buffer_size);
-
+		// Process index buffer (just copy over)
+		// Bytes are grow-only type.
+		int index_buffer_size = cmd_list->IdxBuffer.size_in_bytes();
+		if (hl_cmd_list->index_buffer_size < index_buffer_size)
+			hl_cmd_list->index_buffer = hl_copy_bytes((vbyte*)cmd_list->IdxBuffer.begin(), index_buffer_size);
+		else
+			memmove((vbyte*)hl_cmd_list->index_buffer, (vbyte*)cmd_list->IdxBuffer.begin(), index_buffer_size);
+		hl_cmd_list->index_buffer_size = index_buffer_size;
+		
 		// create the array for command buffer
-		varray* hl_cmd_buffers = hl_alloc_array(&hlt_dynobj, cmd_list->CmdBuffer.size());
-		vdynobj** hl_cmd_buffers_ptr = hl_aptr(hl_cmd_buffers, vdynobj*);
+		int command_count = cmd_list->CmdBuffer.size();
+
+		if (hl_cmd_list->commands->size < command_count)
+		{
+			varray* old = hl_cmd_list->commands;
+			hl_cmd_list->commands = hl_alloc_array(hlt_rendercommand, command_count);
+			// Copy over previously allocated data
+			int size = hl_type_size(hlt_rendercommand);
+			memmove( hl_aptr(hl_cmd_list->commands,vbyte), hl_aptr(old,vbyte), old->size * size);
+		}
+		hl_cmd_list->command_count = command_count;
+
+		vrendercommand** hl_commands = hl_aptr(hl_cmd_list->commands, vrendercommand*);
 
 		for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.size(); cmd_i++)
 		{
 			const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-
-			// create the hl dynamic to store the cmd buffer
-			vdynobj* hl_cmd_buffer = hl_alloc_dynobj();
-			hl_cmd_buffers_ptr[cmd_i] = hl_cmd_buffer;
-
-			// store the texture id
-			vobj* tex_id = (vobj*)pcmd->TextureId;
-			if (tex_id == NULL)
-				hl_dyn_setp((vdynamic*)hl_cmd_buffer, hl_hash_utf8("texture_id"), &hlt_dyn, NULL);
-			else
-				hl_dyn_setp((vdynamic*)hl_cmd_buffer, hl_hash_utf8("texture_id"), tex_id->t, pcmd->TextureId);
-
-			// create the index buffer
-			int index_buffer_size = sizeof(ImDrawIdx) * pcmd->ElemCount;
-			vbyte* index_buffer = hl_copy_bytes((vbyte*)idx_buffer, index_buffer_size);
-
-			// store the index buffer
-			hl_dyn_setp((vdynamic*)hl_cmd_buffer, hl_hash_utf8("index_buffer"), &hlt_bytes, index_buffer);
-
-			// store the index buffer size
-			hl_dyn_seti((vdynamic*)hl_cmd_buffer, hl_hash_utf8("index_buffer_size"), &hlt_i32, index_buffer_size);
-
-			// store the clipping rect
-			hl_dyn_seti((vdynamic*)hl_cmd_buffer, hl_hash_utf8("clip_left"), &hlt_i32, int(pcmd->ClipRect.x - draw_data->DisplayPos.x));
-			hl_dyn_seti((vdynamic*)hl_cmd_buffer, hl_hash_utf8("clip_top"), &hlt_i32, int(pcmd->ClipRect.y - draw_data->DisplayPos.y));
-			hl_dyn_seti((vdynamic*)hl_cmd_buffer, hl_hash_utf8("clip_width"), &hlt_i32, int(pcmd->ClipRect.z - pcmd->ClipRect.x));
-			hl_dyn_seti((vdynamic*)hl_cmd_buffer, hl_hash_utf8("clip_height"), &hlt_i32, int(pcmd->ClipRect.w - pcmd->ClipRect.y));
-
-			idx_buffer += pcmd->ElemCount;
+			
+			vrendercommand* hl_cmd_buffer = hl_commands[cmd_i] == nullptr ? (hl_commands[cmd_i] = (vrendercommand*)hl_alloc_obj(hlt_rendercommand)) : hl_commands[cmd_i];
+			
+			hl_cmd_buffer->texture_id = (vdynamic*)pcmd->GetTexID();
+			hl_cmd_buffer->index_offset = pcmd->IdxOffset;
+			hl_cmd_buffer->elem_count = pcmd->ElemCount;
+			
+			hl_cmd_buffer->clip_left   = int(pcmd->ClipRect.x - draw_data->DisplayPos.x);
+			hl_cmd_buffer->clip_top    = int(pcmd->ClipRect.y - draw_data->DisplayPos.y);
+			hl_cmd_buffer->clip_width  = int(pcmd->ClipRect.z - pcmd->ClipRect.x);
+			hl_cmd_buffer->clip_height = int(pcmd->ClipRect.w - pcmd->ClipRect.y);
 		}
-
-		// store the command buffer array
-		hl_dyn_setp((vdynamic*)hl_cmd_list, hl_hash_utf8("draw_objects"), &hlt_array, hl_cmd_buffers);
+		
 	}
-
-	vdynamic* param = (vdynamic*)hl_alloc_dynobj();
-	hl_dyn_setp(param, hl_hash_utf8("cmd_list"), &hlt_array, hl_cmd_list);
-
-	vdynamic* args[1];
-	args[0] = param;
-	if (s_render_function != nullptr) hl_dyn_call(s_render_function, args, 1);
+	
+	hl_call1fixed(void,s_render_function,vrenderlist*,render_list);
 }
 
 HL_PRIM void HL_NAME(set_render_callback)(vclosure* render_fn)
@@ -164,13 +214,17 @@ HL_PRIM void HL_NAME(render)()
 	Hack: Because we want to allocate ImVec2/4 classes on HL side, we need to hijack the hl_type of those classes somehow.
 	And there's no API to obtain said classes. So we steal them from live instances.
 **/
-HL_PRIM void HL_NAME(initialize)(vimvec2* hl_vec2, vimvec4* hl_vec4) {
+HL_PRIM void HL_NAME(initialize)(vimvec2* hl_vec2, vimvec4* hl_vec4, vrenderlist* renderlist, vrenderdata* renderdata, vrendercommand* rendercommand) {
 	hlt_imvec2 = hl_vec2->t;
 	hlt_imvec4 = hl_vec4->t;
+	render_list = renderlist;
+	hl_add_root(&render_list);
+	hlt_renderdata = renderdata->t;
+	hlt_rendercommand = rendercommand->t;
 }
 
-DEFINE_PRIM(_VOID, initialize, _IMVEC2 _IMVEC4);
-DEFINE_PRIM(_VOID, set_render_callback, _FUN(_VOID, _DYN));
+DEFINE_PRIM(_VOID, initialize, _IMVEC2 _IMVEC4 _TRENDERLIST _TRENDERDATA _TRENDERCOMMAND);
+DEFINE_PRIM(_VOID, set_render_callback, _FUN(_VOID, _TRENDERLIST));
 DEFINE_PRIM(_VOID, add_key_char, _I32);
 DEFINE_PRIM(_VOID, add_key_event, _I32 _BOOL);
 DEFINE_PRIM(_VOID, set_events, _F32 _F32 _F32 _F32 _BOOL _BOOL);
