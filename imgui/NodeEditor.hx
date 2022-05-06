@@ -4,13 +4,11 @@ import imgui.ImGui.ExtDynamic;
 import imgui.ImGui.ImVec2;
 import imgui.ImGui.ImVec4;
 import imgui.ImGui.ImDrawList;
-#end
 
-typedef NodeId = Int;
-typedef PinId = Int;
-typedef LinkId = Int;
+typedef NodeId = hl.I64;
+typedef PinId = hl.I64;
+typedef LinkId = hl.I64;
 
-#if hlimgui
 private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 
 typedef EditorContext = hl.Abstract<"imnecontext">;
