@@ -1,19 +1,11 @@
 package imgui;
 
+import imgui.types.ImFontAtlas;
 #if heaps
 
 import h3d.mat.Texture;
 import imgui.ImGui;
 import hxd.Key;
-
-private typedef CursorInfo = { 
-	next: CursorInfo,
-	c: ImGuiMouseCursor,
-	x1: Int, y1: Int,
-	x2: Int, y2: Int,
-	w: Int, h: Int,
-	ox: Int, oy: Int
-}
 
 class ImGuiDrawableBuffers {
 
@@ -36,8 +28,16 @@ class ImGuiDrawableBuffers {
 		if (this.initialized) {
 			return;
 		}
-
-		var font_info:{buffer:hl.Bytes, width:Int, height:Int, cursors: CursorInfo } = ImGui.initialize(renderDrawListsFromExternal);
+		
+		ImGui.provideTypes();
+		ImGui.createContext();
+		ImGui.setRenderCallback(renderDrawListsFromExternal);
+		
+		var fonts = ImGui.getFontAtlas();
+		var font_info = new ImFontTexData();
+		fonts.addFontDefault();
+		fonts.getTexDataAsRGBA32(font_info);
+		fonts.clearTexData();
 
 		// create font texture
 		var texture_size = font_info.width * font_info.height * 4;
@@ -47,30 +47,37 @@ class ImGuiDrawableBuffers {
 			hxd.PixelFormat.RGBA
 		);
 		font_texture = Texture.fromPixels(font_pixels);
-		ImGui.setFontTexture(font_texture);
+		fonts.setTexId(font_texture);
 
 		#if hlimgui_cursor
-		var cur = font_info.cursors;
-		while (cur != null) {
-			// Assemble the cursor pixel data
-			var cursor_bitmap = new hxd.BitmapData(cur.w+2, cur.h+2);
-			
-			// Mix the fill and outline data same way ImGui would do it
-			for (y in 0...cur.h) for (x in 0...cur.w) {
-				// Outline
-				if ((font_pixels.getPixel(x+cur.x2, y+cur.y2)&0xff000000) != 0)
-				{
-					cursor_bitmap.setPixel(x, y, 0xff000000);
-					// Shadow
-					cursor_bitmap.setPixel(x+1, y+1, 0x30000000);
-					cursor_bitmap.setPixel(x+2, y+2, 0x30000000);
-					
+		var cur = new ImCursorData();
+		for (i in 0...ImGuiMouseCursor.COUNT) {
+			if (fonts.getMouseCursorTexData(i, cur)) {
+				var width = Std.int(cur.size.x);
+				var height = Std.int(cur.size.y);
+				var fillX = Std.int(cur.uvFill.x * font_pixels.width);
+				var fillY = Std.int(cur.uvFill.y * font_pixels.height);
+				var borderX = Std.int(cur.uvBorder.x * font_pixels.width);
+				var borderY = Std.int(cur.uvBorder.y * font_pixels.height);
+				var cursorBitmap = new hxd.BitmapData(width+2, height);
+				for (y in 0...height) for (x in 0...width) {
+					// 4. Draw `uvBorder` with fill color
+					if ((font_pixels.getPixel(x + borderX, y + borderY) & 0xff000000) != 0) {
+						cursorBitmap.setPixel(x, y, 0xffffffff);
+					} else if ((font_pixels.getPixel(x + fillX, y + fillY) & 0xff000000) != 0) {
+						// 3. Draw `uvFill` with border color
+						cursorBitmap.setPixel(x,y, 0xff000000);
+						// 1. Draw `uvFill` offset by [1,0] with shadow color
+						if (cursorBitmap.getPixel(x + 1, y) == 0x30000000)
+							cursorBitmap.setPixel(x + 1, y, 0x57000000); // In case previous pixel was casting shadow - do rough shadow blending.
+						else
+							cursorBitmap.setPixel(x + 1, y, 0x30000000);
+						// 2. Draw `uvFill` offset by [2,0] with shadow color
+						cursorBitmap.setPixel(x + 2, y, 0x30000000);
+					}
 				}
-				// Fill
-				else if ((font_pixels.getPixel(x+cur.x1, y+cur.y1)&0xff000000) != 0) cursor_bitmap.setPixel(x, y, 0xffffffff);
+				cursor_map[i] = hxd.Cursor.Custom(new hxd.Cursor.CustomCursor([cursorBitmap], 0, Std.int(cur.offset.x), Std.int(cur.offset.y)));
 			}
-			cursor_map[cur.c] = hxd.Cursor.Custom(new hxd.Cursor.CustomCursor([cursor_bitmap], 0, cur.ox, cur.oy));
-			cur = cur.next;
 		}
 		#end
 

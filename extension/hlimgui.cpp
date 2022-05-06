@@ -13,6 +13,8 @@ typedef struct
 } HeapVertex;
 
 static vclosure* s_render_function = nullptr;
+hl_type* hlt_imvec2;
+hl_type* hlt_imvec4;
 
 void renderDrawLists(ImDrawData* draw_data)
 {
@@ -102,65 +104,14 @@ void renderDrawLists(ImDrawData* draw_data)
 
 	vdynamic* args[1];
 	args[0] = param;
-	hl_dyn_call(s_render_function, args, 1);
+	if (s_render_function != nullptr) hl_dyn_call(s_render_function, args, 1);
 }
 
-HL_PRIM vdynamic* HL_NAME(initialize)(vclosure* render_fn)
+HL_PRIM void HL_NAME(set_render_callback)(vclosure* render_fn)
 {
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-
-	// set render draw function
+	if (s_render_function != nullptr) hl_remove_root(&s_render_function);
 	s_render_function = render_fn;
-	hl_add_root(&s_render_function);
-
-	// create default font texture buffer
-	io.Fonts->AddFontDefault();
-
-	unsigned char* pixels;
-	int width, height;
-	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-
-	vbyte* buffer = hl_copy_bytes(pixels, width*height*4);
-
-	vdynamic* font_info = (vdynamic*)hl_alloc_dynobj();
-	hl_dyn_setp(font_info, hl_hash_utf8("buffer"), &hlt_bytes, buffer);
-	hl_dyn_seti(font_info, hl_hash_utf8("width"), &hlt_i32, width);
-	hl_dyn_seti(font_info, hl_hash_utf8("height"), &hlt_i32, height);
-	
-	ImVec2 offset, size, uv[4];
-	vdynamic* cursors = nullptr;
-	
-	// Retrieve cursor positioning data from imgui default font and pass it to Heaps
-	// Allows us to display all actual cursors without being restricted by what Heaps supports.
-	for ( int cursor = ImGuiMouseCursor_Arrow; cursor < ImGuiMouseCursor_COUNT; cursor++) {
-		if (io.Fonts->GetMouseCursorTexData(cursor, &offset, &size, &uv[0], &uv[2])) {
-			vdynamic* cur = (vdynamic*)hl_alloc_dynobj();
-			hl_dyn_seti(cur, hl_hash_utf8("x1"), &hlt_i32, (int)(uv[0].x * width));
-			hl_dyn_seti(cur, hl_hash_utf8("y1"), &hlt_i32, (int)(uv[0].y * height));
-			hl_dyn_seti(cur, hl_hash_utf8("x2"), &hlt_i32, (int)(uv[2].x * width));
-			hl_dyn_seti(cur, hl_hash_utf8("y2"), &hlt_i32, (int)(uv[2].y * height));
-			hl_dyn_seti(cur, hl_hash_utf8("w"), &hlt_i32, (int)size.x);
-			hl_dyn_seti(cur, hl_hash_utf8("h"), &hlt_i32, (int)size.y);
-			hl_dyn_seti(cur, hl_hash_utf8("ox"), &hlt_i32, (int)offset.x);
-			hl_dyn_seti(cur, hl_hash_utf8("oy"), &hlt_i32, (int)offset.y);
-			hl_dyn_seti(cur, hl_hash_utf8("c"), &hlt_i32, cursor);
-			
-			hl_dyn_setp(cur, hl_hash_utf8("next"), &hlt_dynobj, cursors);
-			cursors = cur;
-		}
-	}
-	hl_dyn_setp(font_info, hl_hash_utf8("cursors"), &hlt_dynobj, cursors);
-
-	io.Fonts->ClearTexData();
-
-	return font_info;
-}
-
-HL_PRIM void HL_NAME(set_font_texture)(ImTextureID texture_id)
-{
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->SetTexID(texture_id);
+	if (render_fn != nullptr) hl_add_root(&s_render_function);
 }
 
 HL_PRIM void HL_NAME(add_key_char)(int c)
@@ -209,8 +160,17 @@ HL_PRIM void HL_NAME(render)()
 	renderDrawLists(draw_data);
 }
 
-DEFINE_PRIM(_DYN, initialize, _FUN(_VOID, _DYN));
-DEFINE_PRIM(_VOID, set_font_texture, _DYN);
+/**
+	Hack: Because we want to allocate ImVec2/4 classes on HL side, we need to hijack the hl_type of those classes somehow.
+	And there's no API to obtain said classes. So we steal them from live instances.
+**/
+HL_PRIM void HL_NAME(initialize)(vimvec2* hl_vec2, vimvec4* hl_vec4) {
+	hlt_imvec2 = hl_vec2->t;
+	hlt_imvec4 = hl_vec4->t;
+}
+
+DEFINE_PRIM(_VOID, initialize, _IMVEC2 _IMVEC4);
+DEFINE_PRIM(_VOID, set_render_callback, _FUN(_VOID, _DYN));
 DEFINE_PRIM(_VOID, add_key_char, _I32);
 DEFINE_PRIM(_VOID, add_key_event, _I32 _BOOL);
 DEFINE_PRIM(_VOID, set_events, _F32 _F32 _F32 _F32 _BOOL _BOOL);

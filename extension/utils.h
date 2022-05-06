@@ -1,15 +1,21 @@
 #pragma once
 
 #define HL_NAME(n) hlimgui_##n
+#define _IMVEC2 _OBJ(_F32 _F32)
+#define _IMVEC4 _OBJ(_F32 _F32 _F32 _F32)
+#define _IMTEXID _DYN
 
 #include <string>
 #include <hl.h>
 #include <vector>
 #include "lib/imgui/imgui.h"
+#include "types.h"
 
 #define convertString(st) st != nullptr ? unicodeToUTF8(st).c_str() : NULL
 #define convertStringNullAsEmpty(st) st != nullptr ? unicodeToUTF8(st).c_str() : ""
 #define convertPtr(ptr,default_value) ptr != nullptr ? *ptr : default_value
+#define convertArray(arr,type) arr != nullptr ? hl_aptr(arr,type) : nullptr
+#define convertVec(ptr,default_value) ptr != nullptr ? ptr : default_value
 
 #ifdef __APPLE__
 #define throw_error(err) hl_throw(hl_alloc_strbytes((const uchar*)(USTR(err))))
@@ -23,14 +29,12 @@
 // DEFINE_PRIM(_I32,get_prop_name,_NO_ARG)
 // DEFINE_PRIM(_VOID,set_prop_name,_REF(_I32))
 #define DEFINE_PRIM_PROP(t,name,args) DEFINE_PRIM(t,get_##name,_NO_ARG)\
-    DEFINE_PRIM(_VOID,set_##name,args)
+	DEFINE_PRIM(_VOID,set_##name,args)
 
 void convertColor(ImU32 color, float& r, float& g, float& b, float& a);
 int unicodeSizeInUTF8(vstring* hl_string);
 void unicodeToUTF8Buffer(vstring* hl_string, char* out);
 std::string unicodeToUTF8(vstring* hl_string);
-
-void getImGuiFontConfigFromHL(ImFontConfig *imgui_font_config, vdynamic* config);
 
 // Replaced by imconfig.h extra converters
 inline ImVec2 getImVec2(vdynamic* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value : vec2; }

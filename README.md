@@ -32,21 +32,6 @@ Most of the ImGui functionalities are supported and binded. Look at  [https://gi
 
 Here is a list of unsupported features and changes:
 
-- Custom font API is non-standard at the moment.
-```haxe
-var font = ImGui.addFontFromFileTtf("path/to/font.ttf", 14);
-ImGui.buildFont();
-var fontInfo:{buffer:hl.Bytes, width:Int, height:Int} = ImGui.getTexDataAsRgba32();
-
-// create font texture
-var textureSize = fontInfo.width * fontInfo.height * 4;
-var fontTexture = Texture.fromPixels(new hxd.Pixels(
-	fontInfo.width,
-	fontInfo.height,
-	fontInfo.buffer.toBytes(textureSize),
-	hxd.PixelFormat.RGBA));
-ImGui.setFontTexture(fontTexture);
-```
 - As Haxe doesn't support function overloading, so if two original functions have the same name, the second one in Haxe has a suffix `2` to disguish it. For example:
 ```haxe
 public static function treeNode(label : String) : Bool {return false;}

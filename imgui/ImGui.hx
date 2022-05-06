@@ -1,5 +1,8 @@
 package imgui;
 
+import imgui.ImGuiUtils;
+import imgui.types.ImFontAtlas;
+import imgui.types.Pointers;
 import haxe.io.Bytes;
 
 @:forward
@@ -566,7 +569,7 @@ abstract ExtDynamic<T>(Dynamic) from T to T {
     var RoundCornersLeft            = RoundCornersBottomLeft | RoundCornersTopLeft;
     var RoundCornersRight           = RoundCornersBottomRight | RoundCornersTopRight;
     var RoundCornersAll             = RoundCornersTopLeft | RoundCornersTopRight | RoundCornersBottomLeft | RoundCornersBottomRight;
-    var RoundCornersDefault_        = RoundCornersAll; // Default to ALL corners if none of the _RoundCornersXX flags are specified.
+    var RoundCornersDefault_        = (1 << 4 | 1 << 5 | 1 << 6 | 1 << 7); // Default to ALL corners if none of the _RoundCornersXX flags are specified.
     var RoundCornersMask_           = RoundCornersAll | RoundCornersNone;
 }
 
@@ -586,32 +589,97 @@ typedef ImEvents = {
 // directly for some reason.
 #if heaps
 abstract ImTextureID(Dynamic) from h3d.mat.Texture to h3d.mat.Texture {}
-// To avoid allocation of unecessary things - cache and reuse some instances.
-private class ImTypeCache {
-
-	public static var imVec2: Array<ImVec2Impl> = [
-		{ x: 0, y: 0 },
-		{ x: 0, y: 0 },
-		{ x: 0, y: 0 },
-		{ x: 0, y: 0 },
-	];
-
-}
-@:structInit
-private class ImVec2Impl {
-	public var x: Single;
-	public var y: Single;
-	public inline function set(x: Single, y: Single) {
-		this.x = x;
-		this.y = y;
-		return this;
-	}
-}
 #else
 typedef ImTextureID = Dynamic;
 #end
 typedef ImU32 = Int;
 typedef ImGuiID = Int;
+
+/** The raw memory ImVec2 **/
+@:structInit class ImVec2S {
+	public var x: Single;
+	public var y: Single;
+	
+	public inline function set(x: Single = 0, y: Single = 0): ImVec2S
+	{
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+	
+	public static inline function get(x: Single = 0, y: Single = 0): ImVec2S { return { x: x, y: y }; };
+	
+	public function toString() {
+		return '{ x: $x, y: $y }';
+	}
+	
+	// TODO: Math operations
+}
+
+/** The raw memory ImVec2 **/
+@:structInit class ImVec4S
+{
+	public var x: Single;
+	public var y: Single;
+	public var z: Single;
+	public var w: Single;
+	
+	public inline function set(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4S
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+		return this;
+	}
+	
+	public inline function setColor(colWAlpha: Int): ImVec4S
+	{
+		return set(((colWAlpha) & 0xff) / 0xff, ((colWAlpha >> 8) & 0xff) / 0xff, ((colWAlpha >> 16) & 0xff) / 0xff, ((colWAlpha >> 24) & 0xff) / 0xff);
+	}
+	
+	public inline function setColorRGB(col: Int, alpha: Float = 1.0): ImVec4S
+	{
+		return set(((col) & 0xff) / 0xff, ((col >> 8) & 0xff) / 0xff, ((col >> 16) & 0xff) / 0xff, alpha);
+	}
+	
+	public static inline function get(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4S { return { x: x, y: y, z: z, w: w }; }
+	public static inline function getColor(colWAlpha: Int): ImVec4S
+	{
+		return {
+			x: ((colWAlpha      ) & 0xff) / 0xff,
+			y: ((colWAlpha >> 8 ) & 0xff) / 0xff,
+			z: ((colWAlpha >> 16) & 0xff) / 0xff,
+			w: ((colWAlpha >> 24) & 0xff) / 0xff
+		};
+	}
+	public static inline function getColorRGB(col: Int, alpha: Float = 1.0): ImVec4S
+	{
+		return {
+			x: ((col      ) & 0xff) / 0xff,
+			y: ((col >> 8 ) & 0xff) / 0xff,
+			z: ((col >> 16) & 0xff) / 0xff,
+			w: alpha
+		};
+	}
+	
+	public inline function toColor():Int
+	{
+		return ((Std.int(x * 0xff) & 0xff)      ) +
+		       ((Std.int(y * 0xff) & 0xff) << 8 ) +
+		       ((Std.int(z * 0xff) & 0xff) << 16) +
+		       ((Std.int(w * 0xff) & 0xff) << 24);
+	}
+	
+	public function xy(): ImVec2S { return ImVec2S.get(x, y); }
+	public function zw(): ImVec2S { return ImVec2S.get(z, w); }
+	
+	public function toString() {
+		return '{ x: $x, y: $y, z: $z, w: $w }';
+	}
+	
+	// TODO: Math opeartions
+}
 
 typedef ImVec2 = {
 	x : Single,
@@ -681,36 +749,7 @@ typedef ImVec4 = {
 	static function style_scale_all_sizes(style: ImGuiStyle, scaleFactor: Single): Void {}
 }
 
-/**
- * ImFontConfig
- * Currently we don't support passing this struct back into haxe on creation; so it's current definition
- * and use cases are limited to configuring a font you're about to create.
- *
- * As a technical note, glypgRanges will currently leak memory, so avoid paths which use this feature per frame.
- */
- @:structInit
-class ImFontConfig
-{
-	var OversampleH: Int = 3;						// Rasterize at higher quality for sub-pixel positioning. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.
-	var OversampleV: Int = 1;						// Rasterize at higher quality for sub-pixel positioning. We don't use sub-pixel positions on the Y axis.// Rasterize at higher quality for sub-pixel positioning. We don't use sub-pixel positions on the Y axis.
-	var PixelSnapH: Bool = false;					// Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.
-	var GlyphExtraSpacing: ImVec2 = {x: 0, y:0};	// Extra spacing (in pixels) between glyphs. Only X axis is supported for now.
-	var GlyphOffset: ImVec2 =  {x: 0, y:0};			// Offset all glyphs from this font input.
-	var GlyphRanges: hl.NativeArray<hl.UI16> = null;// Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE, currently this will just leak.
-	var GlyphMinAdvanceX: Single = 0;				// Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font
-	var GlyphMaxAdvanceX: Single = 3.402823E+38;	// FLT_MAX  // Maximum AdvanceX for glyphs
-	var MergeMode: Bool = false;					// Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.
-	var RasterizerFlags: Int = 0;					// Settings for custom font rasterizer (e.g. ImGuiFreeType). Leave as zero if you aren't using one.
-	var RasterizerMultiply: Single = 1;				// Brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable.
-	var EllipsisChar: Int = -1;						// Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.
-}
-
-private typedef ImFontPtr = hl.Abstract<"imfont">;
-private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
-private typedef ImStateStoragePtr = hl.Abstract<"imstatestorage">;
-private typedef ImContextPtr = hl.Abstract<"imcontext">;
-private typedef ImDragDropPayloadPtr = hl.Abstract<"imdnd">;
-private typedef ImGuiDockNode = hl.Abstract<"imguidocknode">;
+typedef ImFontConfig = imgui.types.ImFontAtlas.ImFontConfig;
 
 // Callbacks
 
@@ -806,99 +845,9 @@ class ImGuiInputTextCallbackData
 }
 
 
-@:hlNative("hlimgui")
-abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
-{
-	public function new(ptr: ImDrawListPtr) { this = ptr; }
-
-	public function addLine( p1: ImVec2, p2: ImVec2, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_line( this, p1, p2, col, thickness ); }
-	public function addRect( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None, thickness: Single = 1.0 ) { drawlist_add_rect( this, pMin, pMax, col, rounding, roundingCorners, thickness ); }
-	public function addRectFilled( pMin: ImVec2, pMax: ImVec2, col: ImU32, rounding: Single = 0.0, roundingCorners: ImDrawFlags = ImDrawFlags.None ) { drawlist_add_rect_filled( this, pMin, pMax, col, rounding, roundingCorners); }
-	public function addRectFilledMultiColor( pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) { drawlist_add_rect_filled_multicolor( this, pMin, pMax, col_upr_left, col_upr_right, col_bot_right, col_bot_left ); }
-	public function addQuad( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_quad(this, p1, p2, p3, p4, col, thickness ); }
-	public function addQuadFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_quad_filled( this, p1, p2, p3, p4, col ); }
-	public function addTriangle( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0 ) { drawlist_add_triangle(this, p1, p2, p3, col, thickness ); }
-	public function addTriangleFilled( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) { drawlist_add_triangle_filled(this, p1, p2, p3, col ); }
-	public function addCircle( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0, thickness: Single = 1.0 ) { drawlist_add_circle( this, center, radius, col, num_segments, thickness ); }
-	public function addCircleFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_circle_filled(this, center, radius, col, num_segments ); }
-	public function addNgon( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single = 1.0 ) { drawlist_add_ngon(this, center, radius, col, num_segments, thickness ); }
-	public function addNgonFilled( center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int = 0) { drawlist_add_ngon_filled(this, center, radius, col, num_segments ); }
-	//public function addPolyLine( points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single = 1.0 ) { drawlist_add_poly_line(this, points, col, closed, thickness ); }
-	//public function addConvexPolyFilled( points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) { drawlist_add_convex_poly_filled(this, points, col ); }
-	public function addBezierCurve( p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single = 1.0, num_segments: Int = 0 ) { drawlist_add_bezier_curve(this, p1, p2, p3, p4, col, thickness, num_segments ); }
-	//
-	public function addText( pos: ImVec2, col: ImU32, text: String ) { drawlist_add_text(this, pos, col, text); }
-	public function addText2( font: ImFont, fontSize: Single, pos: ImVec2, col: ImU32, text: String, wrapWidth: Single = 0.0, ?cpuFineClipRect: ImVec4 ) { drawlist_add_text2(this, font==null?null:(@:privateAccess font.ptr), fontSize, pos, col, text, wrapWidth, cpuFineClipRect); }
-
-	public function addImage( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image(this, userTextureId, pMin, pMax, uvMin, uvMax, col); }
-	public function addImageQuad( userTextureId: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, ?uv1: ImVec2, ?uv2: ImVec2, ?uv3: ImVec2, ?uv4: ImVec2, col: Int = 0xffffffff ) { drawlist_add_image_quad(this, userTextureId, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col); }
-	// Due to Haxe limitation on defualt parameters being "constant" and enum abstract values that rely on previous enum abstract value (A | B) are not "constant" - hack with -1
-	public function addImageRounded( userTextureId: ImTextureID, pMin: ImVec2, pMax: ImVec2, ?uvMin: ImVec2, ?uvMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1 ) { drawlist_add_image_rounded(this, userTextureId, pMin, pMax, uvMin, uvMax, col, rounding, roundingCorners == -1 ? ImDrawFlags.RoundCornersDefault_ : roundingCorners); }
-
-	#if heaps
-	// Helper methods for Heaps: Use Tile instead of Texture to pass image segments easily.
-
-	public inline function addTile( tile: h2d.Tile, pMin: ImVec2, pMax: ImVec2, col: Int = 0xffffffff, honorDxDy = false) @:privateAccess {
-		if (honorDxDy) {
-			pMin.x += tile.dx;
-			pMin.y += tile.dy;
-			pMax.x += tile.dx;
-			pMax.y += tile.dy;
-		}
-		addImage(tile.getTexture(), pMin, pMax, ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v2), col);
-	}
-
-	public inline function addTileQuad( tile: h2d.Tile, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: Int = 0xffffffff) @:privateAccess {
-		addImageQuad( tile.getTexture(), p1, p2, p3, p4,
-			ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), ImTypeCache.imVec2[3].set(tile.u2, tile.v),
-			col
-		);
-	}
-
-	public inline function addTileRounded( tile: h2d.Tile, pMin: ImVec2, pMax: ImVec2, col: Int, rounding: Single, roundingCorners: ImDrawFlags = -1, honorDxDy = false ) @:privateAccess {
-		if (honorDxDy) {
-			pMin.x += tile.dx;
-			pMin.y += tile.dy;
-			pMax.x += tile.dx;
-			pMax.y += tile.dy;
-		}
-		addImageRounded( tile.getTexture(), pMin, pMax, ImTypeCache.imVec2[0].set(tile.u, tile.v), ImTypeCache.imVec2[1].set(tile.u2, tile.v2), col, rounding, roundingCorners);
-	}
-	#end
-
-	static function drawlist_add_line( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function drawlist_add_rect( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags, thickness ) {}
-	static function drawlist_add_rect_filled( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
-	static function drawlist_add_rect_filled_multicolor( drawlist: ImDrawListPtr, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32 ) {}
-	static function drawlist_add_quad( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function drawlist_add_quad_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function drawlist_add_triangle( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32, thickness: Single ) {}
-	static function drawlist_add_triangle_filled( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function drawlist_add_circle( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
-	static function drawlist_add_circle_filled( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int) {}
-	static function drawlist_add_ngon( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int, thickness: Single ) {}
-	static function drawlist_add_ngon_filled( drawlist: ImDrawListPtr, center: ExtDynamic<ImVec2>, radius: Single, col: ImU32, num_segments: Int) {}
-	static function drawlist_add_poly_line( drawlist: ImDrawListPtr, points: hl.NativeArray<ImVec2>, col: ImU32, closed: Bool, thickness: Single ) {}
-	static function drawlist_add_convex_poly_filled( drawlist: ImDrawListPtr, points: hl.NativeArray<ExtDynamic<ImVec2>>, col: ImU32 ) {}
-	static function drawlist_add_bezier_curve( drawlist: ImDrawListPtr, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, col: ImU32, thickness: Single, num_segments: Int ) {}
-	static function drawlist_add_text( drawlist: ImDrawListPtr, pos: ExtDynamic<ImVec2>, col: ImU32, text: String ) {}
-	static function drawlist_add_text2( drawlist: ImDrawListPtr, font: ImFontPtr, font_size: Single, pos: ExtDynamic<ImVec2>, col: ImU32, text: String, wrap_width: Single, cpu_fine_clip_rect: ExtDynamic<ImVec4> ) {}
-
-	static function drawlist_add_image( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function drawlist_add_image_quad( drawlist: ImDrawListPtr, userTextureId: ImTextureID, p1: ExtDynamic<ImVec2>, p2: ExtDynamic<ImVec2>, p3: ExtDynamic<ImVec2>, p4: ExtDynamic<ImVec2>, uv1: ExtDynamic<ImVec2>, uv2: ExtDynamic<ImVec2>, uv3: ExtDynamic<ImVec2>, uv4: ExtDynamic<ImVec2>, col: ImU32 ) {}
-	static function drawlist_add_image_rounded( drawlist: ImDrawListPtr, userTextureId: ImTextureID, pMin: ExtDynamic<ImVec2>, pMax: ExtDynamic<ImVec2>, uvMin: ExtDynamic<ImVec2>, uvMax: ExtDynamic<ImVec2>, col: ImU32, rounding: Single, roundingCorners: ImDrawFlags ) {}
-}
-
-
-@:hlNative("hlimgui")
-abstract ImFont(ImFontPtr) from ImFontPtr to ImFontPtr
-{
-	// For backwards compatibility
-	var ptr(get, never): ImFontPtr;
-	inline function get_ptr() return this;
-
-	public function new(ptr: ImFontPtr) { this = ptr; }
-}
+typedef ImDrawList = imgui.types.ImDrawList;
+typedef ImFont = imgui.types.ImFont;
+typedef ImFontAtlas = imgui.types.ImFontAtlas;
 
 @:hlNative("hlimgui")
 abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStoragePtr
@@ -1145,11 +1094,11 @@ class ImGui
 	public static function imageButton(user_texture_id : ImTextureID, size : ExtDynamic<ImVec2>, uv0 : ExtDynamic<ImVec2> = null,  uv1 : ExtDynamic<ImVec2> = null, frame_padding : Int = -1, bg_col : ExtDynamic<ImVec4> = null, tint_col : ExtDynamic<ImVec4> = null) : Bool {return false;}
 	#if heaps
 	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2, ?tint_col: ImVec4, ?border_col: ImVec4) @:privateAccess {
-		image(tile.getTexture(), size == null ? ImTypeCache.imVec2[0].set(tile.width, tile.height) : size, ImTypeCache.imVec2[1].set(tile.u, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), tint_col, border_col);
+		image(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), tint_col, border_col);
 	}
 
 	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2, frame_padding: Int = -1, ?bg_col: ImVec4, ?tint_col: ImVec4): Bool @:privateAccess {
-		return imageButton(tile.getTexture(), size == null ? ImTypeCache.imVec2[0].set(tile.width, tile.height) : size, ImTypeCache.imVec2[1].set(tile.u, tile.v), ImTypeCache.imVec2[2].set(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
+		return imageButton(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
 	}
 	#end
 	public static function checkbox(label : String, v : hl.Ref<Bool>) : Bool {return false;}
@@ -1606,7 +1555,6 @@ class ImGui
 	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
 
 	// GetIO()->... wrappers
-	public static function setFontTexture(texture_id : ImTextureID) {} // Fonts->SetTexID
 	public static function setIniFilename(filename : String) {} // IniFilename
 	public static function addKeyChar(c : Int) {} // AddInputCharacter
 	public static function addKeyEvent(c : Int, down: Bool) {} // AddKeyEvent
@@ -1619,16 +1567,57 @@ class ImGui
 	public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
 	public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
 	public static function getUserData() : Dynamic {return null;} // UserData
+	public static function getFontAtlas(): ImFontAtlas { return null; }
 
 
 	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
-	public static function addFontDefault(?config:ExtDynamic<ImFontConfig>) : ImFont { return null; }
-	public static function addFontFromFileTtf( filename: String, size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
-	public static function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, config: ExtDynamic<ImFontConfig> = null, glyphRanges: hl.NativeArray<hl.UI16> = null) : ImFont { return null; }
-	public static function buildFont() {} // flat version of ImGui::GetIO().Fonts->Build();
+	@:deprecated("Use getFontAtlas().setTexId()")
+	public static inline function setFontTexture(texture_id : ImTextureID) { getFontAtlas().setTexId(texture_id); }
+	@:deprecated("Use getFontAtlas().addFontDefault()")
+	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return getFontAtlas().addFontDefault(config); }
+	@:deprecated("Use getFontAtlas().addFontFromFileTTF()")
+	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromFileTTF(filename, size, config, glyphRanges); }
+	@:deprecated("Use getFontAtlas().addFontFromMemoryTTF()")
+	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromMemoryTTF(bytes, size, font_size, config, glyphRanges); }
+	@:deprecated("Use getFontAtlas().build()")
+	public static inline function buildFont(): Bool { return getFontAtlas().build(); }
 
 	// internal functions
-	public static function initialize(render_fn:Dynamic->Void) : Dynamic {return null;}
-	public static function getTexDataAsRgba32() : Dynamic {return null;} // : {buffer:hl.Bytes, width:Int, height:Int} { return{ buffer: null, width: 0, height: 0 }; }
+	public static function setRenderCallback(render_fn:Dynamic->Void) {}
+	
+	/**
+		Mandatory to call before anything else!
+		Provides C side the necessary hl_type references for data constructed on C side such as ImVec2 and ImVec4.
+	**/
+	public static inline function provideTypes() {
+		_init(ImVec2S.get(), ImVec4S.get());
+	}
+	@:hlNative("hlimgui", "initialize")
+	static function _init(vec2: ImVec2S, vec4: ImVec4S) {};
+	
+	/**
+		Bootstrap helper to initialize Imgui.
+	**/
+	public static inline function initialize(render_fn:Dynamic->Void) : ImFontTexData {
+		provideTypes();
+		createContext();
+		setRenderCallback(render_fn);
+		var fonts = getFontAtlas();
+		fonts.addFontDefault();
+		var output = new ImFontTexData();
+		fonts.getTexDataAsRGBA32(output);
+		fonts.clearTexData();
+		return output;
+	}
+	
+	
+	@:deprecated("Use getFontAtlas().getTexDataAsRGBA32() + getFontAtlas().clearTexData()")
+	public static inline function getTexDataAsRgba32(): ImFontTexData {
+		var atlas = getFontAtlas();
+		var output = new ImFontTexData();
+		atlas.getTexDataAsRGBA32(output);
+		atlas.clearTexData();
+		return output;
+	}
 
 }
