@@ -70,6 +70,7 @@ typedef EditorContext = hl.Abstract<"imnecontext">;
  *
  * Unlike imgui style, there's no "set" function, so there is no constructor.
  */
+@:keep
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
 @:hlNative("hlimgui","nodeeditor_")
 @:struct

@@ -3,6 +3,7 @@ package imgui.types;
 import imgui.ImGui;
 import hl.Bytes;
 
+@:keep
 class RenderList {
 	
 	public var lists: hl.NativeArray<RenderData>;
@@ -13,6 +14,7 @@ class RenderList {
 	}
 }
 
+@:keep
 class RenderData {
 	public var vertexBuffer: Bytes;
 	public var vertexBufferSize: Int;
@@ -24,6 +26,7 @@ class RenderData {
 	function new() {}
 }
 
+@:keep
 class RenderCommand {
 	public var textureID: ImTextureID;
 	public var indexOffset: Int;

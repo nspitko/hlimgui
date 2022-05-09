@@ -5,6 +5,7 @@ import hl.NativeArray;
 import hl.Bytes;
 import imgui.types.Pointers;
 
+@:keep
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
 @:struct class ImFontConfig {
 	@:noCompletion var FontData: Bytes;                    // TTF/OTF data
@@ -49,6 +50,7 @@ import imgui.types.Pointers;
 
 }
 /** An output storage for ImFontAtlas.getTexDataAsX methods. **/
+@:keep
 class ImFontTexData {
 	public var buffer: Bytes;
 	public var width: Int;
@@ -79,6 +81,7 @@ class ImFontTexData {
 	4. Draw `uvBorder` with fill color
 	
 **/
+@:keep
 class ImCursorData {
 	public var offset: ImVec2S;
 	public var size: ImVec2S;
@@ -93,6 +96,7 @@ class ImCursorData {
 	}
 }
 
+@:keep
 @:struct class ImFontAtlasCustomRect {
 	
 	public var width: hl.UI16;

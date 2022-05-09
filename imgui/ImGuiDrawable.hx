@@ -15,7 +15,7 @@ class ImGuiDrawableBuffers {
 
 	public var vertex_buffers(default, null) : Array<h3d.Buffer> = [];
 	public var index_buffers(default, null) : Array<h3d.Indexes> = [];
-	public var commands: Array<hl.NativeArray<RenderCommand>> = [];
+	public var commands: Array<Dynamic> = []; // hl.NativeArray<RenderCommand> See https://github.com/HaxeFoundation/hashlink/issues/461
 	public var bufferCount: Int;
 
 	var noTexture: Texture;
@@ -141,7 +141,7 @@ class ImGuiDrawableBuffers {
 	public function draw(ctx: h2d.RenderContext, obj: h2d.Drawable) {
 		var e = ctx.engine;
 		for (i in 0...bufferCount) {
-			var cmdList = commands[i];
+			var cmdList: hl.NativeArray<RenderCommand> = commands[i];
 			for (cmd in cmdList) {
 				if (cmd.elemCount > 0 && ctx.beginDrawObject(obj, cmd.textureID == null ? noTexture : cmd.textureID)) {
 					e.setRenderZone(cmd.clipLeft, cmd.clipTop, cmd.clipWidth, cmd.clipHeight);

@@ -90,30 +90,55 @@ import haxe.io.Bytes;
 }
 
 @:enum abstract ImGuiStyleVar(Int) from Int to Int {
+	/** float: use pushStyleVar() **/
 	var Alpha = 0;
+	/** float: use pushStyleVar() **/
 	var DisabledAlpha;
+	/** ImVec2: use pushStyleVar2() **/
 	var WindowPadding;
+	/** float: use pushStyleVar() **/
 	var WindowRounding;
+	/** float: use pushStyleVar() **/
 	var WindowBorderSize;
+	/** ImVec2: use pushStyleVar2() **/
 	var WindowMinSize;
+	/** ImVec2: use pushStyleVar2() **/
 	var WindowTitleAlign;
+	/** float: use pushStyleVar() **/
 	var ChildRounding;
+	/** float: use pushStyleVar() **/
 	var ChildBorderSize;
+	/** float: use pushStyleVar() **/
 	var PopupRounding;
+	/** float: use pushStyleVar() **/
 	var PopupBorderSize;
+	/** ImVec2: use pushStyleVar2() **/
 	var FramePadding;
+	/** float: use pushStyleVar() **/
 	var FrameRounding;
+	/** float: use pushStyleVar() **/
 	var FrameBorderSize;
+	/** ImVec2: use pushStyleVar2() **/
 	var ItemSpacing;
+	/** ImVec2: use pushStyleVar2() **/
 	var ItemInnerSpacing;
+	/** float: use pushStyleVar() **/
 	var IndentSpacing;
+	/** ImVec2: use pushStyleVar2() **/
 	var CellPadding;
+	/** float: use pushStyleVar() **/
 	var ScrollbarSize;
+	/** float: use pushStyleVar() **/
 	var ScrollbarRounding;
+	/** float: use pushStyleVar() **/
 	var GrabMinSize;
+	/** float: use pushStyleVar() **/
 	var GrabRounding;
+	/** float: use pushStyleVar() **/
 	var TabRounding;
+	/** ImVec2: use pushStyleVar2() **/
 	var ButtonTextAlign;
+	/** ImVec2: use pushStyleVar2() **/
 	var SelectableTextAlign;
 	var COUNT;
 }
@@ -587,6 +612,7 @@ typedef ImU32 = Int;
 typedef ImGuiID = Int;
 
 /** The raw memory ImVec2 **/
+@:keep
 @:structInit class ImVec2S {
 	public var x: Single;
 	public var y: Single;
@@ -614,6 +640,7 @@ typedef ImGuiID = Int;
 }
 
 /** The raw memory ImVec2 **/
+@:keep
 @:structInit class ImVec4S
 {
 	public var x: Single;
@@ -650,18 +677,18 @@ typedef ImGuiID = Int;
 	public static inline function getColor(colWAlpha: Int): ImVec4S
 	{
 		return {
-			x: ((colWAlpha      ) & 0xff) / 0xff,
+			x: ((colWAlpha >> 16) & 0xff) / 0xff,
 			y: ((colWAlpha >> 8 ) & 0xff) / 0xff,
-			z: ((colWAlpha >> 16) & 0xff) / 0xff,
+			z: ((colWAlpha      ) & 0xff) / 0xff,
 			w: ((colWAlpha >> 24) & 0xff) / 0xff
 		};
 	}
 	public static inline function getColorRGB(col: Int, alpha: Float = 1.0): ImVec4S
 	{
 		return {
-			x: ((col      ) & 0xff) / 0xff,
+			x: ((col >> 16) & 0xff) / 0xff,
 			y: ((col >> 8 ) & 0xff) / 0xff,
-			z: ((col >> 16) & 0xff) / 0xff,
+			z: ((col      ) & 0xff) / 0xff,
 			w: alpha
 		};
 	}
@@ -699,6 +726,7 @@ typedef ImVec4 = ImVec4S;
 // 	w : Single
 // }
 
+@:keep
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
 @:hlNative("hlimgui")
 @:struct class ImGuiStyle {
@@ -764,6 +792,7 @@ typedef ImFontConfig = imgui.types.ImFontAtlas.ImFontConfig;
 **/
 typedef ImGuiInputTextCallbackDataFunc = ( ImGuiInputTextCallbackData ) -> Int;
 
+@:keep
 @:struct @:hlNative("hlimgui")
 class ImGuiInputTextCallbackData
 {
@@ -954,11 +983,13 @@ class ImGui
 
 	// Windows
 	public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	/** Always call `end()` regardless of `begin()` return value! **/
 	public static function end() {}
 
 	// Child Windows
 	public static function beginChild(str_id : String, ?size : ImVec2S, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function beginChild2(id : Int, ?size : ImVec2S, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	/** Always call `endChild()` regardless of `beginChild()` return value! **/
 	public static function endChild() {}
 
 	// Windows Utilities
@@ -1116,6 +1147,7 @@ class ImGui
 
 	// Widgets: Combo Box
 	public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
+	/** Only call `endCombo()` if `beginCombo()` returns `true`! **/
 	public static function endCombo() {}
 	public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
@@ -1239,7 +1271,7 @@ class ImGui
 		- Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
 	**/
 	public static function beginListBox(label: String, ?size: ImVec2S): Bool { return false; }
-	/** Only call if beginListBox returns true! **/
+	/** Only call `endListBox()` if `beginListBox()` returns `true`! **/
 	public static function endListBox() {}
 
 	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
@@ -1263,13 +1295,13 @@ class ImGui
 
 	// Widgets: Menus
 	public static function beginMenuBar() : Bool {return false;}
-	/** Only call EndMenuBar() if BeginMenuBar() returns true! **/
+	/** Only call `endMenuBar()` if `beginMenuBar()` returns `true`! **/
 	public static function endMenuBar() {}
 	public static function beginMainMenuBar() : Bool {return false;}
-	/** Only call EndMainMenuBar() if BeginMainMenuBar() returns true! **/
+	/** Only call `endMainMenuBar()` if `beginMainMenuBar()` returns `true`! **/
 	public static function endMainMenuBar() {}
 	public static function beginMenu(label : String, enabled : Bool = true) : Bool {return false;}
-	/** Only call EndMenu() if BeginMenu() returns true! **/
+	/** Only call `endMenu()` if `beginMenu()` returns `true`! **/
 	public static function endMenu() {}
 	public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
 	public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
@@ -1284,6 +1316,7 @@ class ImGui
 	// Popups: begin/end function
 	public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	/** Only call `endPopup()` if `beginPopupXXX()` returns `true`! **/
 	public static function endPopup() {}
 
 	// Popups: open/close functions
@@ -1302,6 +1335,7 @@ class ImGui
 
 	// Tables
 	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, ?outer_size: ImVec2S, inner_width = 0 ): Bool { return false; }
+	/** Only call `endTable()` if `beginTable()` returns `true`! **/
 	public static function endTable() {}
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
 	public static function tableNextColumn() {}
@@ -1337,8 +1371,10 @@ class ImGui
 
 	// Tab Bars, Tabs
 	public static function beginTabBar(str_id : String, flags : ImGuiTabBarFlags = 0) : Bool {return false;}
+	/** Only call `endTabBar()` if `beginTabBar()` returns `true`! **/
 	public static function endTabBar() {}
 	public static function beginTabItem(label : String, p_open : hl.Ref<Bool> = null, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
+	/** Only call `endTabItem()` if `beginTabItem()` returns `true`! **/
 	public static function endTabItem() {}
 	public static function tabItemButton(label : String, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
@@ -1377,8 +1413,10 @@ class ImGui
 
 	// Drag and drop
 	public static function beginDragDropTarget(): Bool { return false; }
+	/** Only call `endDragDropTarget()` if `beginDragDropTarget()` returns `true`! **/
 	public static function endDragDropTarget() {}
 	public static function beginDragDropSource( flags: ImGuiDragDropFlags = 0 ): Bool { return false; }
+	/** Only call `endDragDropSource()` if `beginDragDropSource()` returns `true`! **/
 	public static function endDragDropSource() {}
 	public static function setDragDropPayload(type: String, payload: hl.Bytes, length: Int, cond: ImGuiCond = 0 ) : Bool { return false; }
 	public static function acceptDragDropPayload(type: String, cond: ImGuiCond = 0 ) : ImDragDropPayload { return null; }
@@ -1484,6 +1522,7 @@ class ImGui
 	public static function getStateStorage() : ImStateStorage {return null;}
 	//setStateStorage
 	public static function beginChildFrame(id : ImGuiID, size : ImVec2S, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	/** Always call `endChildFrame()` regardless of `beginChildFrame()` return value! **/
 	public static function endChildFrame() {}
 	@:deprecated("Obsolete: Use ImGuiListClipper")
 	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
