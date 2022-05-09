@@ -1472,8 +1472,9 @@ class ImGui
 	}
 
 	// Disabling [BETA API]
-	// public static function beginDisabled(disabled: Bool = true) {}
-	// public static function endDisabled() {}
+	public static inline function beginDisabled(disabled: Bool = true) { begin_disabled(disabled); }
+	static function begin_disabled(disabled: Bool) {}
+	public static function endDisabled() {}
 
 	// Clipping
 	public static function pushClipRect(clip_rect_min : ImVec2S, clip_rect_max : ImVec2S, intersect_with_current_clip_rect : Bool) {}

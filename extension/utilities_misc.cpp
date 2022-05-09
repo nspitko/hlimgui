@@ -40,6 +40,12 @@ HL_PRIM void HL_NAME(end_child_frame)()
     ImGui::EndChildFrame();
 }
 
+HL_PRIM void HL_NAME(begin_disabled)(bool disabled) {
+    ImGui::BeginDisabled(disabled);
+}
+HL_PRIM void HL_NAME(end_disabled)() {
+    ImGui::EndDisabled();
+}
 
 DEFINE_PRIM(_BOOL, is_rect_visible, _IMVEC2);
 DEFINE_PRIM(_BOOL, is_rect_visible2, _IMVEC2 _IMVEC2);
@@ -49,6 +55,8 @@ DEFINE_PRIM(_BYTES, get_style_color_name, _I32);
 DEFINE_PRIM(_VOID, calc_list_clipping, _I32 _F32 _REF(_I32) _REF(_I32));
 DEFINE_PRIM(_BOOL, begin_child_frame, _I32 _IMVEC2 _REF(_I32));
 DEFINE_PRIM(_VOID, end_child_frame, _NO_ARG);
+DEFINE_PRIM(_VOID, begin_disabled, _BOOL);
+DEFINE_PRIM(_VOID, end_disabled, _NO_ARG);
 
 // State storage
 
