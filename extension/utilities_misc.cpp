@@ -97,3 +97,53 @@ DEFINE_PRIM(_BOOL, state_storage_get_bool, _TSTATESTORAGE _I32 _BOOL);
 DEFINE_PRIM(_VOID, state_storage_set_bool, _TSTATESTORAGE _I32 _BOOL);
 DEFINE_PRIM(_F32, state_storage_get_float, _TSTATESTORAGE _I32 _F32);
 DEFINE_PRIM(_VOID, state_storage_set_float, _TSTATESTORAGE _I32 _F32);
+
+// ImGuiListClipper
+
+#define CL_NAME(n) HL_NAME(imlistclipper_##n)
+#define DEFINE_CPRIM(ret,name,args) DEFINE_PRIM(ret,imlistclipper_##name,_STRUCT args)
+
+typedef struct _hl_list_clipper hl_list_clipper;
+struct _hl_list_clipper {
+    void(*finalize)(hl_list_clipper*);
+    ImGuiListClipper clipper;
+};
+
+static void imlistclipper_finalize(hl_list_clipper *c)
+{
+    c->clipper.~ImGuiListClipper();
+}
+
+HL_PRIM hl_list_clipper* CL_NAME(init)()
+{
+    hl_list_clipper* hl_mem = (hl_list_clipper*)hl_gc_alloc_finalizer(sizeof(hl_list_clipper));
+    hl_mem->finalize = imlistclipper_finalize;
+    new (&hl_mem->clipper)ImGuiListClipper();
+    return hl_mem;
+}
+
+HL_PRIM void CL_NAME(begin)(hl_list_clipper* c, int items_count, float items_height)
+{
+    c->clipper.Begin(items_count, items_height);
+}
+
+HL_PRIM void CL_NAME(end)(hl_list_clipper* c)
+{
+    c->clipper.End();
+}
+
+HL_PRIM bool CL_NAME(step)(hl_list_clipper* c)
+{
+    return c->clipper.Step();
+}
+
+HL_PRIM void CL_NAME(force_display_range_by_indices)(hl_list_clipper* c, int item_min, int item_max)
+{
+    return c->clipper.ForceDisplayRangeByIndices(item_min, item_max);
+}
+
+DEFINE_PRIM(_STRUCT, imlistclipper_init, _NO_ARG);
+DEFINE_CPRIM(_VOID, begin, _I32 _F32);
+DEFINE_CPRIM(_VOID, end, _NO_ARG);
+DEFINE_CPRIM(_BOOL, step, _NO_ARG);
+DEFINE_CPRIM(_VOID, force_display_range_by_indices, _I32 _I32);
