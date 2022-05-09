@@ -883,6 +883,7 @@ class ImGuiInputTextCallbackData
 typedef ImDrawList = imgui.types.ImDrawList;
 typedef ImFont = imgui.types.ImFont;
 typedef ImFontAtlas = imgui.types.ImFontAtlas;
+typedef ImGuiListClipper = imgui.types.ImGuiListClipper;
 
 @:hlNative("hlimgui")
 abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStoragePtr

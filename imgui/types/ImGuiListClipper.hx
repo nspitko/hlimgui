@@ -1,6 +1,6 @@
 package imgui.types;
 
-@:keep @:struct class ImGuiClipperStruct
+@:keep @:struct class ImGuiListClipperStruct
 {
 	@:noCompletion var finalizer: hl.Bytes; // [HL] GC callback for calling finalizer on the struct when it's freed.
 	public var displayStart: Int;           // First item to display, updated by each call to Step()
@@ -37,9 +37,9 @@ package imgui.types;
 **/
 @:forward
 @:hlNative("hlimgui", "imlistclipper_")
-abstract ImGuiClipper(ImGuiClipperStruct) from ImGuiClipperStruct to ImGuiClipperStruct
+abstract ImGuiListClipper(ImGuiListClipperStruct) from ImGuiListClipperStruct to ImGuiListClipperStruct
 {
-	static function init(): ImGuiClipperStruct { return null; }
+	static function init(): ImGuiListClipperStruct { return null; }
 	
 	public inline function new() this = @:privateAccess init();
 	
