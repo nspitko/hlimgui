@@ -37,5 +37,24 @@ class RenderCommand {
 	public var clipWidth: Int;
 	public var clipHeight: Int;
 	
+	/** If present - instead of regular draw call invoke the callback. **/
+	public var callback: RenderCommandCallback;
+	public var callbackData: Dynamic;
+	
 	function new() {}
 }
+
+#if heaps
+class RenderCommandCallbackData {
+	public var ctx: h2d.RenderContext;
+	public var obj: h2d.Drawable;
+	
+	function new() {}
+}
+#else
+typedef RenderCommandCallbackData = Dynamic;
+#end
+// TODO: Make RenderData == ImDrawList
+// parentList: RenderData, command: RenderCommand, data: RenderCommandCallbackData
+// Avoid recursion by using Dynamic
+typedef RenderCommandCallback = (parentList: Dynamic, command: Dynamic, data: Dynamic)->Void;

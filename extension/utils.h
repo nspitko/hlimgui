@@ -5,6 +5,11 @@
 #define _IMVEC4 _OBJ(_F32 _F32 _F32 _F32)
 #define _IMTEXID _DYN
 
+#define _TRENDERCALLBACK _FUN(_VOID, _DYN _DYN _DYN)
+#define _TRENDERCOMMAND _OBJ(_IMTEXID _I32 _I32 _I32 _I32 _I32 _I32 _TRENDERCALLBACK _DYN)
+#define _TRENDERDATA _OBJ(_BYTES _I32 _BYTES _I32 _ARR _I32)
+#define _TRENDERLIST _OBJ(_ARR _I32)
+
 #include <string>
 #include <hl.h>
 #include <vector>

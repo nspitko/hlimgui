@@ -34,9 +34,9 @@ typedef struct
 	int clip_width;
 	int clip_height;
 	
-	// vclosure* callback; // TODO
+	vclosure* callback;
+	vdynamic* callback_data;
 } vrendercommand;
-#define _TRENDERCOMMAND _OBJ(_IMTEXID _I32 _I32 _I32 _I32 _I32 _I32)
 
 typedef struct
 {
@@ -48,7 +48,6 @@ typedef struct
 	varray* commands;
 	int command_count;
 } vrenderdata;
-#define _TRENDERDATA _OBJ(_BYTES _I32 _BYTES _I32 _ARR _I32)
 
 typedef struct
 {
@@ -56,7 +55,6 @@ typedef struct
 	varray* lists;
 	int size;
 } vrenderlist;
-#define _TRENDERLIST _OBJ(_ARR _I32)
 
 static vrenderlist* render_list = nullptr;
 
@@ -150,6 +148,18 @@ void renderDrawLists(ImDrawData* draw_data)
 			hl_cmd_buffer->clip_top    = int(pcmd->ClipRect.y - draw_data->DisplayPos.y);
 			hl_cmd_buffer->clip_width  = int(pcmd->ClipRect.z - pcmd->ClipRect.x);
 			hl_cmd_buffer->clip_height = int(pcmd->ClipRect.w - pcmd->ClipRect.y);
+			
+			// TODO: Handle ResetRenderState?
+			if (pcmd->UserCallback != nullptr && pcmd->UserCallback != ImDrawCallback_ResetRenderState)
+			{
+				hl_cmd_buffer->callback = pcmd->UserCallback;
+				hl_cmd_buffer->callback_data = (vdynamic*)pcmd->UserCallbackData;
+			}
+			else
+			{
+				hl_cmd_buffer->callback = NULL;
+				hl_cmd_buffer->callback_data = NULL;
+			}
 		}
 		
 	}

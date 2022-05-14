@@ -15,10 +15,12 @@ class ImGuiDrawableBuffers {
 
 	public var vertex_buffers(default, null) : Array<h3d.Buffer> = [];
 	public var index_buffers(default, null) : Array<h3d.Indexes> = [];
-	public var commands: Array<Dynamic> = []; // hl.NativeArray<RenderCommand> See https://github.com/HaxeFoundation/hashlink/issues/461
+	public var commands: Array<RenderData> = []; // hl.NativeArray<RenderCommand> See https://github.com/HaxeFoundation/hashlink/issues/461
 	public var bufferCount: Int;
 
 	var noTexture: Texture;
+	
+	var commandData: RenderCommandCallbackData = @:privateAccess new RenderCommandCallbackData();
 	
 	private var initialized : Bool;
 	public var font_texture : Texture;
@@ -115,7 +117,7 @@ class ImGuiDrawableBuffers {
 			final vertexStride = 8;
 			var vertexCount = Std.int(data.vertexBufferSize / (vertexStride * 4)); // data.vertexBufferSize>>5;
 			var indexCount = data.indexBufferSize>>1;
-			if (vertexCount == 0) continue;
+			// if (vertexCount == 0) continue;
 			
 			// create or reuse vertex buffer
 			if (i == this.vertex_buffers.length) {
@@ -133,23 +135,66 @@ class ImGuiDrawableBuffers {
 			}
 			this.vertex_buffers[i].uploadBytes(data.vertexBuffer.toBytes(data.vertexBufferSize), 0, vertexCount);
 			this.index_buffers[i].uploadBytes(data.indexBuffer.toBytes(data.indexBufferSize), 0, indexCount);
-			this.commands[i] = data.commands.sub(0, data.commandCount);
+			this.commands[i] = data;//data.commands.sub(0, data.commandCount);
 			bufferCount++;
 		}
 	}
 	
 	public function draw(ctx: h2d.RenderContext, obj: h2d.Drawable) {
 		var e = ctx.engine;
+		commandData.ctx = ctx;
+		commandData.obj = obj;
 		for (i in 0...bufferCount) {
-			var cmdList: hl.NativeArray<RenderCommand> = commands[i];
-			for (cmd in cmdList) {
-				if (cmd.elemCount > 0 && ctx.beginDrawObject(obj, cmd.textureID == null ? noTexture : cmd.textureID)) {
+			var data = commands[i];
+			var cmdList = data.commands;
+			for (j in 0...data.commandCount) {
+				var cmd = cmdList[j];
+				if (cmd.callback != null) {
+					e.setRenderZone(); // Makre sure to reset clip rect.
+					cmd.callback(data, cmd, commandData);
+				} else if (cmd.elemCount > 0 && ctx.beginDrawObject(obj, cmd.textureID == null ? noTexture : cmd.textureID)) {
 					e.setRenderZone(cmd.clipLeft, cmd.clipTop, cmd.clipWidth, cmd.clipHeight);
 					e.renderIndexed(vertex_buffers[i], index_buffers[i], Std.int(cmd.indexOffset / 3), Std.int(cmd.elemCount / 3));
 				}
 			}
 		}
 		e.setRenderZone();
+	}
+	
+	/**
+		A helper method to set the `smooth` flag to `true` and render subsequent contents using bilinear filtering.
+		
+		Usage:
+		```haxe
+		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
+		```
+	**/
+	public static function setSmoothCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
+		data.obj.smooth = true;
+	}
+	
+	/**
+		A helper method to reset the `smooth` flag to use the default smooth value.
+		
+		Usage:
+		```haxe
+		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
+		```
+	**/
+	public static function resetSmoothCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
+		data.obj.smooth = null;
+	}
+	
+	/**
+		A helper method to reset the `smooth` flag to `false` and render subsequent contents using nearest neighbor filtering.
+		
+		Usage:
+		```haxe
+		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
+		```
+	**/
+	public static function setNearestCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
+		data.obj.smooth = false;
 	}
 }
 
