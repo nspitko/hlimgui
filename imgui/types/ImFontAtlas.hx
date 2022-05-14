@@ -83,16 +83,16 @@ class ImFontTexData {
 **/
 @:keep
 class ImCursorData {
-	public var offset: ImVec2S;
-	public var size: ImVec2S;
-	public var uvBorder: ImVec4S; // xy = min, zw = max
-	public var uvFill: ImVec4S; // xy = min, zw = max
+	public var offset: ImVec2;
+	public var size: ImVec2;
+	public var uvBorder: ImVec4; // xy = min, zw = max
+	public var uvFill: ImVec4; // xy = min, zw = max
 	
 	public function new() {
-		offset = ImVec2S.get();
-		size = ImVec2S.get();
-		uvBorder = ImVec4S.get();
-		uvFill = ImVec4S.get();
+		offset = ImVec2.get();
+		size = ImVec2.get();
+		uvBorder = ImVec4.get();
+		uvFill = ImVec4.get();
 	}
 }
 
@@ -117,10 +117,10 @@ abstract ImFontAtlas(ImFontAtlasPtr) from ImFontAtlasPtr to ImFontAtlasPtr
 {
 	inline function new(ptr: ImFontAtlasPtr) { this = ptr; }
 	
-	public function addFont(config: ImFontConfig): ImFontPtr { return null; }
-	public function addFontDefault(?config: ImFontConfig): ImFontPtr { return null; }
-	public function addFontFromFileTTF(filename: String, size_pixels: Single, ?font_cfg: ImFontConfig, ?glyph_ranges: hl.NativeArray<hl.UI16>): ImFontPtr { return null; }
-	public function addFontFromMemoryTTF(font_data: Bytes, font_size: Int, size_pixels: Single, ?font_cfg: ImFontConfig, ?glyph_ranges: hl.NativeArray<hl.UI16>): ImFontPtr { return null; }
+	public function addFont(config: ImFontConfig): ImFont { return null; }
+	public function addFontDefault(?config: ImFontConfig): ImFont { return null; }
+	public function addFontFromFileTTF(filename: String, size_pixels: Single, ?font_cfg: ImFontConfig, ?glyph_ranges: hl.NativeArray<hl.UI16>): ImFont { return null; }
+	public function addFontFromMemoryTTF(font_data: Bytes, font_size: Int, size_pixels: Single, ?font_cfg: ImFontConfig, ?glyph_ranges: hl.NativeArray<hl.UI16>): ImFont { return null; }
 	
 	public function clearInputData() {}
 	public function clearTexData() {}
@@ -136,10 +136,10 @@ abstract ImFontAtlas(ImFontAtlasPtr) from ImFontAtlasPtr to ImFontAtlasPtr
 	// GetGlyphRangesX
 	
 	public function addCustomRectRegular(width: Int, height: Int): Int { return 0; }
-	public function addCustomRectFontGlyph(font: ImFontPtr, id: hl.UI16, width: Int, height: Int, advance_x: Single, offset: ImVec2S = null): Int { return 0; }
+	public function addCustomRectFontGlyph(font: ImFontPtr, id: hl.UI16, width: Int, height: Int, advance_x: Single, offset: ImVec2 = null): Int { return 0; }
 	public function getCustomRectByIndex(index: Int): ImFontAtlasCustomRect { return null; }
 	
-	public function calcCustomRectUV(rect: ImFontAtlasCustomRect, uv_min: ImVec2S, uv_max: ImVec2S) {}
+	public function calcCustomRectUV(rect: ImFontAtlasCustomRect, uv_min: ImVec2, uv_max: ImVec2) {}
 	public function getMouseCursorTexData(cursor: ImGuiMouseCursor, output: ImCursorData): Bool { return false; }
 	
 }

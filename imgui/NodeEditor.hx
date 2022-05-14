@@ -1,6 +1,8 @@
 package imgui;
 #if hlimgui
+import imgui.ImGui.ImVec2;
 import imgui.ImGui.ImVec2S;
+import imgui.ImGui.ImVec4;
 import imgui.ImGui.ImVec4S;
 import imgui.ImGui.ImDrawList;
 #end
@@ -84,15 +86,15 @@ class Style
 	public var PinRounding: Single;
 	public var PinBorderWidth: Single;
 	public var LinkStrength: Single;
-	@:flatten var SourceDirection: ImVec2S;
-	@:flatten var TargetDirection: ImVec2S;
+	@:flatten var SourceDirection: ImVec2;
+	@:flatten var TargetDirection: ImVec2;
 	public var ScrollDuration: Single;
 	public var FlowMarkerDistance: Single;
 	public var FlowSpeed: Single;
 	public var FlowDuration: Single;
-	@:flatten var PivotAlignment: ImVec2S;
-	@:flatten var PivotSize: ImVec2S;
-	@:flatten var PivotScale: ImVec2S;
+	@:flatten var PivotAlignment: ImVec2;
+	@:flatten var PivotSize: ImVec2;
+	@:flatten var PivotScale: ImVec2;
 	public var PinCorners: Single;
 	public var PinRadius: Single;
 	public var PinArrowSize: Single;
@@ -134,51 +136,51 @@ class NodeEditor
 	public static function setStyle( style: Style ) { }
 
 	public static function pushStyleVar( varIndex: StyleVar, val: Single ) { }
-	public static function pushStyleVar2( varIndex: StyleVar, vec2: ImVec2S ) { }
-	public static function pushStyleVar3( varIndex: StyleVar, vec4: ImVec4S ) { }
+	public static function pushStyleVar2( varIndex: StyleVar, vec2: ImVec2 ) { }
+	public static function pushStyleVar3( varIndex: StyleVar, vec4: ImVec4 ) { }
 	public static function popStyleVar( count: Int = 1 ) { }
-	public static function pushStyleColor( varIndex: StyleColor, vec2: ImVec4S ) { }
+	public static function pushStyleColor( varIndex: StyleColor, vec2: ImVec4 ) { }
 	public static function popStyleColor( count: Int = 1 ) { }
 
 	// Item
-	public static function begin(name : String, ?size : ImVec2S) : Void { }
+	public static function begin(name : String, ?size : ImVec2) : Void { }
 	public static function end() : Void { }
 
 	public static function beginNode(nodeId : NodeId ) : Void { }
 	public static function endNode() : Void { }
 
 	public static function beginPin(pinId : PinId, kind : PinKind) : Void { }
-	public static function pinRect(a : ImVec2S, a : ImVec2S) : Void { }
-	public static function pinPivotRect(a : ImVec2S, a : ImVec2S) : Void { }
-	public static function pinPivotSize(size : ImVec2S ) : Void { }
-	public static function pinPivotScale(scale : ImVec2S ) : Void { }
-	public static function pinPivotAlignment(alignment : ImVec2S ) : Void { }
+	public static function pinRect(a : ImVec2, a : ImVec2) : Void { }
+	public static function pinPivotRect(a : ImVec2, a : ImVec2) : Void { }
+	public static function pinPivotSize(size : ImVec2 ) : Void { }
+	public static function pinPivotScale(scale : ImVec2 ) : Void { }
+	public static function pinPivotAlignment(alignment : ImVec2 ) : Void { }
 	public static function endPin() : Void { }
 
 	// group
-	public static function group( size : ImVec2S = null ) : Void { }
+	public static function group( size : ImVec2 = null ) : Void { }
 	public static function beginGroupHint( nodeId: NodeId ) : Bool { return false; }
-	public static function getGroupMin() : ImVec2S { return null; }
-	public static function getGroupMax() : ImVec2S { return null; }
+	public static function getGroupMin() : ImVec2 { return null; }
+	public static function getGroupMax() : ImVec2 { return null; }
 	public static inline function getHintForegroundDrawList() : ImDrawList { return new ImDrawList( get_hint_foreground_draw_list() ); }
 	public static inline function getHintBackgroundDrawList() : ImDrawList { return new ImDrawList( get_hint_background_draw_list() ); }
 	public static function endGroupHint() : Void { }
 
 	public static inline function getNodeBackgroundDrawList( nodeId: NodeId ) : ImDrawList { return new ImDrawList( get_node_background_draw_list( nodeId ) ); }
 
-	public static function link( linkId: LinkId, startId: PinId, endId: PinId, color: ImVec4S = null, thickness: Single = 0 ) : Bool { return false; }
+	public static function link( linkId: LinkId, startId: PinId, endId: PinId, color: ImVec4 = null, thickness: Single = 0 ) : Bool { return false; }
 	public static function flow( linkId: LinkId, direction: FlowDirection = FlowDirection.Forward ): Void  { }
 
 	// Create
-	public static function beginCreate( color: ImVec4S = null, thickness: Single = 1.0 ) : Bool { return false; }
+	public static function beginCreate( color: ImVec4 = null, thickness: Single = 1.0 ) : Bool { return false; }
 	public static function queryNewLink( startPinId: hl.Ref<PinId>, endPinId: hl.Ref<PinId> ) : Bool { return false; }
-	public static function queryNewLink2( startPinId: hl.Ref<PinId>, endPinId: hl.Ref<PinId>, color: ImVec4S, thickness: Single = 1.0 ) : Bool { return false; }
+	public static function queryNewLink2( startPinId: hl.Ref<PinId>, endPinId: hl.Ref<PinId>, color: ImVec4, thickness: Single = 1.0 ) : Bool { return false; }
 	public static function queryNewNode( startNodeId: hl.Ref<NodeId> ) : Bool { return false; }
-	public static function queryNewNode2( startNodeId: hl.Ref<NodeId>, color: ImVec4S, thickness: Single = 1.0 ) : Bool { return false; }
+	public static function queryNewNode2( startNodeId: hl.Ref<NodeId>, color: ImVec4, thickness: Single = 1.0 ) : Bool { return false; }
 	public static function acceptNewItem() : Bool { return false; }
-	public static function acceptNewItem2( color: ImVec4S = null , thickness: Single = 1.0 ) : Bool { return false; }
+	public static function acceptNewItem2( color: ImVec4 = null , thickness: Single = 1.0 ) : Bool { return false; }
 	public static function rejectNewItem() : Bool { return false; }
-	public static function rejectNewItem2( color: ImVec4S = null , thickness: Single = 1.0 ) : Bool { return false; }
+	public static function rejectNewItem2( color: ImVec4 = null , thickness: Single = 1.0 ) : Bool { return false; }
 	public static function endCreate() : Void { }
 
 	// Delete
@@ -190,10 +192,10 @@ class NodeEditor
 	public static function endDelete() : Void {}
 
 	// Status
-	public static function setNodePosition( nodeId: NodeId, position: ImVec2S ) : Void {}
-	public static function getNodePosition( nodeId: NodeId ) : ImVec2S { return null; }
-	public static function getNodeSize( nodeId: NodeId ) : ImVec2S { return null; }
-	public static function setGroupSize( nodeId: NodeId, size: ImVec2S ) : Void {}
+	public static function setNodePosition( nodeId: NodeId, position: ImVec2 ) : Void {}
+	public static function getNodePosition( nodeId: NodeId ) : ImVec2 { return null; }
+	public static function getNodeSize( nodeId: NodeId ) : ImVec2 { return null; }
+	public static function setGroupSize( nodeId: NodeId, size: ImVec2 ) : Void {}
 	public static function centerNodeOnScreen( nodeId: NodeId ) : Void {}
 	public static function setNodeZPosition( nodeId: NodeId, z: Single ) : Void {}
 	public static function getNodeZPosition( nodeId: NodeId ) : Single { return 0; }
@@ -252,9 +254,9 @@ class NodeEditor
 	public static function getLinkPins( linkId: LinkId, startPinId: hl.Ref<PinId>, endPinId: hl.Ref<PinId> ) : Bool { return false; } // pass nullptr if particular pin do not interest you
 	public static function pinHadAnyLinks( pinId: PinId ) : Bool { return false; }
 	//
-	public static function getScreenSize( ) : ImVec2S { return null; }
-	public static function screenToCanvas( pos: ImVec2S ) : ImVec2S { return null; }
-	public static function canvasToScreen( pos: ImVec2S ) : ImVec2S { return null; }
+	public static function getScreenSize( ) : ImVec2 { return null; }
+	public static function screenToCanvas( pos: ImVec2 ) : ImVec2 { return null; }
+	public static function canvasToScreen( pos: ImVec2 ) : ImVec2 { return null; }
 	//
 	public static function getNodeCount( ) : Int { return 0; }
 

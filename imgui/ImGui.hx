@@ -618,25 +618,37 @@ typedef ImGuiID = Int;
 	public var y: Single;
 	
 	@:deprecated("Remainder of ExtDynamic")
-	public var v(get, never): ImVec2S;
+	@:noCompletion public var v(get, never): ImVec2;
 	inline function get_v() return this;
 	@:deprecated("Remainder of ExtDynamic")
-	public inline function to(): ImVec2S return this;
+	@:noCompletion public inline function to(): ImVec2 return this;
 	
-	public inline function set(x: Single = 0, y: Single = 0): ImVec2S
+	public inline function set(x: Single = 0, y: Single = 0): ImVec2
 	{
 		this.x = x;
 		this.y = y;
 		return this;
 	}
 	
-	public static inline function get(x: Single = 0, y: Single = 0): ImVec2S { return { x: x, y: y }; };
+	public static inline function get(x: Single = 0, y: Single = 0): ImVec2 { return { x: x, y: y }; };
 	
 	public function toString() {
 		return '{ x: $x, y: $y }';
 	}
 	
-	// TODO: Math operations
+	@:noCompletion public inline function add(other: ImVec2S) { return get(x + other.x, y + other.y); }
+	@:noCompletion public inline function sub(other: ImVec2S) { return get(x - other.x, y - other.y); }
+	@:noCompletion public inline function mul(other: ImVec2S) { return get(x * other.x, y * other.y); }
+	@:noCompletion public inline function div(other: ImVec2S) { return get(x / other.x, y / other.y); }
+	@:noCompletion public inline function neg() { return get(-x, -y); }
+	
+	@:noCompletion public inline function addSelf(other: ImVec2S) { return set(x + other.x, y + other.y); }
+	@:noCompletion public inline function subSelf(other: ImVec2S) { return set(x - other.x, y - other.y); }
+	@:noCompletion public inline function mulSelf(other: ImVec2S) { return set(x * other.x, y * other.y); }
+	@:noCompletion public inline function divSelf(other: ImVec2S) { return set(x / other.x, y / other.y); }
+	@:noCompletion public inline function negSelf() { return set(-x, -y); }
+	
+	@:noCompletion public inline function compare(other: ImVec2S) { return x == other.x && y == other.y; }
 }
 
 /** The raw memory ImVec2 **/
@@ -649,12 +661,12 @@ typedef ImGuiID = Int;
 	public var w: Single;
 	
 	@:deprecated("Remainder of ExtDynamic")
-	public var v(get, never): ImVec4S;
+	@:noCompletion public var v(get, never): ImVec4;
 	inline function get_v() return this;
 	@:deprecated("Remainder of ExtDynamic")
-	public inline function to(): ImVec4S return this;
+	@:noCompletion public inline function to(): ImVec4 return this;
 	
-	public inline function set(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4S
+	public inline function set(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4
 	{
 		this.x = x;
 		this.y = y;
@@ -663,18 +675,18 @@ typedef ImGuiID = Int;
 		return this;
 	}
 	
-	public inline function setColor(colWAlpha: Int): ImVec4S
+	public inline function setColor(colWAlpha: Int): ImVec4
 	{
 		return set(((colWAlpha) & 0xff) / 0xff, ((colWAlpha >> 8) & 0xff) / 0xff, ((colWAlpha >> 16) & 0xff) / 0xff, ((colWAlpha >> 24) & 0xff) / 0xff);
 	}
 	
-	public inline function setColorRGB(col: Int, alpha: Float = 1.0): ImVec4S
+	public inline function setColorRGB(col: Int, alpha: Float = 1.0): ImVec4
 	{
 		return set(((col) & 0xff) / 0xff, ((col >> 8) & 0xff) / 0xff, ((col >> 16) & 0xff) / 0xff, alpha);
 	}
 	
-	public static inline function get(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4S { return { x: x, y: y, z: z, w: w }; }
-	public static inline function getColor(colWAlpha: Int): ImVec4S
+	public static inline function get(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4 { return { x: x, y: y, z: z, w: w }; }
+	public static inline function getColor(colWAlpha: Int): ImVec4
 	{
 		return {
 			x: ((colWAlpha >> 16) & 0xff) / 0xff,
@@ -683,7 +695,7 @@ typedef ImGuiID = Int;
 			w: ((colWAlpha >> 24) & 0xff) / 0xff
 		};
 	}
-	public static inline function getColorRGB(col: Int, alpha: Float = 1.0): ImVec4S
+	public static inline function getColorRGB(col: Int, alpha: Float = 1.0): ImVec4
 	{
 		return {
 			x: ((col >> 16) & 0xff) / 0xff,
@@ -695,36 +707,65 @@ typedef ImGuiID = Int;
 	
 	public inline function toColor():Int
 	{
-		return ((Std.int(x * 0xff) & 0xff)      ) +
+		return ((Std.int(z * 0xff) & 0xff)      ) +
 		       ((Std.int(y * 0xff) & 0xff) << 8 ) +
-		       ((Std.int(z * 0xff) & 0xff) << 16) +
+		       ((Std.int(x * 0xff) & 0xff) << 16) +
 		       ((Std.int(w * 0xff) & 0xff) << 24);
 	}
 	
-	public function xy(): ImVec2S { return ImVec2S.get(x, y); }
-	public function zw(): ImVec2S { return ImVec2S.get(z, w); }
+	public function xy(): ImVec2 { return ImVec2S.get(x, y); }
+	public function zw(): ImVec2 { return ImVec2S.get(z, w); }
 	
 	public function toString() {
 		return '{ x: $x, y: $y, z: $z, w: $w }';
 	}
 	
-	// TODO: Math opeartions
+	@:noCompletion public inline function add(other: ImVec4S) { return get(x + other.x, y + other.y, z + other.z, w + other.w); }
+	@:noCompletion public inline function sub(other: ImVec4S) { return get(x - other.x, y - other.y, z - other.z, w - other.w); }
+	@:noCompletion public inline function mul(other: ImVec4S) { return get(x * other.x, y * other.y, z * other.z, w * other.w); }
+	@:noCompletion public inline function div(other: ImVec4S) { return get(x / other.x, y / other.y, z / other.z, w / other.w); }
+	@:noCompletion public inline function neg() { return get(-x, -y, -z, -w); }
+	
+	@:noCompletion public inline function addSelf(other: ImVec4S) { return set(x + other.x, y + other.y, z + other.z, w + other.w); }
+	@:noCompletion public inline function subSelf(other: ImVec4S) { return set(x - other.x, y - other.y, z - other.z, w - other.w); }
+	@:noCompletion public inline function mulSelf(other: ImVec4S) { return set(x * other.x, y * other.y, z * other.z, w * other.w); }
+	@:noCompletion public inline function divSelf(other: ImVec4S) { return set(x / other.x, y / other.y, z / other.z, w / other.w); }
+	@:noCompletion public inline function negSelf() { return set(-x, -y, -z, -w); }
+	
+	@:noCompletion public inline function compare(other: ImVec4S) { return other != null && x == other.x && y == other.y && z == other.z && w == other.w; }
 }
 
 // TODO: rename them back into ImVec2/4.
-typedef ImVec2 = ImVec2S;
-typedef ImVec4 = ImVec4S;
-// typedef ImVec2 = {
-// 	x : Single,
-// 	y : Single
-// }
-
-// typedef ImVec4 = {
-// 	x : Single,
-// 	y : Single,
-// 	z : Single,
-// 	w : Single
-// }
+@:forward
+@:forwardStatics
+abstract ImVec2(ImVec2S) from ImVec2S to ImVec2S {
+	@:op(A + B) static inline function _add(a: ImVec2, b: ImVec2) return a.add(b);
+	@:op(A - B) static inline function _sub(a: ImVec2, b: ImVec2) return a.sub(b);
+	@:op(A * B) static inline function _mul(a: ImVec2, b: ImVec2) return a.mul(b);
+	@:op(A / B) static inline function _div(a: ImVec2, b: ImVec2) return a.div(b);
+	@:op(-A) static inline function _neg(a: ImVec2) return a.neg();
+	
+	@:op(A += B) static inline function _addSelf(a: ImVec2, b: ImVec2) return a.addSelf(b);
+	@:op(A -= B) static inline function _subSelf(a: ImVec2, b: ImVec2) return a.subSelf(b);
+	@:op(A *= B) static inline function _mulSelf(a: ImVec2, b: ImVec2) return a.mulSelf(b);
+	@:op(A /= B) static inline function _divSelf(a: ImVec2, b: ImVec2) return a.divSelf(b);
+	@:op(A == B) static inline function _compare(a: ImVec2, b: ImVec2) return a == null ? b == null : a.compare(b);
+}
+@:forward
+@:forwardStatics
+abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
+	@:op(A + B) static inline function _add(a: ImVec4, b: ImVec4) return a.add(b);
+	@:op(A - B) static inline function _sub(a: ImVec4, b: ImVec4) return a.sub(b);
+	@:op(A * B) static inline function _mul(a: ImVec4, b: ImVec4) return a.mul(b);
+	@:op(A / B) static inline function _div(a: ImVec4, b: ImVec4) return a.div(b);
+	@:op(-A) static inline function _neg(a: ImVec4) return a.neg();
+	
+	@:op(A += B) static inline function _addSelf(a: ImVec4, b: ImVec4) return a.addSelf(b);
+	@:op(A -= B) static inline function _subSelf(a: ImVec4, b: ImVec4) return a.subSelf(b);
+	@:op(A *= B) static inline function _mulSelf(a: ImVec4, b: ImVec4) return a.mulSelf(b);
+	@:op(A /= B) static inline function _divSelf(a: ImVec4, b: ImVec4) return a.divSelf(b);
+	@:op(A == B) static inline function _compare(a: ImVec4, b: ImVec4) return a == null ? b == null : a.compare(b);
+}
 
 @:keep
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
@@ -988,8 +1029,8 @@ class ImGui
 	public static function end() {}
 
 	// Child Windows
-	public static function beginChild(str_id : String, ?size : ImVec2S, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	public static function beginChild2(id : Int, ?size : ImVec2S, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild(str_id : String, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChild2(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	/** Always call `endChild()` regardless of `beginChild()` return value! **/
 	public static function endChild() {}
 
@@ -1000,34 +1041,34 @@ class ImGui
 	public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
 	public static function getWindowDrawList() : ImDrawList {return null;}
 	public static function getWindowDpiScale(): Single { return 0; }
-	public static function getWindowPos() : ImVec2S {return null;}
-	public static function getWindowSize() : ImVec2S {return null;}
+	public static function getWindowPos() : ImVec2 {return null;}
+	public static function getWindowSize() : ImVec2 {return null;}
 	public static function getWindowWidth() : Single {return 0;}
 	public static function getWindowHeight(): Single {return 0;}
 
 	// Window manipulation
-	public static function setNextWindowPos(pos: ImVec2S, cond: ImGuiCond = 0, ?pivot: ImVec2S) {}
-	public static function setNextWindowSize(size: ImVec2S, cond : ImGuiCond = 0) {}
-	public static function setNextWindowSizeConstraints(size_min : ImVec2S, size_max : ImVec2S) {}
-	public static function setNextWindowContentSize(size : ImVec2S) {}
+	public static function setNextWindowPos(pos: ImVec2, cond: ImGuiCond = 0, ?pivot: ImVec2) {}
+	public static function setNextWindowSize(size: ImVec2, cond : ImGuiCond = 0) {}
+	public static function setNextWindowSizeConstraints(size_min : ImVec2, size_max : ImVec2) {}
+	public static function setNextWindowContentSize(size : ImVec2) {}
 	public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setNextWindowFocus() {}
 	public static function setNextWindowBgAlpha(alpha : Single) {}
-	public static function setWindowPos(pos : ImVec2S, cond : ImGuiCond = 0) {}
-	public static function setWindowSize(size : ImVec2S, cond : ImGuiCond = 0) {}
+	public static function setWindowPos(pos : ImVec2, cond : ImGuiCond = 0) {}
+	public static function setWindowSize(size : ImVec2, cond : ImGuiCond = 0) {}
 	public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus() {}
 	public static function setWindowFontScale(scale : Single) {}
-	public static function setWindowPos2(name : String, pos : ImVec2S, cond : ImGuiCond = 0) {}
-	public static function setWindowSize2(name : String, size : ImVec2S, cond : ImGuiCond = 0) {}
+	public static function setWindowPos2(name : String, pos : ImVec2, cond : ImGuiCond = 0) {}
+	public static function setWindowSize2(name : String, size : ImVec2, cond : ImGuiCond = 0) {}
 	public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setWindowFocus2(name : String) {}
 
 	// Content region
-	public static function getContentRegionMax() : ImVec2S {return null;}
-	public static function getContentRegionAvail() : ImVec2S {return null;}
-	public static function getWindowContentRegionMin() : ImVec2S {return null;}
-	public static function getWindowContentRegionMax() : ImVec2S {return null;}
+	public static function getContentRegionMax() : ImVec2 {return null;}
+	public static function getContentRegionAvail() : ImVec2 {return null;}
+	public static function getWindowContentRegionMin() : ImVec2 {return null;}
+	public static function getWindowContentRegionMax() : ImVec2 {return null;}
 	@:deprecated // Obsoleted in latest imgui
 	public static function getWindowContentRegionWidth() : Single {return 0;}
 
@@ -1047,10 +1088,10 @@ class ImGui
 	public static function pushFont( font: ImFont ) {}
 	public static function popFont() {}
 	public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
-	public static function pushStyleColor2(idx : ImGuiCol, col : ImVec4S) {}
+	public static function pushStyleColor2(idx : ImGuiCol, col : ImVec4) {}
 	public static function popStyleColor(count : Int = 1) {}
 	public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
-	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ImVec2S) {}
+	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ImVec2) {}
 	public static function popStyleVar(count : Int = 1) {}
 	public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
 	public static function popAllowKeyboardFocus() {}
@@ -1068,31 +1109,31 @@ class ImGui
 	// Style read access
 	public static function getFont(): ImFont {return null;}
 	public static function getFontSize() : Single {return 0;}
-	public static function getFontTexUvWhitePixel() : ImVec2S {return null;}
+	public static function getFontTexUvWhitePixel() : ImVec2 {return null;}
 	public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
-	public static function getColorU322(col : ImVec4S) : ImU32 {return 0;}
+	public static function getColorU322(col : ImVec4) : ImU32 {return 0;}
 	public static function getColorU323(col : ImU32) : ImU32 {return 0;}
-	public static function getStyleColorVec4(idx : ImGuiCol) : ImVec4S {return null;}
+	public static function getStyleColorVec4(idx : ImGuiCol) : ImVec4 {return null;}
 
 	// Cursor / Layout
 	public static function separator() {}
 	public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
 	public static function newLine() {}
 	public static function spacing() {}
-	public static function dummy(size : ImVec2S) {}
+	public static function dummy(size : ImVec2) {}
 	public static function indent(indent_w : Single = 0.0) {}
 	public static function unindent(indent_w : Single = 0.0) {}
 	public static function beginGroup() {}
 	public static function endGroup() {}
-	public static function getCursorPos() : ImVec2S {return null;}
+	public static function getCursorPos() : ImVec2 {return null;}
 	public static function getCursorPosX() : Single {return 0;}
 	public static function getCursorPosY() : Single {return 0;}
-	public static function setCursorPos(local_pos : ImVec2S) {}
+	public static function setCursorPos(local_pos : ImVec2) {}
 	public static function setCursorPosX(local_x : Single) {}
 	public static function setCursorPosY(local_y : Single) {}
-	public static function getCursorStartPos() : ImVec2S {return null;}
-	public static function getCursorScreenPos() : ImVec2S {return null;}
-	public static function setCursorScreenPos(pos : ImVec2S) {}
+	public static function getCursorStartPos() : ImVec2 {return null;}
+	public static function getCursorScreenPos() : ImVec2 {return null;}
+	public static function setCursorScreenPos(pos : ImVec2) {}
 	public static function alignTextToFramePadding() {}
 	public static function getTextLineHeight() : Single {return 0;}
 	public static function getTextLineHeightWithSpacing() : Single {return 0;}
@@ -1117,25 +1158,25 @@ class ImGui
 	// TODO: TextUnformatted(text: String, ?start: Int, ?end: Int)
 	// TODO: Allow format arguments to be passed
 	public static function text(text : String) {}
-	public static function textColored(col : ImVec4S, fmt : String) {}
+	public static function textColored(col : ImVec4, fmt : String) {}
 	public static function textDisabled(text : String) {}
 	public static function textWrapped(text : String) {}
 	public static function labelText(label : String, text : String) {}
 	public static function bulletText(text : String) {}
 
 	// Widgets: Main
-	public static function button(name : String, ?size : ImVec2S) : Bool {return false;}
+	public static function button(name : String, ?size : ImVec2) : Bool {return false;}
 	public static function smallButton(label : String) : Bool {return false;}
-	public static function invisibleButton(str_id : String, ?size : ImVec2S) : Bool {return false;}
+	public static function invisibleButton(str_id : String, ?size : ImVec2) : Bool {return false;}
 	public static function arrowButton(str_id : String, dir : ImGuiDir) : Bool {return false;}
-	public static function image(user_texture_id: ImTextureID, size: ImVec2S, ?uv0: ImVec2S, ?uv1: ImVec2S, ?tint_col: ImVec4S, ?border_col: ImVec4S) {}
-	public static function imageButton(user_texture_id: ImTextureID, size: ImVec2S, ?uv0: ImVec2S, ?uv1: ImVec2S, frame_padding: Int = -1, ?bg_col: ImVec4S, ?tint_col: ImVec4S) : Bool {return false;}
+	public static function image(user_texture_id: ImTextureID, size: ImVec2, ?uv0: ImVec2, ?uv1: ImVec2, ?tint_col: ImVec4, ?border_col: ImVec4) {}
+	public static function imageButton(user_texture_id: ImTextureID, size: ImVec2, ?uv0: ImVec2, ?uv1: ImVec2, frame_padding: Int = -1, ?bg_col: ImVec4, ?tint_col: ImVec4) : Bool {return false;}
 	#if heaps
-	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2S, ?tint_col: ImVec4S, ?border_col: ImVec4S) @:privateAccess {
+	public static inline function imageTile( tile: h2d.Tile, ?size: ImVec2, ?tint_col: ImVec4, ?border_col: ImVec4) @:privateAccess {
 		image(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), tint_col, border_col);
 	}
 
-	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2S, frame_padding: Int = -1, ?bg_col: ImVec4S, ?tint_col: ImVec4S): Bool @:privateAccess {
+	public static inline function imageTileButton( tile: h2d.Tile, ?size: ImVec2, frame_padding: Int = -1, ?bg_col: ImVec4, ?tint_col: ImVec4): Bool @:privateAccess {
 		return imageButton(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
 	}
 	#end
@@ -1143,7 +1184,7 @@ class ImGui
 	public static function checkboxFlags(label : String, flags : hl.Ref<Int>, flags_value : Int) : Bool {return false;}
 	public static function radioButton(label : String, active : Bool) : Bool {return false;}
 	public static function radioButton2(label : String, v : hl.Ref<Int>, v_button : Int) : Bool {return false;}
-	public static function progressBar(fraction: Single, ?size_arg: ImVec2S, ?overlay: String) {}
+	public static function progressBar(fraction: Single, ?size_arg: ImVec2, ?overlay: String) {}
 	public static function bullet() {}
 
 	// Widgets: Combo Box
@@ -1178,8 +1219,8 @@ class ImGui
 	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
-	public static function vSliderFloat(label : String, size : ImVec2S, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function vSliderInt(label : String, size : ImVec2S, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderFloat(label : String, size : ImVec2, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderInt(label : String, size : ImVec2, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static inline function sliderFloatN(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
@@ -1195,11 +1236,11 @@ class ImGui
 
 	// Widgets: Input with Keyboard
 	public static function inputText(label : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultiline(label : String, value: hl.Ref<String>, ?size: ImVec2S, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextMultiline(label : String, value: hl.Ref<String>, ?size: ImVec2, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHint(label : String, hint : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 
 	public static function inputTextBuf(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, ?size: ImVec2S, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, ?size: ImVec2, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHintBuf(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 
 	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
@@ -1247,7 +1288,7 @@ class ImGui
     public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorPicker3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : hl.Ref<Single> = null) : Bool {return false;}
-    public static function colorButton(desc_id: String, ?col: ImVec4S, flags: ImGuiColorEditFlags = 0, ?size: ImVec2S) : Bool {return false;}
+    public static function colorButton(desc_id: String, ?col: ImVec4, flags: ImGuiColorEditFlags = 0, ?size: ImVec2) : Bool {return false;}
 	public static function setColorEditOptions(flags : ImGuiColorEditFlags) {}
 
 	// Widgets: Trees
@@ -1263,30 +1304,30 @@ class ImGui
 	public static function setNextItemOpen(is_open : Bool, cond : ImGuiCond = 0) {}
 
 	// Widgets: Selectables
-	public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2S) : Bool {return false;}
-	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2S) : Bool {return false;}
+	public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
+	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
 
 	// Widgets: List Boxes
 	/**
 		- Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
 		- Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
 	**/
-	public static function beginListBox(label: String, ?size: ImVec2S): Bool { return false; }
+	public static function beginListBox(label: String, ?size: ImVec2): Bool { return false; }
 	/** Only call `endListBox()` if `beginListBox()` returns `true`! **/
 	public static function endListBox() {}
 
 	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
 	// TODO: Callback variant
 	@:deprecated("Use beginListBox")
-	public static inline function listBoxHeader(label: String, ?size: ImVec2S) : Bool {return beginListBox(label, size);}
+	public static inline function listBoxHeader(label: String, ?size: ImVec2) : Bool {return beginListBox(label, size);}
 	@:deprecated("Obsolete")
 	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
 	@:deprecated("Use endListBox")
 	public static inline function listBoxFooter() { endListBox(); }
 
 	// Widgets: Data Plotting
-	public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2S) {}
-	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2S) {}
+	public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2) {}
+	public static function plotHistogram(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2) {}
 
 	// Widgets: Value() Helpers.
 	public static function valueBool(prefix : String, b : Bool) {}
@@ -1335,7 +1376,7 @@ class ImGui
 	public static function isPopupOpen(str_id : String) : Bool {return false;}
 
 	// Tables
-	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, ?outer_size: ImVec2S, inner_width = 0 ): Bool { return false; }
+	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, ?outer_size: ImVec2, inner_width = 0 ): Bool { return false; }
 	/** Only call `endTable()` if `beginTable()` returns `true`! **/
 	public static function endTable() {}
 	public static function tableNextRow( rowFlags: ImGuiTableRowFlags = ImGuiTableRowFlags.None, minRowHeight: Single = 0 ) {}
@@ -1381,7 +1422,7 @@ class ImGui
 	public static function setTabItemClosed(tab_or_docked_window_label : String) {}
 
 	// Docking
-	public static function dockSpace(id : ImGuiID, ?size : ImVec2S, flags : ImGuiDockNodeFlags = 0) {}
+	public static function dockSpace(id : ImGuiID, ?size : ImVec2, flags : ImGuiDockNodeFlags = 0) {}
 	// dockSpaceOverViewport // Viewport API
 	public static function setNextWindowDockId(id : ImGuiID, cond : ImGuiCond = 0) {}
 	// setNextWindowClass // Viewport API
@@ -1396,8 +1437,8 @@ class ImGui
 	public static function dockBuilderRemoveNode(node_id : ImGuiID) {}
 	public static function dockBuilderRemoveNodeDockedWindows(node_id : ImGuiID, clear_settings_refs: Bool) {}
 	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
-	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ImVec2S ) {}
-	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ImVec2S ) {}
+	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ImVec2 ) {}
+	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ImVec2 ) {}
 	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
 	// DockBuilderCopyDockSpace
 	// DockBuilderCopyNode
@@ -1478,7 +1519,7 @@ class ImGui
 	public static function endDisabled() {}
 
 	// Clipping
-	public static function pushClipRect(clip_rect_min : ImVec2S, clip_rect_max : ImVec2S, intersect_with_current_clip_rect : Bool) {}
+	public static function pushClipRect(clip_rect_min : ImVec2, clip_rect_max : ImVec2, intersect_with_current_clip_rect : Bool) {}
 	public static function popClipRect() {}
 
 	// Focus, Activation
@@ -1499,17 +1540,17 @@ class ImGui
 	public static function isAnyItemHovered() : Bool {return false;}
 	public static function isAnyItemActive() : Bool {return false;}
 	public static function isAnyItemFocused() : Bool {return false;}
-	public static function getItemRectMin() : ImVec2S {return null;}
-	public static function getItemRectMax() : ImVec2S {return null;}
-	public static function getItemRectSize() : ImVec2S {return null;}
+	public static function getItemRectMin() : ImVec2 {return null;}
+	public static function getItemRectMax() : ImVec2 {return null;}
+	public static function getItemRectSize() : ImVec2 {return null;}
 	public static function setItemAllowOverlap() {}
 
 	// Viewports
 	// public static function getMainViewport(): IMViewport
 
 	// Miscellaneous Utilities
-	public static function isRectVisible(size : ImVec2S) : Bool {return false;}
-	public static function isRectVisible2(rect_min : ImVec2S, rect_max : ImVec2S) : Bool {return false;}
+	public static function isRectVisible(size : ImVec2) : Bool {return false;}
+	public static function isRectVisible2(rect_min : ImVec2, rect_max : ImVec2) : Bool {return false;}
 	public static function getTime() : Float {return 0;}
 	public static function getFrameCount() : Int {return 0;}
 	public static function getForegroundDrawList() : ImDrawList {return null;}
@@ -1523,18 +1564,18 @@ class ImGui
 	}
 	public static function getStateStorage() : ImStateStorage {return null;}
 	//setStateStorage
-	public static function beginChildFrame(id : ImGuiID, size : ImVec2S, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginChildFrame(id : ImGuiID, size : ImVec2, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	/** Always call `endChildFrame()` regardless of `beginChildFrame()` return value! **/
 	public static function endChildFrame() {}
 	@:deprecated("Obsolete: Use ImGuiListClipper")
 	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
 
 	// Text Utilities
-	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0): ImVec2S {return null;}
+	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0): ImVec2 {return null;}
 
 	// Color Utilities
-	public static function colorConvertU32ToFloat4(color : ImU32) : ImVec4S {return null;}
-	public static function colorConvertFloat4ToU32(color : ImVec4S) : ImU32 {return 0;}
+	public static function colorConvertU32ToFloat4(color : ImU32) : ImVec4 {return null;}
+	public static function colorConvertFloat4ToU32(color : ImVec4) : ImU32 {return 0;}
 	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
 	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
 
@@ -1554,13 +1595,13 @@ class ImGui
 	public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
 	public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
 	//TODO: getMouseClickedCount
-	public static function isMouseHoveringRect(r_min : ImVec2S, r_max : ImVec2S, clip : Bool = true) : Bool {return false;}
-	public static function isMousePosValid(?mouse_pos : ImVec2S) : Bool {return false;}
+	public static function isMouseHoveringRect(r_min : ImVec2, r_max : ImVec2, clip : Bool = true) : Bool {return false;}
+	public static function isMousePosValid(?mouse_pos : ImVec2) : Bool {return false;}
 	public static function isAnyMouseDown() : Bool {return false;}
-	public static function getMousePos() : ImVec2S {return null;}
-	public static function getMousePosOnOpeningCurrentPopup() : ImVec2S {return null;}
+	public static function getMousePos() : ImVec2 {return null;}
+	public static function getMousePosOnOpeningCurrentPopup() : ImVec2 {return null;}
 	public static function isMouseDragging(button : ImGuiMouseButton, lock_threshold : Single = -1.0) : Bool {return false;}
-	public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ImVec2S {return null;}
+	public static function getMouseDragDelta(button : ImGuiMouseButton = 0, lock_threshold : Single = -1.0) : ImVec2 {return null;}
 	public static function resetMouseDragDelta(button : ImGuiMouseButton = 0) {}
 	public static function getMouseCursor() : ImGuiMouseCursor {return 0;}
 	public static function setMouseCursor(cursor_type : ImGuiMouseCursor) {}
@@ -1637,10 +1678,10 @@ class ImGui
 		Provides C side the necessary hl_type references for data constructed on C side such as ImVec2 and ImVec4.
 	**/
 	public static inline function provideTypes() @:privateAccess {
-		_init(ImVec2S.get(), ImVec4S.get(), new RenderList(), new RenderData(), new RenderCommand());
+		_init(ImVec2.get(), ImVec4.get(), new RenderList(), new RenderData(), new RenderCommand());
 	}
 	@:hlNative("hlimgui", "initialize")
-	static function _init(vec2: ImVec2S, vec4: ImVec4S, renderlist: RenderList, renderdata: RenderData, rendercommand: RenderCommand) {};
+	static function _init(vec2: ImVec2, vec4: ImVec4, renderlist: RenderList, renderdata: RenderData, rendercommand: RenderCommand) {};
 	
 	/**
 		Bootstrap helper to initialize Imgui.
