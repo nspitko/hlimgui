@@ -632,9 +632,15 @@ typedef ImGuiID = Int;
 	
 	public static inline function get(x: Single = 0, y: Single = 0): ImVec2 { return { x: x, y: y }; };
 	
-	public function toString() {
+	@:keep public function toString() {
 		return '{ x: $x, y: $y }';
 	}
+	
+	@:noCompletion public inline function addScalar(other: Single) { return get(x + other, y + other); }
+	@:noCompletion public inline function subScalar(other: Single) { return get(x - other, y - other); }
+	@:noCompletion public inline function mulScalar(other: Single) { return get(x * other, y * other); }
+	@:noCompletion public inline function divScalar(other: Single) { return get(x / other, y / other); }
+	@:noCompletion public inline function modScalar(other: Single) { return get(x % other, y % other); }
 	
 	@:noCompletion public inline function add(other: ImVec2S) { return get(x + other.x, y + other.y); }
 	@:noCompletion public inline function sub(other: ImVec2S) { return get(x - other.x, y - other.y); }
@@ -642,11 +648,17 @@ typedef ImGuiID = Int;
 	@:noCompletion public inline function div(other: ImVec2S) { return get(x / other.x, y / other.y); }
 	@:noCompletion public inline function neg() { return get(-x, -y); }
 	
-	@:noCompletion public inline function addSelf(other: ImVec2S) { return set(x + other.x, y + other.y); }
-	@:noCompletion public inline function subSelf(other: ImVec2S) { return set(x - other.x, y - other.y); }
-	@:noCompletion public inline function mulSelf(other: ImVec2S) { return set(x * other.x, y * other.y); }
-	@:noCompletion public inline function divSelf(other: ImVec2S) { return set(x / other.x, y / other.y); }
-	@:noCompletion public inline function negSelf() { return set(-x, -y); }
+	@:noCompletion public inline function addSelf(other: ImVec2S) { x += other.x; y += other.y; return this; }
+	@:noCompletion public inline function subSelf(other: ImVec2S) { x -= other.x; y -= other.y; return this; }
+	@:noCompletion public inline function mulSelf(other: ImVec2S) { x *= other.x; y *= other.y; return this; }
+	@:noCompletion public inline function divSelf(other: ImVec2S) { x /= other.x; y /= other.y; return this; }
+	@:noCompletion public inline function negSelf() { x = -x; y = -y; return this; }
+	
+	@:noCompletion public inline function addSelfScalar(other: Single) { x += other; y += other; return this; }
+	@:noCompletion public inline function subSelfScalar(other: Single) { x -= other; y -= other; return this; }
+	@:noCompletion public inline function mulSelfScalar(other: Single) { x *= other; y *= other; return this; }
+	@:noCompletion public inline function divSelfScalar(other: Single) { x /= other; y /= other; return this; }
+	@:noCompletion public inline function modSelfScalar(other: Single) { x %= other; y %= other; return this; }
 	
 	@:noCompletion public inline function compare(other: ImVec2S) { return x == other.x && y == other.y; }
 }
@@ -716,9 +728,15 @@ typedef ImGuiID = Int;
 	public function xy(): ImVec2 { return ImVec2S.get(x, y); }
 	public function zw(): ImVec2 { return ImVec2S.get(z, w); }
 	
-	public function toString() {
+	@:keep public function toString() {
 		return '{ x: $x, y: $y, z: $z, w: $w }';
 	}
+	
+	@:noCompletion public inline function addScalar(other: Single) { return get(x + other, y + other, z + other, w + other); }
+	@:noCompletion public inline function subScalar(other: Single) { return get(x - other, y - other, z - other, w - other); }
+	@:noCompletion public inline function mulScalar(other: Single) { return get(x * other, y * other, z * other, w * other); }
+	@:noCompletion public inline function divScalar(other: Single) { return get(x / other, y / other, z / other, w / other); }
+	@:noCompletion public inline function modScalar(other: Single) { return get(x % other, y % other, z % other, w % other); }
 	
 	@:noCompletion public inline function add(other: ImVec4S) { return get(x + other.x, y + other.y, z + other.z, w + other.w); }
 	@:noCompletion public inline function sub(other: ImVec4S) { return get(x - other.x, y - other.y, z - other.z, w - other.w); }
@@ -726,11 +744,17 @@ typedef ImGuiID = Int;
 	@:noCompletion public inline function div(other: ImVec4S) { return get(x / other.x, y / other.y, z / other.z, w / other.w); }
 	@:noCompletion public inline function neg() { return get(-x, -y, -z, -w); }
 	
-	@:noCompletion public inline function addSelf(other: ImVec4S) { return set(x + other.x, y + other.y, z + other.z, w + other.w); }
-	@:noCompletion public inline function subSelf(other: ImVec4S) { return set(x - other.x, y - other.y, z - other.z, w - other.w); }
-	@:noCompletion public inline function mulSelf(other: ImVec4S) { return set(x * other.x, y * other.y, z * other.z, w * other.w); }
-	@:noCompletion public inline function divSelf(other: ImVec4S) { return set(x / other.x, y / other.y, z / other.z, w / other.w); }
-	@:noCompletion public inline function negSelf() { return set(-x, -y, -z, -w); }
+	@:noCompletion public inline function addSelf(other: ImVec4S) { x += other.x; y += other.y; z += other.z; w += other.w; return this; }
+	@:noCompletion public inline function subSelf(other: ImVec4S) { x -= other.x; y -= other.y; z -= other.z; w -= other.w; return this; }
+	@:noCompletion public inline function mulSelf(other: ImVec4S) { x *= other.x; y *= other.y; z *= other.z; w *= other.w; return this; }
+	@:noCompletion public inline function divSelf(other: ImVec4S) { x /= other.x; y /= other.y; z /= other.z; w /= other.w; return this; }
+	@:noCompletion public inline function negSelf() { x = -x; y = -y; z = -z; w = -w; return this; }
+	
+	@:noCompletion public inline function addSelfScalar(other: Single) { x += other; y += other; z += other; w += other; return this; }
+	@:noCompletion public inline function subSelfScalar(other: Single) { x -= other; y -= other; z -= other; w -= other; return this; }
+	@:noCompletion public inline function mulSelfScalar(other: Single) { x *= other; y *= other; z *= other; w *= other; return this; }
+	@:noCompletion public inline function divSelfScalar(other: Single) { x /= other; y /= other; z /= other; w /= other; return this; }
+	@:noCompletion public inline function modSelfScalar(other: Single) { x %= other; y %= other; z %= other; w %= other; return this; }
 	
 	@:noCompletion public inline function compare(other: ImVec4S) { return other != null && x == other.x && y == other.y && z == other.z && w == other.w; }
 }
@@ -745,10 +769,23 @@ abstract ImVec2(ImVec2S) from ImVec2S to ImVec2S {
 	@:op(A / B) static inline function _div(a: ImVec2, b: ImVec2) return a.div(b);
 	@:op(-A) static inline function _neg(a: ImVec2) return a.neg();
 	
+	@:op(A + B) static inline function _addScalar(a: ImVec2, b: Single) return a.addScalar(b);
+	@:op(A - B) static inline function _subScalar(a: ImVec2, b: Single) return a.subScalar(b);
+	@:op(A * B) static inline function _mulScalar(a: ImVec2, b: Single) return a.mulScalar(b);
+	@:op(A / B) static inline function _divScalar(a: ImVec2, b: Single) return a.divScalar(b);
+	@:op(A % B) static inline function _modScalar(a: ImVec2, b: Single) return a.modScalar(b);
+	
 	@:op(A += B) static inline function _addSelf(a: ImVec2, b: ImVec2) return a.addSelf(b);
 	@:op(A -= B) static inline function _subSelf(a: ImVec2, b: ImVec2) return a.subSelf(b);
 	@:op(A *= B) static inline function _mulSelf(a: ImVec2, b: ImVec2) return a.mulSelf(b);
 	@:op(A /= B) static inline function _divSelf(a: ImVec2, b: ImVec2) return a.divSelf(b);
+	
+	@:op(A += B) static inline function _addSelfScalar(a: ImVec2, b: Single) return a.addSelfScalar(b);
+	@:op(A -= B) static inline function _subSelfScalar(a: ImVec2, b: Single) return a.subSelfScalar(b);
+	@:op(A *= B) static inline function _mulSelfScalar(a: ImVec2, b: Single) return a.mulSelfScalar(b);
+	@:op(A /= B) static inline function _divSelfScalar(a: ImVec2, b: Single) return a.divSelfScalar(b);
+	@:op(A %= B) static inline function _modSelfScalar(a: ImVec2, b: Single) return a.modSelfScalar(b);
+	
 	@:op(A == B) static inline function _compare(a: ImVec2, b: ImVec2) return a == null ? b == null : a.compare(b);
 }
 @:forward
@@ -760,10 +797,23 @@ abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
 	@:op(A / B) static inline function _div(a: ImVec4, b: ImVec4) return a.div(b);
 	@:op(-A) static inline function _neg(a: ImVec4) return a.neg();
 	
+	@:op(A + B) static inline function _addScalar(a: ImVec4, b: Single) return a.addScalar(b);
+	@:op(A - B) static inline function _subScalar(a: ImVec4, b: Single) return a.subScalar(b);
+	@:op(A * B) static inline function _mulScalar(a: ImVec4, b: Single) return a.mulScalar(b);
+	@:op(A / B) static inline function _divScalar(a: ImVec4, b: Single) return a.divScalar(b);
+	@:op(A % B) static inline function _modScalar(a: ImVec4, b: Single) return a.modScalar(b);
+	
 	@:op(A += B) static inline function _addSelf(a: ImVec4, b: ImVec4) return a.addSelf(b);
 	@:op(A -= B) static inline function _subSelf(a: ImVec4, b: ImVec4) return a.subSelf(b);
 	@:op(A *= B) static inline function _mulSelf(a: ImVec4, b: ImVec4) return a.mulSelf(b);
 	@:op(A /= B) static inline function _divSelf(a: ImVec4, b: ImVec4) return a.divSelf(b);
+	
+	@:op(A += B) static inline function _addSelfScalar(a: ImVec4, b: Single) return a.addSelfScalar(b);
+	@:op(A -= B) static inline function _subSelfScalar(a: ImVec4, b: Single) return a.subSelfScalar(b);
+	@:op(A *= B) static inline function _mulSelfScalar(a: ImVec4, b: Single) return a.mulSelfScalar(b);
+	@:op(A /= B) static inline function _divSelfScalar(a: ImVec4, b: Single) return a.divSelfScalar(b);
+	@:op(A %= B) static inline function _modSelfScalar(a: ImVec4, b: Single) return a.modSelfScalar(b);
+	
 	@:op(A == B) static inline function _compare(a: ImVec4, b: ImVec4) return a == null ? b == null : a.compare(b);
 }
 
