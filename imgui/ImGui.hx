@@ -321,6 +321,7 @@ import haxe.io.Bytes;
 	var Double : Int = 9;
 	var COUNT : Int = 10;
 }
+abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from Float from hl.I64 {}
 
 @:enum abstract ImGuiConfigFlags(Int) from Int to Int {
     var None                   = 0;
@@ -623,6 +624,11 @@ typedef ImGuiID = Int;
 	@:deprecated("Remainder of ExtDynamic")
 	@:noCompletion public inline function to(): ImVec2 return this;
 	
+	public inline function new(x: Single = 0.0, y: Single = 0.0) {
+		this.x = x;
+		this.y = y;
+	}
+	
 	public inline function set(x: Single = 0, y: Single = 0): ImVec2
 	{
 		this.x = x;
@@ -671,6 +677,30 @@ typedef ImGuiID = Int;
 	public var y: Single;
 	public var z: Single;
 	public var w: Single;
+	
+	public inline function new(x: Single = 0.0, y: Single = 0.0, z: Single = 0.0, w: Single = 0.0) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+	}
+	/** Alias to `x` **/
+	public var r(get, set): Single;
+	/** Alias to `y` **/
+	public var g(get, set): Single;
+	/** Alias to `z` **/
+	public var b(get, set): Single;
+	/** Alias to `w` **/
+	public var a(get, set): Single;
+	
+	inline function get_r() return x;
+	inline function set_r(v) return x = v;
+	inline function get_g() return y;
+	inline function set_g(v) return y = v;
+	inline function get_b() return z;
+	inline function set_b(v) return z = v;
+	inline function get_a() return w;
+	inline function set_a(v) return w = v;
 	
 	@:deprecated("Remainder of ExtDynamic")
 	@:noCompletion public var v(get, never): ImVec4;
@@ -1282,7 +1312,16 @@ class ImGui
 	public static inline function sliderDoubleN(label : String, v : hl.NativeArray<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {
 		return slider_scalar_n(label, ImGuiDataType.Double, v, v_min, v_max, format, flags);
 	}
-	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<Dynamic>, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
+	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<ImGuiScalar>, v_min : ImGuiScalar, v_max : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
+	
+	public static function vSliderDouble(label: String, size: ImVec2, v: hl.Ref<Float>, v_min: Float, v_max: Float, ?format: String, flags: Int = 0) {
+		var tmp = ImTypeCache.array(v.get());
+		var ret = v_slider_scalar(label, size, Double, tmp, v_min, v_max, format, flags);
+		if (isItemEdited()) v.set(tmp[0]);
+		return ret;
+	}
+	// TODO: Allow usage of vSliderScalar directly?
+	public static function v_slider_scalar(label: String, size: ImVec2, type: ImGuiDataType, v: hl.NativeArray<ImGuiScalar>, v_min: ImGuiScalar, v_max: ImGuiScalar, ?format: String, flags: Int = 0): Bool {return false;}
 
 	// Widgets: Input with Keyboard
 	public static function inputText(label : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
@@ -1331,7 +1370,7 @@ class ImGui
 		return inputIntN(label, v, flags);
 	}
 
-	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, step : Dynamic, step_fast : Dynamic, format : String, flags : Int) : Bool {return false;}
+	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<ImGuiScalar>, step : ImGuiScalar, step_fast : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
 
 	// Widgets: Color Editor/Picker
     public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
@@ -1628,6 +1667,10 @@ class ImGui
 	public static function colorConvertFloat4ToU32(color : ImVec4) : ImU32 {return 0;}
 	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
 	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
+	/** Helper method to reduce hl.Ref dependency. w/alpha is preserved. **/
+	public static function colorConvertRGBtoHSVVec(input: ImVec4): ImVec4 {return null;}
+	/** Helper method to reduce hl.Ref dependency. w/alpha is preserved. **/
+	public static function colorConvertHSVtoRGBVec(input: ImVec4): ImVec4 {return null;}
 
 	// Inputs Utilities: Keyboard
 	public static function isKeyDown(user_key_index : Int) : Bool {return false;}

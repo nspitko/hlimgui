@@ -1,8 +1,10 @@
 package imgui;
 
 #if !hlimgui_disable_macro_helpers
+#if macro
 import haxe.macro.Expr;
 using haxe.macro.Tools;
+#end
 
 /**
   A helper macro function to workaround `hl.Ref` only working with local variables.
@@ -83,6 +85,7 @@ macro function wrefc(expr: Expr, names: Array<Expr>): Expr {
   return wref_gen(expr, false, false, names);
 }
 
+#if macro
 private function wref_gen(expr: Expr, voidCall: Bool, alwaysAssignBack: Bool, names: Array<Expr>):Expr {
   var tmps:Array<String> = [];
   var tmpDecl:Array<Expr> = [];
@@ -119,5 +122,7 @@ private function wref_gen(expr: Expr, voidCall: Bool, alwaysAssignBack: Bool, na
   if (!voidCall) result.push(macro result);
   return macro $b{result};
 }
+
+#end
 
 #end

@@ -20,9 +20,28 @@ HL_PRIM void HL_NAME(color_convert_hsvto_rgb)(float h, float s, float v, float* 
     ImGui::ColorConvertHSVtoRGB(h, s, v, *out_r, *out_g, *out_b);
 }
 
-// TODO: ImVec4 helpers for HSV<->RGB
+// Non-canonical: Helper to reduce _REF() dependencies
+HL_PRIM vimvec4* HL_NAME(color_convert_rgbto_hsvvec)(vimvec4* input)
+{
+    vimvec4* output = (vimvec4*)hl_alloc_obj(hlt_imvec4);
+    output->w = input->w;
+    ImGui::ColorConvertRGBtoHSV(input->x, input->y, input->z, output->x, output->y, output->z);
+    return output;
+}
+
+// Non-canonical: Helper to reduce _REF() dependencies
+HL_PRIM vimvec4* HL_NAME(color_convert_hsvto_rgbvec)(vimvec4* input)
+{
+    vimvec4* output = (vimvec4*)hl_alloc_obj(hlt_imvec4);
+    output->w = input->w;
+    ImGui::ColorConvertHSVtoRGB(input->x, input->y, input->z, output->x, output->y, output->z);
+    return output;
+}
 
 DEFINE_PRIM(_IMVEC4, color_convert_u32_to_float4, _I32);
 DEFINE_PRIM(_I32, color_convert_float4_to_u32, _IMVEC4);
 DEFINE_PRIM(_VOID, color_convert_rgbto_hsv, _F32 _F32 _F32 _REF(_F32) _REF(_F32) _REF(_F32));
 DEFINE_PRIM(_VOID, color_convert_hsvto_rgb, _F32 _F32 _F32 _REF(_F32) _REF(_F32) _REF(_F32));
+
+DEFINE_PRIM(_IMVEC4, color_convert_rgbto_hsvvec, _IMVEC4);
+DEFINE_PRIM(_IMVEC4, color_convert_hsvto_rgbvec, _IMVEC4);

@@ -102,6 +102,22 @@ HL_PRIM void F_NAME(set_tex_id)(ImFontAtlas* fonts, ImTextureID id)
 }
 
 // TODO: GetGlyphRangesX();
+// BLOCKED: hl.h doesn't expose hlt_i16 type to properly allocate the glyph range that would be compatible.
+// varray* ranges_to_array(ImWchar* ranges)
+// {
+// 	int len = 0;
+// 	ImWchar* ptr = ranges;
+// 	while (ptr++) len++;
+// 	varray* output = hl_alloc_array(hlt_i16, len);
+// 	int* outPtr = hl_aptr(output, int);
+// 	while (ranges) *(outPtr++) = (int)*(ranges++);
+// 	return output;
+// }
+
+// HL_PRIM varray* F_NAME(get_glyph_ranges_default)(ImFontAtlas* fonts)
+// {
+// 	return ranges_to_array(fonts->GetGlyphRangesDefault);
+// }
 
 HL_PRIM int F_NAME(add_custom_rect_regular)(ImFontAtlas* fonts, int width, int height)
 {
