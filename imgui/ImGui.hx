@@ -143,6 +143,20 @@ import haxe.io.Bytes;
 	var COUNT;
 }
 
+enum abstract ImGuiPopupFlags(Int) from Int to Int {
+	final None                    = 0;
+	final MouseButtonLeft         = 0;        // For BeginPopupContext*(): open on Left Mouse release. Guaranteed to always be == 0 (same as ImGuiMouseButton_Left)
+	final MouseButtonRight        = 1;        // For BeginPopupContext*(): open on Right Mouse release. Guaranteed to always be == 1 (same as ImGuiMouseButton_Right)
+	final MouseButtonMiddle       = 2;        // For BeginPopupContext*(): open on Middle Mouse release. Guaranteed to always be == 2 (same as ImGuiMouseButton_Middle)
+	final MouseButtonMask_        = 0x1F;
+	final MouseButtonDefault_     = 1;
+	final NoOpenOverExistingPopup = 1 << 5;   // For OpenPopup*(), BeginPopupContext*(): don't open if there's already a popup at the same level of the popup stack
+	final NoOpenOverItems         = 1 << 6;   // For BeginPopupContextWindow(): don't return true when hovering items, only when hovering empty space
+	final AnyPopupId              = 1 << 7;   // For IsPopupOpen(): ignore the ImGuiID parameter and test for any popup.
+	final AnyPopupLevel           = 1 << 8;   // For IsPopupOpen(): search/test at any level of the popup stack (default test in the current level)
+	final AnyPopup                = AnyPopupId | AnyPopupLevel;
+}
+
 @:enum abstract ImGuiSelectableFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var DontClosePopups : Int = 1;
@@ -789,7 +803,6 @@ typedef ImGuiID = Int;
 	@:noCompletion public inline function compare(other: ImVec4S) { return other != null && x == other.x && y == other.y && z == other.z && w == other.w; }
 }
 
-// TODO: rename them back into ImVec2/4.
 @:forward
 @:forwardStatics
 abstract ImVec2(ImVec2S) from ImVec2S to ImVec2S {
@@ -1451,18 +1464,23 @@ class ImGui
 	public static function endPopup() {}
 
 	// Popups: open/close functions
-	public static function openPopup(str_id : String) {}
-	// TODO: openPopup with id: ImGuiID
-	public static function openPopupOnItemClick(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Void {}
+	public static function openPopup(str_id: String, flags: ImGuiPopupFlags = 0) {}
+	public static function openPopupId(id: ImGuiID, flags: ImGuiPopupFlags = 0) {}
+	public static function openPopupOnItemClick(str_id : String = null, flags : ImGuiPopupFlags = 1) : Void {}
 	public static function closeCurrentPopup() {}
 
 	// Popups: open+begin combined function helpers
-	public static function beginPopupContextItem(str_id : String = null, mouse_button : ImGuiMouseButton = 1) : Bool {return false;}
-	public static function beginPopupContextWindow(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {return false;}
-	public static function beginPopupContextVoid(str_id : String = null, mouse_button : ImGuiMouseButton= 1) : Bool {return false;}
+	public static function beginPopupContextItem(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
+	public static function beginPopupContextWindow(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
+	public static function beginPopupContextVoid(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
+	
+	@:deprecated("Use beginPopupContextWindow(id, MouseButtonRight | NoOpenOverItems)") @:noCompletion
+	public static function beginPopupContextWindow2(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {
+		return beginPopupContextWindow(str_id, mouse_button | (also_over_items ? NoOpenOverItems : 0));
+	}
 
 	// Popups: query functions
-	public static function isPopupOpen(str_id : String) : Bool {return false;}
+	public static function isPopupOpen(str_id : String, flags: ImGuiPopupFlags = 0) : Bool {return false;}
 
 	// Tables
 	public static function beginTable( id: String, column: Int, flags: ImGuiTableFlags = ImGuiTableFlags.None, ?outer_size: ImVec2, inner_width = 0 ): Bool { return false; }
