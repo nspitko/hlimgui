@@ -805,7 +805,11 @@ typedef ImGuiID = Int;
 
 @:forward
 @:forwardStatics
+@:structInit
 abstract ImVec2(ImVec2S) from ImVec2S to ImVec2S {
+	
+	public inline function new(x: Single = 0.0, y: Single = 0.0) this = new ImVec2S(x, y);
+	
 	@:op(A + B) static inline function _add(a: ImVec2, b: ImVec2) return a.add(b);
 	@:op(A - B) static inline function _sub(a: ImVec2, b: ImVec2) return a.sub(b);
 	@:op(A * B) static inline function _mul(a: ImVec2, b: ImVec2) return a.mul(b);
@@ -833,7 +837,11 @@ abstract ImVec2(ImVec2S) from ImVec2S to ImVec2S {
 }
 @:forward
 @:forwardStatics
+@:structInit
 abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
+	
+	public inline function new(x: Single = 0.0, y: Single = 0.0, z: Single = 0.0, w: Single = 0.0) this = new ImVec4S(x, y, z, w);
+	
 	@:op(A + B) static inline function _add(a: ImVec4, b: ImVec4) return a.add(b);
 	@:op(A - B) static inline function _sub(a: ImVec4, b: ImVec4) return a.sub(b);
 	@:op(A * B) static inline function _mul(a: ImVec4, b: ImVec4) return a.mul(b);
