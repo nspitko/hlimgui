@@ -1705,7 +1705,7 @@ class ImGui
 	public static function isMouseClicked(button : ImGuiMouseButton, repeat : Bool = false) : Bool {return false;}
 	public static function isMouseReleased(button : ImGuiMouseButton) : Bool {return false;}
 	public static function isMouseDoubleClicked(button : ImGuiMouseButton) : Bool {return false;}
-	//TODO: getMouseClickedCount
+	public static function getMouseClickedCount(button : ImGuiMouseButton) : Int {return 0;}
 	public static function isMouseHoveringRect(r_min : ImVec2, r_max : ImVec2, clip : Bool = true) : Bool {return false;}
 	public static function isMousePosValid(?mouse_pos : ImVec2) : Bool {return false;}
 	public static function isAnyMouseDown() : Bool {return false;}

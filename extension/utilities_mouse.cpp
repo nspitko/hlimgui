@@ -20,6 +20,11 @@ HL_PRIM bool HL_NAME(is_mouse_double_clicked)(ImGuiMouseButton button)
     return ImGui::IsMouseDoubleClicked(button);
 }
 
+HL_PRIM int HL_NAME(get_mouse_clicked_count)(ImGuiMouseButton button)
+{
+    return ImGui::GetMouseClickedCount(button);
+}
+
 HL_PRIM bool HL_NAME(is_mouse_hovering_rect)(vimvec2* r_min, vimvec2* r_max, bool* clip)
 {
     return ImGui::IsMouseHoveringRect(r_min, r_max, convertPtr(clip, true));
@@ -79,6 +84,7 @@ DEFINE_PRIM(_BOOL, is_mouse_down, _I32);
 DEFINE_PRIM(_BOOL, is_mouse_clicked, _I32 _REF(_BOOL));
 DEFINE_PRIM(_BOOL, is_mouse_released, _I32);
 DEFINE_PRIM(_BOOL, is_mouse_double_clicked, _I32);
+DEFINE_PRIM(_I32, get_mouse_clicked_count, _I32);
 DEFINE_PRIM(_BOOL, is_mouse_hovering_rect, _IMVEC2 _IMVEC2 _REF(_BOOL));
 DEFINE_PRIM(_BOOL, is_mouse_pos_valid, _IMVEC2);
 DEFINE_PRIM(_BOOL, is_any_mouse_down, _NO_ARG);
