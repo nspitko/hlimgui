@@ -103,3 +103,26 @@ abstract ImDrawList(ImDrawListPtr) from ImDrawListPtr to ImDrawListPtr
 	}
 	#end
 }
+
+@:struct private class ImDrawListSplitterStruct {
+	
+	@:noCompletion var finalizer: HLFinalizer; // [HL] GC finalizer
+	var _current: Int;                         // Current channel number (0)
+	var _count: Int;                           // Number of active channels (1+)
+	var _channels: ImVector;                   // Draw channels (not resized down so _Count might be < Channels.Size)
+	
+}
+
+@:hlNative("hlimgui", "drawlistsplitter_") @:forward
+abstract ImDrawListSplitter(ImDrawListSplitterStruct) from ImDrawListSplitterStruct to ImDrawListSplitterStruct {
+	
+	static function init(): ImDrawListSplitterStruct {return null;}
+
+	public inline function new() this = init();
+
+	public function clear() {}
+	public function clearFreeMemory() {}
+	public function split(drawList: ImDrawList, count: Int) {}
+	public function merge(drawList: ImDrawList) {}
+	public function setCurrentChannel(drawList: ImDrawList, channelIdx: Int) {}
+}

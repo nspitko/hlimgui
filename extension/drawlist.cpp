@@ -280,3 +280,59 @@ DEFINE_FPRIM(_VOID, path_rect, _IMVEC2 _IMVEC2 _REF(_F32) _REF(_I32));
 
 DEFINE_FPRIM(_VOID, add_callback, _TRENDERCALLBACK _DYN);
 DEFINE_FPRIM(_VOID, add_draw_cmd, _NO_ARG);
+
+// DrawListSplitter
+
+#define S_NAME(n) HL_NAME(drawlistsplitter_##n)
+#define DEFINE_SPRIM(t,name,args) DEFINE_PRIM(t,drawlistsplitter_##name,_STRUCT args)
+
+typedef struct _hl_list_splitter hl_list_splitter;
+struct _hl_list_splitter {
+	void(*finalize)(hl_list_splitter*);
+	ImDrawListSplitter splitter;
+};
+
+static void drawlistsplitter_finalize(hl_list_splitter *c)
+{
+	c->splitter.~ImDrawListSplitter();
+}
+
+HL_PRIM hl_list_splitter* S_NAME(init)()
+{
+	hl_list_splitter* hl_mem = (hl_list_splitter*)hl_gc_alloc_finalizer(sizeof(hl_list_splitter));
+	hl_mem->finalize = drawlistsplitter_finalize;
+	new (&hl_mem->splitter)ImDrawListSplitter();
+	return hl_mem;
+}
+
+HL_PRIM void S_NAME(clear)(hl_list_splitter* s)
+{
+	s->splitter.Clear();
+}
+
+HL_PRIM void S_NAME(clear_free_memory)(hl_list_splitter* s)
+{
+	s->splitter.ClearFreeMemory();
+}
+
+HL_PRIM void S_NAME(split)(hl_list_splitter* s, ImDrawList* draw_list, int count)
+{
+	s->splitter.Split(draw_list, count);
+}
+
+HL_PRIM void S_NAME(merge)(hl_list_splitter* s, ImDrawList* draw_list)
+{
+	s->splitter.Merge(draw_list);
+}
+
+HL_PRIM void S_NAME(set_current_channel)(hl_list_splitter* s, ImDrawList* draw_list, int channel_idx)
+{
+	s->splitter.SetCurrentChannel(draw_list, channel_idx);
+}
+
+DEFINE_PRIM(_STRUCT, drawlistsplitter_init, _NO_ARG);
+DEFINE_SPRIM(_VOID, clear, _NO_ARG);
+DEFINE_SPRIM(_VOID, clear_free_memory, _NO_ARG);
+DEFINE_SPRIM(_VOID, split, _TDRAWLIST _I32);
+DEFINE_SPRIM(_VOID, merge, _TDRAWLIST);
+DEFINE_SPRIM(_VOID, set_current_channel, _TDRAWLIST _I32);

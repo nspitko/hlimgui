@@ -1015,6 +1015,7 @@ class ImGuiInputTextCallbackData
 
 
 typedef ImDrawList = imgui.types.ImDrawList;
+typedef ImDrawListSplitter = imgui.types.ImDrawList.ImDrawListSplitter;
 typedef ImFont = imgui.types.ImFont;
 typedef ImFontAtlas = imgui.types.ImFontAtlas;
 typedef ImGuiListClipper = imgui.types.ImGuiListClipper;

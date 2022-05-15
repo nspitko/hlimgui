@@ -4,6 +4,8 @@
 #define _IMVEC2 _OBJ(_F32 _F32)
 #define _IMVEC4 _OBJ(_F32 _F32 _F32 _F32)
 #define _IMTEXID _DYN
+#define _IMVECTOR _ABSTRACT(imvector)
+#define _FIN _ABSTRACT(finalizer)
 
 #define _TRENDERCALLBACK _FUN(_VOID, _DYN _DYN _DYN)
 #define _TRENDERCOMMAND _OBJ(_IMTEXID _I32 _I32 _I32 _I32 _I32 _I32 _TRENDERCALLBACK _DYN)
