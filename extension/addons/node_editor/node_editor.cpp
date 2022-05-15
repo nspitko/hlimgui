@@ -104,7 +104,7 @@ HL_PRIM void HL_NAME(nodeeditor_end)()
 
 //------------------------------------------------------------------------------
 
-HL_PRIM void HL_NAME(nodeeditor_begin_node)( int id )
+HL_PRIM void HL_NAME(nodeeditor_begin_node)( NodeEditor::NodeId id )
 {
 	NodeEditor::BeginNode( id );
 }
@@ -116,7 +116,7 @@ HL_PRIM void HL_NAME(nodeeditor_end_node)()
 
 //------------------------------------------------------------------------------
 
-HL_PRIM void HL_NAME(nodeeditor_begin_pin)( int id, NodeEditor::PinKind kind )
+HL_PRIM void HL_NAME(nodeeditor_begin_pin)( NodeEditor::PinId id, NodeEditor::PinKind kind )
 {
 	NodeEditor::BeginPin( id, kind );
 }
@@ -212,7 +212,6 @@ HL_PRIM bool HL_NAME(nodeeditor_begin_create)( vimvec4 *color, float *thickness 
 	return NodeEditor::BeginCreate( getImVec4( color, ImVec4(1,1,1,1 ) ), convertPtr( thickness, 1.0F ) );
 }
 
-//HL_PRIM bool HL_NAME(nodeeditor_query_new_link)( int *startPinId, int *endPinId )
 HL_PRIM bool HL_NAME(nodeeditor_query_new_link)( NodeEditor::PinId *startPinId, NodeEditor::PinId *endPinId )
 {
 	return NodeEditor::QueryNewLink( startPinId, endPinId );
@@ -375,11 +374,10 @@ HL_PRIM varray *HL_NAME(nodeeditor_get_selected_nodes)()
 
 	int actualSize = NodeEditor::GetSelectedNodes( selectedNodes, allocSize );
 
-	varray* hlArray = hl_alloc_array( &hlt_i32, actualSize );
-	int *hlPtr = hl_aptr(hlArray, int);
+	varray* hlArray = hl_alloc_array( &hlt_i64, actualSize );
+	NodeEditor::NodeId *hlPtr = hl_aptr(hlArray, NodeEditor::NodeId);
 
-	for( int i=0; i < actualSize; i++)
-		hlPtr[i] = (int)selectedNodes[i].Get();
+	memcpy( hlPtr, selectedNodes, actualSize * sizeof( NodeEditor::NodeId ) );
 
 	delete selectedNodes;
 
@@ -394,11 +392,10 @@ HL_PRIM varray *HL_NAME(nodeeditor_get_selected_links)()
 
 	int actualSize = NodeEditor::GetSelectedLinks( selectedLinks, allocSize );
 
-	varray* hlArray = hl_alloc_array( &hlt_i32, actualSize );
-	int *hlPtr = hl_aptr(hlArray, int);
+	varray* hlArray = hl_alloc_array( &hlt_i64, actualSize );
+	NodeEditor::LinkId *hlPtr = hl_aptr(hlArray, NodeEditor::LinkId);
 
-	for( int i=0; i < actualSize; i++)
-		hlPtr[i] = (int)selectedLinks[i].Get();
+	memcpy( hlPtr, selectedLinks, actualSize * sizeof( NodeEditor::LinkId ) );
 
 	delete selectedLinks;
 
@@ -638,9 +635,9 @@ DEFINE_PRIM(_VOID, nodeeditor_pop_style_color, _REF(_I32) );
 //
 DEFINE_PRIM(_VOID, nodeeditor_begin, _STRING _IMVEC2);
 DEFINE_PRIM(_VOID, nodeeditor_end, _NO_ARG);
-DEFINE_PRIM(_VOID, nodeeditor_begin_node, _I32);
+DEFINE_PRIM(_VOID, nodeeditor_begin_node, _I64);
 DEFINE_PRIM(_VOID, nodeeditor_end_node, _NO_ARG);
-DEFINE_PRIM(_VOID, nodeeditor_begin_pin, _I32 _I32);
+DEFINE_PRIM(_VOID, nodeeditor_begin_pin, _I64 _I32);
 DEFINE_PRIM(_VOID, nodeeditor_end_pin, _NO_ARG);
 DEFINE_PRIM(_VOID, nodeeditor_pin_rect, _IMVEC2 _IMVEC2);
 DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_rect, _IMVEC2 _IMVEC2);
@@ -649,24 +646,24 @@ DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_scale, _IMVEC2);
 DEFINE_PRIM(_VOID, nodeeditor_pin_pivot_alignment, _IMVEC2);
 DEFINE_PRIM(_VOID, nodeeditor_group, _IMVEC2 );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_begin_group_hint, _I32 );
+DEFINE_PRIM(_BOOL, nodeeditor_begin_group_hint, _I64 );
 DEFINE_PRIM(_IMVEC2, nodeeditor_get_group_min, _NO_ARG );
 DEFINE_PRIM(_IMVEC2, nodeeditor_get_group_max, _NO_ARG );
 DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_hint_foreground_draw_list, _NO_ARG );
 DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_hint_background_draw_list, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_end_group_hint, _NO_ARG );
 //
-DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_node_background_draw_list, _I32 );
+DEFINE_PRIM(_TDRAWLIST, nodeeditor_get_node_background_draw_list, _I64 );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_link, _I32 _I32 _I32 _IMVEC4 _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_link, _I64 _I64 _I64 _IMVEC4 _REF(_F32) );
 //
-DEFINE_PRIM(_VOID, nodeeditor_flow, _I32 _REF(_I32) );
+DEFINE_PRIM(_VOID, nodeeditor_flow, _I64 _REF(_I32) );
 //
 DEFINE_PRIM(_BOOL, nodeeditor_begin_create, _IMVEC4 _REF(_F32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_new_link, _REF(_I32) _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_new_link2, _REF(_I32) _REF(_I32) _IMVEC4 _REF(_F32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_new_node, _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_new_node2, _REF(_I32) _IMVEC4 _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_new_link, _REF(_I64) _REF(_I64) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_new_link2, _REF(_I64) _REF(_I64) _IMVEC4 _REF(_F32) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_new_node, _REF(_I64) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_new_node2, _REF(_I64) _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_BOOL, nodeeditor_accept_new_item, _NO_ARG );
 DEFINE_PRIM(_BOOL, nodeeditor_accept_new_item2, _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_BOOL, nodeeditor_reject_new_item, _NO_ARG );
@@ -674,21 +671,21 @@ DEFINE_PRIM(_BOOL, nodeeditor_reject_new_item2, _IMVEC4 _REF(_F32) );
 DEFINE_PRIM(_VOID, nodeeditor_end_create, _NO_ARG );
 //
 DEFINE_PRIM(_BOOL, nodeeditor_begin_delete, _NO_ARG );
-DEFINE_PRIM(_BOOL, nodeeditor_query_deleted_link, _REF(_I32) _REF(_I32) _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_query_deleted_node, _REF(_I32) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_deleted_link, _REF(_I64) _REF(_I64) _REF(_I64) );
+DEFINE_PRIM(_BOOL, nodeeditor_query_deleted_node, _REF(_I64) );
 DEFINE_PRIM(_BOOL, nodeeditor_accept_deleted_item, _REF(_BOOL) );
 DEFINE_PRIM(_VOID, nodeeditor_reject_deleted_item, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_end_delete, _NO_ARG );
 //
-DEFINE_PRIM(_VOID, nodeeditor_set_node_position, _I32 _IMVEC2 );
-DEFINE_PRIM(_IMVEC2, nodeeditor_get_node_position, _I32 );
-DEFINE_PRIM(_VOID, nodeeditor_set_group_size, _I32 _IMVEC2 );
-DEFINE_PRIM(_IMVEC2, nodeeditor_get_node_size, _I32 );
-DEFINE_PRIM(_VOID, nodeeditor_center_node_on_screen, _I32 );
-DEFINE_PRIM(_VOID, nodeeditor_set_node_zposition, _I32 _F32 );
-DEFINE_PRIM(_F32, nodeeditor_get_node_zposition, _I32 );
+DEFINE_PRIM(_VOID, nodeeditor_set_node_position, _I64 _IMVEC2 );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_node_position, _I64 );
+DEFINE_PRIM(_VOID, nodeeditor_set_group_size, _I64 _IMVEC2 );
+DEFINE_PRIM(_IMVEC2, nodeeditor_get_node_size, _I64 );
+DEFINE_PRIM(_VOID, nodeeditor_center_node_on_screen, _I64 );
+DEFINE_PRIM(_VOID, nodeeditor_set_node_zposition, _I64 _F32 );
+DEFINE_PRIM(_F32, nodeeditor_get_node_zposition, _I64 );
 //
-DEFINE_PRIM(_VOID, nodeeditor_restore_node_state, _I32 );
+DEFINE_PRIM(_VOID, nodeeditor_restore_node_state, _I64 );
 //
 DEFINE_PRIM(_VOID, nodeeditor_suspend, _NO_ARG );
 DEFINE_PRIM(_VOID, nodeeditor_resume, _NO_ARG );
@@ -699,28 +696,28 @@ DEFINE_PRIM(_BOOL, nodeeditor_has_selection_changed, _NO_ARG );
 DEFINE_PRIM(_I32, nodeeditor_get_selected_object_count, _NO_ARG );
 DEFINE_PRIM(_ARR, nodeeditor_get_selected_nodes, _NO_ARG );
 DEFINE_PRIM(_ARR, nodeeditor_get_selected_links, _NO_ARG );
-DEFINE_PRIM(_BOOL, nodeeditor_is_node_selected, _I32 );
-DEFINE_PRIM(_BOOL, nodeeditor_is_link_selected, _I32 );
+DEFINE_PRIM(_BOOL, nodeeditor_is_node_selected, _I64 );
+DEFINE_PRIM(_BOOL, nodeeditor_is_link_selected, _I64 );
 DEFINE_PRIM(_VOID, nodeeditor_clear_selection, _NO_ARG );
-DEFINE_PRIM(_VOID, nodeeditor_select_node, _I32 _REF(_BOOL) );
-DEFINE_PRIM(_VOID, nodeeditor_select_link, _I32 _REF(_BOOL) );
-DEFINE_PRIM(_VOID, nodeeditor_deselect_node, _I32 );
-DEFINE_PRIM(_VOID, nodeeditor_deselect_link, _I32 );
+DEFINE_PRIM(_VOID, nodeeditor_select_node, _I64 _REF(_BOOL) );
+DEFINE_PRIM(_VOID, nodeeditor_select_link, _I64 _REF(_BOOL) );
+DEFINE_PRIM(_VOID, nodeeditor_deselect_node, _I64 );
+DEFINE_PRIM(_VOID, nodeeditor_deselect_link, _I64 );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_delete_node, _I32 );
-DEFINE_PRIM(_BOOL, nodeeditor_delete_link, _I32 );
+DEFINE_PRIM(_BOOL, nodeeditor_delete_node, _I64 );
+DEFINE_PRIM(_BOOL, nodeeditor_delete_link, _I64 );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_has_any_links, _I32 );
-DEFINE_PRIM(_BOOL, nodeeditor_has_any_links2, _I32 );
-DEFINE_PRIM(_I32, nodeeditor_break_links, _I32 );
-DEFINE_PRIM(_I32, nodeeditor_break_links2, _I32 );
+DEFINE_PRIM(_BOOL, nodeeditor_has_any_links, _I64 );
+DEFINE_PRIM(_BOOL, nodeeditor_has_any_links2, _I64 );
+DEFINE_PRIM(_I32, nodeeditor_break_links, _I64 );
+DEFINE_PRIM(_I32, nodeeditor_break_links2, _I64 );
 //
 DEFINE_PRIM(_VOID, nodeeditor_navigate_to_content, _REF(_F32) );
 DEFINE_PRIM(_VOID, nodeeditor_navigate_to_selection, _REF(_BOOL) _REF(_F32) );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_show_node_context_menu, _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_show_pin_context_menu, _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_show_link_context_menu, _REF(_I32) );
+DEFINE_PRIM(_BOOL, nodeeditor_show_node_context_menu, _REF(_I64) );
+DEFINE_PRIM(_BOOL, nodeeditor_show_pin_context_menu, _REF(_I64) );
+DEFINE_PRIM(_BOOL, nodeeditor_show_link_context_menu, _REF(_I64) );
 DEFINE_PRIM(_BOOL, nodeeditor_show_background_context_menu, _NO_ARG );
 //
 DEFINE_PRIM(_VOID, nodeeditor_enable_shortcuts, _BOOL );
@@ -729,17 +726,17 @@ DEFINE_PRIM(_BOOL, nodeeditor_are_shortcuts_enabled, _NO_ARG );
 // @todo shortcuts
 //
 DEFINE_PRIM(_F32, nodeeditor_get_current_zoom, _NO_ARG );
-DEFINE_PRIM(_I32, nodeeditor_get_hovered_node, _NO_ARG );
-DEFINE_PRIM(_I32, nodeeditor_get_hovered_pin, _NO_ARG );
-DEFINE_PRIM(_I32, nodeeditor_get_hovered_link, _NO_ARG );
-DEFINE_PRIM(_I32, nodeeditor_get_double_clicked_node, _NO_ARG );
-DEFINE_PRIM(_I32, nodeeditor_get_double_clicked_pin, _NO_ARG );
-DEFINE_PRIM(_I32, nodeeditor_get_double_clicked_link, _NO_ARG );
+DEFINE_PRIM(_I64, nodeeditor_get_hovered_node, _NO_ARG );
+DEFINE_PRIM(_I64, nodeeditor_get_hovered_pin, _NO_ARG );
+DEFINE_PRIM(_I64, nodeeditor_get_hovered_link, _NO_ARG );
+DEFINE_PRIM(_I64, nodeeditor_get_double_clicked_node, _NO_ARG );
+DEFINE_PRIM(_I64, nodeeditor_get_double_clicked_pin, _NO_ARG );
+DEFINE_PRIM(_I64, nodeeditor_get_double_clicked_link, _NO_ARG );
 DEFINE_PRIM(_BOOL, nodeeditor_is_background_clicked, _NO_ARG );
 DEFINE_PRIM(_BOOL, nodeeditor_is_background_double_clicked, _NO_ARG );
 //
-DEFINE_PRIM(_BOOL, nodeeditor_get_link_pins, _I32 _REF(_I32) _REF(_I32) );
-DEFINE_PRIM(_BOOL, nodeeditor_pin_had_any_links, _I32 );
+DEFINE_PRIM(_BOOL, nodeeditor_get_link_pins, _I64 _REF(_I64) _REF(_I64) );
+DEFINE_PRIM(_BOOL, nodeeditor_pin_had_any_links, _I64 );
 //
 DEFINE_PRIM(_IMVEC2, nodeeditor_get_screen_size, _NO_ARG );
 DEFINE_PRIM(_IMVEC2, nodeeditor_screen_to_canvas, _IMVEC2 );
