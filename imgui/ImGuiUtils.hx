@@ -3,6 +3,23 @@ package imgui;
 import imgui.ImGui;
 
 /**
+	Shorthand for `new ImVec2(x, y)` that mimics C `ImVec2(x, y)`.
+**/
+inline function imvec2(x: Single = 0.0, y: Single = 0.0): ImVec2 return new ImVec2(x, y);
+/**
+	Shorthand for `new ImVec4(x, y, z, w)` that mimics C `ImVec4(x, y, z, w)`.
+**/
+extern inline overload function imvec4(x: Single = 0.0, y: Single = 0.0, z: Single = 0.0, w: Single = 0.0): ImVec4 return new ImVec4(x, y, z, w);
+/**
+	Shorthand for `ImVec4.getColor(colWAlpha)`.
+**/
+extern inline overload function imvec4(colWAlpha: Int) return ImVec4.getColor(colWAlpha);
+/**
+	Shorthand for `ImVec4.getColorRGB(rgb, alpha)`.
+**/
+extern inline overload function imvec4(rgb: Int, alpha: Float) return ImVec4.getColorRGB(rgb, alpha);
+
+/**
 	Helper with pre-allocated generic ImGui types to reduce allocation count.
 	
 	Those are expected to be fire-and-forget type and should be available for reuse right after a function call.
