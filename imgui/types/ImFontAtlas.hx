@@ -26,6 +26,15 @@ import imgui.types.Pointers;
 	var RasterizerMultiply: Single;         // Brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable.
 	var EllipsisChar: hl.UI16;              // Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.
 
+	// [Internal]
+	// There's a char[40] buffer here for some reason...
+	@:noCompletion var name1: Int; @:noCompletion var name2: Int; @:noCompletion var name3: Int;
+	@:noCompletion var name4: Int; @:noCompletion var name5: Int; @:noCompletion var name6: Int;
+	@:noCompletion var name7: Int; @:noCompletion var name8: Int; @:noCompletion var name9: Int;
+	@:noCompletion var name10: Int;
+
+	@:noCompletion var DstFont: Bytes;
+
 	public function new() {
 		init(this);
 	}
