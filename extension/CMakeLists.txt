@@ -10,7 +10,7 @@ option(NODE_EDITOR "Include imgui-node-editor (required to use NodeEditor.hx)" O
 file(GLOB SOURCES "*.cpp")
 file(GLOB IMGUI_SOURCES "lib/imgui/*.cpp")
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if( NODE_EDITOR )
@@ -41,6 +41,7 @@ set(HLPATH /usr/local/opt/hashlink/libexec)
 target_include_directories(${TARGET_NAME}${TARGET_EXT} PUBLIC ${HLPATH}/include)
 target_link_libraries(${TARGET_NAME}${TARGET_EXT} ${HLPATH}/lib/libhl.dylib ${APPLICATION_SERVICES_FRAMEWORK})
 ELSE()
+target_include_directories(${TARGET_NAME}${TARGET_EXT} PUBLIC $ENV{HASHLINKPATH}/include lib/imgui/ )
 target_link_libraries(${TARGET_NAME}${TARGET_EXT} hl)
 ENDIF()
 
