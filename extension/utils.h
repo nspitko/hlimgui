@@ -22,7 +22,7 @@
 #define convertStringNullAsEmpty(st) st != nullptr ? unicodeToUTF8(st).c_str() : ""
 #define convertPtr(ptr,default_value) ptr != nullptr ? *ptr : default_value
 #define convertArray(arr,type) arr != nullptr ? hl_aptr(arr,type) : nullptr
-#define convertVec(ptr,default_value) ptr != nullptr ? ptr : default_value
+#define convertVec(ptr,default_value) ptr != nullptr ? ImVec2(ptr) : ImVec2(default_value)
 
 #ifdef __APPLE__
 #define throw_error(err) hl_throw(hl_alloc_strbytes((const uchar*)(USTR(err))))
@@ -44,8 +44,8 @@ void unicodeToUTF8Buffer(vstring* hl_string, char* out);
 std::string unicodeToUTF8(vstring* hl_string);
 
 // Converters that handle nullptr with default value
-inline ImVec2 getImVec2(vimvec2* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value : vec2; }
-inline ImVec4 getImVec4(vimvec4* vec4, const ImVec4& default_value = ImVec4(0, 0, 0, 0)) { return vec4 == nullptr ? default_value : vec4; }
+inline ImVec2 getImVec2(vimvec2* vec2, const ImVec2& default_value = ImVec2(0, 0)) { return vec2 == nullptr ? default_value :  ImVec2(vec2); }
+inline ImVec4 getImVec4(vimvec4* vec4, const ImVec4& default_value = ImVec4(0, 0, 0, 0)) { return vec4 == nullptr ? default_value : ImVec4(vec4); }
 
 vbyte* getVByteFromCStr(const char* str);
 

@@ -1,7 +1,12 @@
 # Heaps/HashLink native binding for [Dear ImGui](https://github.com/ocornut/imgui)
 
 ## Build & Install
-First, make sure that HashLink, CMake and a C/C++ compiler are installed on your system.
+First, make sure that HashLink, CMake and a C/C++ compiler are installed on your system. This version of hlimgui uses submodules. Get them prepared like this:
+
+```
+git submodule init
+git submodule update
+```
 
 Then the native extension needs to be built with these commands:
 
@@ -13,7 +18,7 @@ cd build
 cmake ..
 cmake --build .
 ```
-It builds a the target `hdll` file, and copy it to the root of the project.
+It builds a target `hdll` file, which you can copy to the root of the project.
 
 Another method is to build it inside Visual Studio Code with `CMake Tools` extension installed, so you don't have to deal with the command line.
 

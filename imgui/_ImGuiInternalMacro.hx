@@ -1,5 +1,6 @@
 package imgui;
 
+import haxe.macro.Type.VarAccess;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 using haxe.macro.Tools;
@@ -114,7 +115,7 @@ class _ImGuiInternalMacro {
             var setArgs:Array<FunctionArg> = [];
             var copyExprs: Array<Expr> = [];
             for (f in fields) {
-              if (!f.isPublic || f.meta.has(":deprecated") || !f.kind.match(FVar(_, _))) continue;
+              if (!f.isPublic || f.meta.has(":deprecated") || !f.kind.match(FVar(VarAccess.AccNormal, VarAccess.AccNormal))) continue;
               var flatName = base.name + "_" + f.name;
               var ct = f.type.toComplexType();
               ret.push({

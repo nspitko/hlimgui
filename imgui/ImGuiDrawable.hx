@@ -116,13 +116,13 @@ class ImGuiDrawableBuffers {
 			
 			final vertexStride = 8;
 			var vertexCount = Std.int(data.vertexBufferSize / (vertexStride * 4)); // data.vertexBufferSize>>5;
-			var indexCount = data.indexBufferSize>>1;
+			var indexCount = data.indexBufferSize>>2;
 			// if (vertexCount == 0) continue;
 			
 			// create or reuse vertex buffer
 			if (i == this.vertex_buffers.length) {
 				this.vertex_buffers[i] = new h3d.Buffer(vertexCount, vertexStride, [RawFormat, Dynamic]);
-				this.index_buffers[i] = new h3d.Indexes(indexCount);
+				this.index_buffers[i] = new h3d.Indexes(indexCount, true);
 			} else {
 				if (this.vertex_buffers[i].vertices < vertexCount) {
 					this.vertex_buffers[i].dispose();
@@ -130,7 +130,7 @@ class ImGuiDrawableBuffers {
 				}
 				if (this.index_buffers[i].count < indexCount) {
 					this.index_buffers[i].dispose();
-					this.index_buffers[i] = new h3d.Indexes(indexCount);
+					this.index_buffers[i] = new h3d.Indexes(indexCount, true);
 				}
 			}
 			this.vertex_buffers[i].uploadBytes(data.vertexBuffer.toBytes(data.vertexBufferSize), 0, vertexCount);
