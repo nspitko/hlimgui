@@ -22,11 +22,11 @@ HL_PRIM void HL_NAME(value_double)(vstring* prefix, double v, vstring* double_fo
     {
         char fmt[64];
         ImFormatString(fmt, IM_ARRAYSIZE(fmt), "%%s: %s", convertString(double_format));
-        ImGui::Text(fmt, prefix, v);
+        ImGui::Text(fmt, convertString(prefix), v);
     }
     else
     {
-        ImGui::Text("%s: %.3lf", prefix, v);
+        ImGui::Text("%s: %.3lf", convertString(prefix), v);
     }
 }
 
