@@ -6,6 +6,10 @@ import imgui.types.ImFontAtlas;
 import imgui.types.Pointers;
 import haxe.io.Bytes;
 
+// Compared to hl.Ref - FieldRef allows referencing instance and static fields without local variable crutching.
+// Cannasse pls add $fieldref
+typedef Ref<T> = imgui.FieldRef<T>;
+
 @:enum abstract ImGuiWindowFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var NoTitleBar : Int = 1;
@@ -1107,10 +1111,10 @@ class ImGui
 	public static function render() {}
 
 	// Demo, Debug, Information
-	public static function showDemoWindow(open : hl.Ref<Bool> = null) {}
-	public static function showMetricsWindow(open : hl.Ref<Bool> = null) {}
-	public static function showStackToolWindow(open : hl.Ref<Bool> = null) {}
-	public static function showAboutWindow(open : hl.Ref<Bool> = null) {}
+	public static function showDemoWindow(open : Ref<Bool> = null) {}
+	public static function showMetricsWindow(open : Ref<Bool> = null) {}
+	public static function showStackToolWindow(open : Ref<Bool> = null) {}
+	public static function showAboutWindow(open : Ref<Bool> = null) {}
 	public static function showStyleEditor(style : ImGuiStyle = null) {}
 	public static function showStyleSelector(label : String) : Bool {return false;}
 	public static function showFontSelector(label : String) {}
@@ -1126,7 +1130,7 @@ class ImGui
 	public static function styleColorsLight(style : ImGuiStyle = null) {}
 
 	// Windows
-	public static function begin(name : String, open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function begin(name : String, open : Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	/** Always call `end()` regardless of `begin()` return value! **/
 	public static function end() {}
 
@@ -1282,10 +1286,10 @@ class ImGui
 		return imageButton(tile.getTexture(), size == null ? ImTypeCache.vec2(tile.width, tile.height) : size, ImTypeCache.vec2(tile.u, tile.v), ImTypeCache.vec2(tile.u2, tile.v2), frame_padding, bg_col, tint_col);
 	}
 	#end
-	public static function checkbox(label : String, v : hl.Ref<Bool>) : Bool {return false;}
-	public static function checkboxFlags(label : String, flags : hl.Ref<Int>, flags_value : Int) : Bool {return false;}
+	public static function checkbox(label : String, v : Ref<Bool>) : Bool {return false;}
+	public static function checkboxFlags(label : String, flags : Ref<Int>, flags_value : Int) : Bool {return false;}
 	public static function radioButton(label : String, active : Bool) : Bool {return false;}
-	public static function radioButton2(label : String, v : hl.Ref<Int>, v_button : Int) : Bool {return false;}
+	public static function radioButton2(label : String, v : Ref<Int>, v_button : Int) : Bool {return false;}
 	public static function progressBar(fraction: Single, ?size_arg: ImVec2, ?overlay: String) {}
 	public static function bullet() {}
 
@@ -1293,17 +1297,17 @@ class ImGui
 	public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
 	/** Only call `endCombo()` if `beginCombo()` returns `true`! **/
 	public static function endCombo() {}
-	public static function combo(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
-	public static function combo2(label : String, current_item : hl.Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	public static function combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	public static function combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	// TODO: comboCallback variant
 
 	// Widgets: Drag Sliders
-	public static function dragFloat(label : String, v : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function dragInt(label : String, v : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function dragDouble(label : String, v : hl.Ref<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragFloat(label : String, v : Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragInt(label : String, v : Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragDouble(label : String, v : Ref<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
-	public static function dragFloatRange2(label : String, v_current_min : hl.Ref<Single>, v_current_max : hl.Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function dragIntRange2(label : String, v_current_min : hl.Ref<Int>, v_current_max : hl.Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragFloatRange2(label : String, v_current_min : Ref<Single>, v_current_max : Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function dragIntRange2(label : String, v_current_min : Ref<Int>, v_current_max : Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static inline function dragFloatN(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
 		return drag_scalar_n(label, ImGuiDataType.Float, v, v_speed, v_min, v_max, format, flags);
@@ -1317,13 +1321,13 @@ class ImGui
 	static function drag_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, v_speed : Single, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
 	// Widgets: Regular Sliders
-	public static function sliderFloat(label : String, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function sliderInt(label : String, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function sliderDouble(label : String, v : hl.Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderFloat(label : String, v : Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderInt(label : String, v : Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderDouble(label : String, v : Ref<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
-	public static function vSliderFloat(label : String, size : ImVec2, v : hl.Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function vSliderInt(label : String, size : ImVec2, v : hl.Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
-	public static function sliderAngle(label : String, v_rad : hl.Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderFloat(label : String, size : ImVec2, v : Ref<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function vSliderInt(label : String, size : ImVec2, v : Ref<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
+	public static function sliderAngle(label : String, v_rad : Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static inline function sliderFloatN(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
 		return slider_scalar_n(label, ImGuiDataType.Float, v, v_min, v_max, format, flags);
@@ -1336,7 +1340,7 @@ class ImGui
 	}
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<ImGuiScalar>, v_min : ImGuiScalar, v_max : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
 	
-	public static function vSliderDouble(label: String, size: ImVec2, v: hl.Ref<Float>, v_min: Float, v_max: Float, ?format: String, flags: Int = 0) {
+	public static function vSliderDouble(label: String, size: ImVec2, v: Ref<Float>, v_min: Float, v_max: Float, ?format: String, flags: Int = 0) {
 		var tmp = ImTypeCache.array(v.get());
 		var ret = v_slider_scalar(label, size, Double, tmp, v_min, v_max, format, flags);
 		if (isItemEdited()) v.set(tmp[0]);
@@ -1346,17 +1350,17 @@ class ImGui
 	public static function v_slider_scalar(label: String, size: ImVec2, type: ImGuiDataType, v: hl.NativeArray<ImGuiScalar>, v_min: ImGuiScalar, v_max: ImGuiScalar, ?format: String, flags: Int = 0): Bool {return false;}
 
 	// Widgets: Input with Keyboard
-	public static function inputText(label : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
-	public static function inputTextMultiline(label : String, value: hl.Ref<String>, ?size: ImVec2, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
-	public static function inputTextWithHint(label : String, hint : String, value: hl.Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputText(label : String, value: Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
+	public static function inputTextMultiline(label : String, value: Ref<String>, ?size: ImVec2, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
+	public static function inputTextWithHint(label : String, hint : String, value: Ref<String>, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 
 	public static function inputTextBuf(label : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 	public static function inputTextMultilineBuf(label : String, buf : hl.Bytes, buf_size : Int, ?size: ImVec2, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null ) : Bool {return false;}
 	public static function inputTextWithHintBuf(label : String, hint : String, buf : hl.Bytes, buf_size : Int, flags : ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallbackDataFunc = null) : Bool {return false;}
 
-	public static function inputInt(label : String, v : hl.Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-	public static function inputFloat(label : String, v : hl.Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
-	public static function inputDouble(label : String, v : hl.Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputInt(label : String, v : Ref<Int>, step : Int = 1, step_fast : Int = 100, flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputFloat(label : String, v : Ref<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
+	public static function inputDouble(label : String, v : Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 
 	public static inline function inputFloatN(label : String, v : hl.NativeArray<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
 		return input_scalar_n(label, ImGuiDataType.Float, v, step, step_fast, format, flags);
@@ -1398,7 +1402,7 @@ class ImGui
     public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
     public static function colorPicker3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
-    public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : hl.Ref<Single> = null) : Bool {return false;}
+    public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : Ref<Single> = null) : Bool {return false;}
     public static function colorButton(desc_id: String, ?col: ImVec4, flags: ImGuiColorEditFlags = 0, ?size: ImVec2) : Bool {return false;}
 	public static function setColorEditOptions(flags : ImGuiColorEditFlags) {}
 
@@ -1411,12 +1415,12 @@ class ImGui
     public static function treePop() {}
     public static function getTreeNodeToLabelSpacing() : Single {return 0;}
     public static function collapsingHeader(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
-    public static function collapsingHeader2(label : String, p_open : hl.Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
+    public static function collapsingHeader2(label : String, p_open : Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
 	public static function setNextItemOpen(is_open : Bool, cond : ImGuiCond = 0) {}
 
 	// Widgets: Selectables
 	public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
-	public static function selectable2(label : String, p_selected : hl.Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
+	public static function selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
 
 	// Widgets: List Boxes
 	/**
@@ -1427,7 +1431,7 @@ class ImGui
 	/** Only call `endListBox()` if `beginListBox()` returns `true`! **/
 	public static function endListBox() {}
 
-	public static function listBox(label : String, current_item : hl.Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
+	public static function listBox(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
 	// TODO: Callback variant
 	@:deprecated("Use beginListBox")
 	public static inline function listBoxHeader(label: String, ?size: ImVec2) : Bool {return beginListBox(label, size);}
@@ -1457,7 +1461,7 @@ class ImGui
 	/** Only call `endMenu()` if `beginMenu()` returns `true`! **/
 	public static function endMenu() {}
 	public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
-	public static function menuItem2(label : String, shortcut : String, p_selected : hl.Ref<Bool>, enabled : Bool = true) : Bool {return false;}
+	public static function menuItem2(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return false;}
 
 	// ToolTips
 	public static function beginTooltip() {}
@@ -1468,7 +1472,7 @@ class ImGui
 
 	// Popups: begin/end function
 	public static function beginPopup(str_id : String, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	public static function beginPopupModal(name : String, p_open : hl.Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static function beginPopupModal(name : String, p_open : Ref<Bool> = null, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	/** Only call `endPopup()` if `beginPopupXXX()` returns `true`! **/
 	public static function endPopup() {}
 
@@ -1531,7 +1535,7 @@ class ImGui
 	public static function beginTabBar(str_id : String, flags : ImGuiTabBarFlags = 0) : Bool {return false;}
 	/** Only call `endTabBar()` if `beginTabBar()` returns `true`! **/
 	public static function endTabBar() {}
-	public static function beginTabItem(label : String, p_open : hl.Ref<Bool> = null, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
+	public static function beginTabItem(label : String, p_open : Ref<Bool> = null, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
 	/** Only call `endTabItem()` if `beginTabItem()` returns `true`! **/
 	public static function endTabItem() {}
 	public static function tabItemButton(label : String, flags : ImGuiTabItemFlags = 0) : Bool {return false;}
@@ -1555,7 +1559,7 @@ class ImGui
 	public static function dockBuilderRemoveNodeChildNodes(node_id : ImGuiID) {}
 	public static function dockBuilderSetNodePos(node_id : ImGuiID, pos: ImVec2 ) {}
 	public static function dockBuilderSetNodeSize(node_id : ImGuiID, size: ImVec2 ) {}
-	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: hl.Ref<ImGuiID>, out_id_at_opposite_dir: hl.Ref<ImGuiID> ) { return 0; }
+	public static function dockBuilderSplitNode(node_id : ImGuiID, split_dir: ImGuiDir, size_ratio_for_node_at_dir: Single, out_id_at_dir: Ref<ImGuiID>, out_id_at_opposite_dir: Ref<ImGuiID> ) { return 0; }
 	// DockBuilderCopyDockSpace
 	// DockBuilderCopyNode
 	public static function dockBuilderCopyWindowSettings(src_name: String, dst_name: String) {}
@@ -1684,7 +1688,7 @@ class ImGui
 	/** Always call `endChildFrame()` regardless of `beginChildFrame()` return value! **/
 	public static function endChildFrame() {}
 	@:deprecated("Obsolete: Use ImGuiListClipper")
-	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : hl.Ref<Int>, out_items_display_end : hl.Ref<Int>) {}
+	public static function calcListClipping(items_count : Int, items_height : Single, out_items_display_start : Ref<Int>, out_items_display_end : Ref<Int>) {}
 
 	// Text Utilities
 	public static function calcTextSize(text : String, text_end : String = null, hide_text_after_double_hash : Bool = false, wrap_width : Single = -1.0): ImVec2 {return null;}
@@ -1692,11 +1696,11 @@ class ImGui
 	// Color Utilities
 	public static function colorConvertU32ToFloat4(color : ImU32) : ImVec4 {return null;}
 	public static function colorConvertFloat4ToU32(color : ImVec4) : ImU32 {return 0;}
-	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : hl.Ref<Single>, out_s : hl.Ref<Single>, out_v : hl.Ref<Single>) {}
-	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : hl.Ref<Single>, out_g : hl.Ref<Single>, out_b : hl.Ref<Single>) {}
-	/** Helper method to reduce hl.Ref dependency. w/alpha is preserved. **/
+	public static function colorConvertRGBtoHSV(r : Single, g : Single, b : Single, out_h : Ref<Single>, out_s : Ref<Single>, out_v : Ref<Single>) {}
+	public static function colorConvertHSVtoRGB(h : Single, s : Single, v : Single, out_r : Ref<Single>, out_g : Ref<Single>, out_b : Ref<Single>) {}
+	/** Helper method to reduce Ref dependency. w/alpha is preserved. **/
 	public static function colorConvertRGBtoHSVVec(input: ImVec4): ImVec4 {return null;}
-	/** Helper method to reduce hl.Ref dependency. w/alpha is preserved. **/
+	/** Helper method to reduce Ref dependency. w/alpha is preserved. **/
 	public static function colorConvertHSVtoRGBVec(input: ImVec4): ImVec4 {return null;}
 
 	// Inputs Utilities: Keyboard
@@ -1738,8 +1742,8 @@ class ImGui
 	public static function loadIniSettingsFromDisk(ini_filename : String) {}
 	public static function loadIniSettingsFromMemory(ini_data : String, ini_size : Int = 0) {}
 	public static function saveIniSettingsToDisk(ini_filename : String) {}
-	static function save_ini_settings_to_memory(out_ini_size : hl.Ref<Int>) : hl.Bytes {return null;}
-	public static function saveIniSettingsToMemory(out_ini_size : hl.Ref<Int> = null) : String {
+	static function save_ini_settings_to_memory(out_ini_size : Ref<Int>) : hl.Bytes {return null;}
+	public static function saveIniSettingsToMemory(out_ini_size : Ref<Int> = null) : String {
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
 	}
 
