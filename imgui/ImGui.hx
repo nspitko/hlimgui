@@ -1135,8 +1135,11 @@ class ImGui
 	public static function end() {}
 
 	// Child Windows
-	public static function beginChild(str_id : String, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	public static function beginChild2(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	public static extern inline overload function beginChild(str_id : String, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool { return begin_child(str_id, size, border, flags); }
+	public static extern inline overload function beginChild(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool { return begin_child2(id, size, border, flags); }
+	static function begin_child(str_id : String, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	static function begin_child2(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
+	
 	/** Always call `endChild()` regardless of `beginChild()` return value! **/
 	public static function endChild() {}
 
@@ -1160,23 +1163,30 @@ class ImGui
 	public static function setNextWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
 	public static function setNextWindowFocus() {}
 	public static function setNextWindowBgAlpha(alpha : Single) {}
-	public static function setWindowPos(pos : ImVec2, cond : ImGuiCond = 0) {}
-	public static function setWindowSize(size : ImVec2, cond : ImGuiCond = 0) {}
-	public static function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
-	public static function setWindowFocus() {}
-	public static function setWindowFontScale(scale : Single) {}
-	public static function setWindowPos2(name : String, pos : ImVec2, cond : ImGuiCond = 0) {}
-	public static function setWindowSize2(name : String, size : ImVec2, cond : ImGuiCond = 0) {}
-	public static function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
-	public static function setWindowFocus2(name : String) {}
+	public static extern inline overload function setWindowPos(pos : ImVec2, cond : ImGuiCond = 0) { set_window_pos(pos, cond); }
+	public static extern inline overload function setWindowSize(size : ImVec2, cond : ImGuiCond = 0) { set_window_size(size, cond); }
+	public static extern inline overload function setWindowCollapsed(collapsed : Bool, cond : ImGuiCond = 0) { set_window_collapsed(collapsed, cond); }
+	public static extern inline overload function setWindowFocus() { set_window_focus(); }
+	public static extern inline overload function setWindowFontScale(scale : Single) {}
+	public static extern inline overload function setWindowPos(name : String, pos : ImVec2, cond : ImGuiCond = 0) { set_window_pos2(name, pos, cond); }
+	public static extern inline overload function setWindowSize(name : String, size : ImVec2, cond : ImGuiCond = 0) { set_window_size2(name, size, cond); }
+	public static extern inline overload function setWindowCollapsed(name : String, collapsed : Bool, cond : ImGuiCond = 0) { set_window_collapsed2(name, collapsed, cond); }
+	public static extern inline overload function setWindowFocus(name : String) { set_window_focus2(name); }
+	
+	static function set_window_pos(pos : ImVec2, cond : ImGuiCond = 0) {}
+	static function set_window_size(size : ImVec2, cond : ImGuiCond = 0) {}
+	static function set_window_collapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
+	static function set_window_focus() {}
+	static function set_window_pos2(name : String, pos : ImVec2, cond : ImGuiCond = 0) {}
+	static function set_window_size2(name : String, size : ImVec2, cond : ImGuiCond = 0) {}
+	static function set_window_collapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) {}
+	static function set_window_focus2(name : String) {}
 
 	// Content region
 	public static function getContentRegionMax() : ImVec2 {return null;}
 	public static function getContentRegionAvail() : ImVec2 {return null;}
 	public static function getWindowContentRegionMin() : ImVec2 {return null;}
 	public static function getWindowContentRegionMax() : ImVec2 {return null;}
-	@:deprecated // Obsoleted in latest imgui
-	public static function getWindowContentRegionWidth() : Single {return 0;}
 
 	// Windows Scrolling
 	public static function getScrollX() : Single {return 0;}
@@ -1193,17 +1203,22 @@ class ImGui
 	// Parameters stacks (shared)
 	public static function pushFont( font: ImFont ) {}
 	public static function popFont() {}
-	public static function pushStyleColor(idx : ImGuiCol, col : ImU32) {}
-	public static function pushStyleColor2(idx : ImGuiCol, col : ImVec4) {}
+	public static extern inline overload function pushStyleColor(idx : ImGuiCol, col : ImU32) { push_style_color(idx, col); }
+	public static extern inline overload function pushStyleColor(idx : ImGuiCol, col : ImVec4) { push_style_color2(idx, col); }
 	public static function popStyleColor(count : Int = 1) {}
-	public static function pushStyleVar(idx : ImGuiStyleVar, val : Single) {}
-	public static function pushStyleVar2(idx : ImGuiStyleVar, val : ImVec2) {}
+	public static extern inline overload function pushStyleVar(idx : ImGuiStyleVar, val : Single) { push_style_var(idx, val); }
+	public static extern inline overload function pushStyleVar(idx : ImGuiStyleVar, val : ImVec2) { push_style_var2(idx, val); }
 	public static function popStyleVar(count : Int = 1) {}
 	public static function pushAllowKeyboardFocus(allow_keyboard_focus : Bool) {}
 	public static function popAllowKeyboardFocus() {}
 	public static function pushButtonRepeat(repeat : Bool) {}
 	public static function popButtonRepeat() {}
 
+	static function push_style_color(idx : ImGuiCol, col : ImU32) {}
+	static function push_style_color2(idx : ImGuiCol, col : ImVec4) {}
+	static function push_style_var(idx : ImGuiStyleVar, val : Single) {}
+	static function push_style_var2(idx : ImGuiStyleVar, val : ImVec2) {}
+	
 	// Parameters stacks (current window)
 	public static function pushItemWidth(item_width : Single) {}
 	public static function popItemWidth() {}
@@ -1216,11 +1231,15 @@ class ImGui
 	public static function getFont(): ImFont {return null;}
 	public static function getFontSize() : Single {return 0;}
 	public static function getFontTexUvWhitePixel() : ImVec2 {return null;}
-	public static function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
-	public static function getColorU322(col : ImVec4) : ImU32 {return 0;}
-	public static function getColorU323(col : ImU32) : ImU32 {return 0;}
+	public static extern inline overload function getColorU32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return get_color_u32(idx, alpha_mul);}
+	public static extern inline overload function getColorU32(col : ImVec4) : ImU32 {return get_color_u322(col);}
+	public static extern inline overload function getColorU32(col : ImU32) : ImU32 {return get_color_u323(col);}
 	public static function getStyleColorVec4(idx : ImGuiCol) : ImVec4 {return null;}
 
+	static function get_color_u32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
+	static function get_color_u322(col : ImVec4) : ImU32 {return 0;}
+	static function get_color_u323(col : ImU32) : ImU32 {return 0;}
+	
 	// Cursor / Layout
 	public static function separator() {}
 	public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
@@ -1256,10 +1275,6 @@ class ImGui
 	@:native("get_id_sub") public static function getIDSub(str_id : String, begin: Int, end: Int) : Int {return 0;}
 	@:native("get_id_ptr") public static function getIDPtr(obj: Any) : Int {return 0;}
 
-	@:deprecated("use getIDSub") public static function getID2(str_id : String, begin: Int, end: Int) : Int {return getIDSub(str_id, begin, end);}
-	@:deprecated("use pushIDSub") public static inline function pushID2(str_id : String, begin : Int, end : Int) { pushIDSub(str_id, begin, end); }
-	@:deprecated("use pushIDInt") public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
-
 	// Widgets: Text
 	// TODO: TextUnformatted(text: String, ?start: Int, ?end: Int)
 	// TODO: Allow format arguments to be passed
@@ -1288,19 +1303,26 @@ class ImGui
 	#end
 	public static function checkbox(label : String, v : Ref<Bool>) : Bool {return false;}
 	public static function checkboxFlags(label : String, flags : Ref<Int>, flags_value : Int) : Bool {return false;}
-	public static function radioButton(label : String, active : Bool) : Bool {return false;}
-	public static function radioButton2(label : String, v : Ref<Int>, v_button : Int) : Bool {return false;}
+	public static extern inline overload function radioButton(label : String, active : Bool) : Bool {return radio_button(label, active);}
+	public static extern inline overload function radioButton(label : String, v : Ref<Int>, v_button : Int) : Bool {return radio_button2(label, v, v_button);}
 	public static function progressBar(fraction: Single, ?size_arg: ImVec2, ?overlay: String) {}
 	public static function bullet() {}
 
+	static function radio_button(label : String, active : Bool) : Bool {return false;}
+	static function radio_button2(label : String, v : Ref<Int>, v_button : Int) : Bool {return false;}
+	
 	// Widgets: Combo Box
+	/** You MUST call `endCombo()` if this method returns `true`! **/
 	public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
 	/** Only call `endCombo()` if `beginCombo()` returns `true`! **/
 	public static function endCombo() {}
-	public static function combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
-	public static function combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	public static extern inline overload function combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return _combo(label, current_item, items, popup_max_height_in_items);}
+	public static extern inline overload function combo(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return _combo2(label, current_item, items_separated_by_zeros, popup_max_height_in_items);}
 	// TODO: comboCallback variant
-
+	
+	@:native("combo") static function _combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	@:native("combo2") static function _combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	
 	// Widgets: Drag Sliders
 	public static function dragFloat(label : String, v : Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragInt(label : String, v : Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1371,59 +1393,46 @@ class ImGui
 	public static inline function inputDoubleN(label : String, v : hl.NativeArray<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {
 		return input_scalar_n(label, ImGuiDataType.Double, v, step, step_fast, format, flags);
 	}
-	@:deprecated("Use inputFloatN")
-	public static inline function inputFloat2(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
-		return inputFloatN(label, v, format, flags);
-	}
-	@:deprecated("Use inputFloatN")
-	public static function inputFloat3(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
-		return inputFloatN(label, v, format, flags);
-	}
-	@:deprecated("Use inputFloatN")
-	public static function inputFloat4(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
-		return inputFloatN(label, v, format, flags);
-	}
-	@:deprecated("Use inputIntN")
-	public static function inputInt2(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
-		return inputIntN(label, v, flags);
-	}
-	@:deprecated("Use inputIntN")
-	public static function inputInt3(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
-		return inputIntN(label, v, flags);
-	}
-	@:deprecated("Use inputIntN")
-	public static function inputInt4(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
-		return inputIntN(label, v, flags);
-	}
 
 	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<ImGuiScalar>, step : ImGuiScalar, step_fast : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
 
 	// Widgets: Color Editor/Picker
-    public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
-    public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
-    public static function colorPicker3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
-    public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : Ref<Single> = null) : Bool {return false;}
-    public static function colorButton(desc_id: String, ?col: ImVec4, flags: ImGuiColorEditFlags = 0, ?size: ImVec2) : Bool {return false;}
+	public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
+	public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
+	public static function colorPicker3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
+	public static function colorPicker4(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0, ref_col : Ref<Single> = null) : Bool {return false;}
+	public static function colorButton(desc_id: String, ?col: ImVec4, flags: ImGuiColorEditFlags = 0, ?size: ImVec2) : Bool {return false;}
 	public static function setColorEditOptions(flags : ImGuiColorEditFlags) {}
 
 	// Widgets: Trees
-	public static function treeNode(label : String) : Bool {return false;}
-    public static function treeNode2(str_id : String, label : String) : Bool {return false;}
-    public static function treeNodeEx(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
-    public static function treeNodeEx2(str_id : String, flags : ImGuiTreeNodeFlags, label : String) : Bool {return false;}
-    public static function treePush(str_id : String) {}
-    public static function treePop() {}
-    public static function getTreeNodeToLabelSpacing() : Single {return 0;}
-    public static function collapsingHeader(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
-    public static function collapsingHeader2(label : String, p_open : Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
+	public static extern inline overload function treeNode(label : String) : Bool {return tree_node(label);}
+	public static extern inline overload function treeNode(str_id : String, label : String) : Bool {return tree_node2(str_id, label);}
+	public static extern inline overload function treeNodeEx(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return tree_node_ex(label, flags);}
+	public static extern inline overload function treeNodeEx(str_id : String, flags : ImGuiTreeNodeFlags, label : String) : Bool {return tree_node_ex2(str_id, flags, label);}
+	public static function treePush(str_id : String) {}
+	public static function treePop() {}
+	public static function getTreeNodeToLabelSpacing() : Single {return 0;}
+	public static extern inline overload function collapsingHeader(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return collapsing_header(label, flags);}
+	public static extern inline overload function collapsingHeader(label : String, p_open : Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return collapsing_header2(label, p_open, flags);}
 	public static function setNextItemOpen(is_open : Bool, cond : ImGuiCond = 0) {}
 
+	static function tree_node(label : String) : Bool {return false;}
+	static function tree_node2(str_id : String, label : String) : Bool {return false;}
+	static function tree_node_ex(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
+	static function tree_node_ex2(str_id : String, flags : ImGuiTreeNodeFlags, label : String) : Bool {return false;}
+	static function collapsing_header(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
+	static function collapsing_header2(label : String, p_open : Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
+	
 	// Widgets: Selectables
-	public static function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
-	public static function selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
+	public static extern inline overload function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return _selectable(label, selected, flags, size);}
+	public static extern inline overload function selectable(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return _selectable2(label, p_selected, flags, size);}
 
+	@:native("selectable") static function _selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
+	@:native("selectable2") static function _selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
+	
 	// Widgets: List Boxes
 	/**
+		You MUST call `endListBox()` if this method returns `true`!
 		- Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
 		- Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
 	**/
@@ -1433,12 +1442,6 @@ class ImGui
 
 	public static function listBox(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, height_in_items : Int = -1) : Bool {return false;}
 	// TODO: Callback variant
-	@:deprecated("Use beginListBox")
-	public static inline function listBoxHeader(label: String, ?size: ImVec2) : Bool {return beginListBox(label, size);}
-	@:deprecated("Obsolete")
-	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
-	@:deprecated("Use endListBox")
-	public static inline function listBoxFooter() { endListBox(); }
 
 	// Widgets: Data Plotting
 	public static function plotLines(label : String, values : hl.NativeArray<Single>, values_offset : Int = 0, overlay_text : String = null, scale_min : Single = FLT_MAX, scale_max : Single = FLT_MAX, ?graph_size : ImVec2) {}
@@ -1460,8 +1463,11 @@ class ImGui
 	public static function beginMenu(label : String, enabled : Bool = true) : Bool {return false;}
 	/** Only call `endMenu()` if `beginMenu()` returns `true`! **/
 	public static function endMenu() {}
-	public static function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
-	public static function menuItem2(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return false;}
+	public static extern inline overload function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return menu_item(label, shortcut, selected, enabled);}
+	public static extern inline overload function menuItem(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return menu_item2(label, shortcut, p_selected, enabled);}
+	
+	static function menu_item(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
+	static function menu_item2(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return false;}
 
 	// ToolTips
 	public static function beginTooltip() {}
@@ -1487,11 +1493,6 @@ class ImGui
 	public static function beginPopupContextWindow(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
 	public static function beginPopupContextVoid(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
 	
-	@:deprecated("Use beginPopupContextWindow(id, MouseButtonRight | NoOpenOverItems)") @:noCompletion
-	public static function beginPopupContextWindow2(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {
-		return beginPopupContextWindow(str_id, mouse_button | (also_over_items ? NoOpenOverItems : 0));
-	}
-
 	// Popups: query functions
 	public static function isPopupOpen(str_id : String, flags: ImGuiPopupFlags = 0) : Bool {return false;}
 
@@ -1669,8 +1670,11 @@ class ImGui
 	// public static function getMainViewport(): IMViewport
 
 	// Miscellaneous Utilities
-	public static function isRectVisible(size : ImVec2) : Bool {return false;}
-	public static function isRectVisible2(rect_min : ImVec2, rect_max : ImVec2) : Bool {return false;}
+	public static inline extern overload function isRectVisible(size : ImVec2) : Bool { return is_rect_visible(size); }
+	public static inline extern overload function isRectVisible(rect_min : ImVec2, rect_max : ImVec2) : Bool { return is_rect_visible2(rect_min, rect_max); }
+	static function is_rect_visible(size : ImVec2) : Bool {return false;}
+	static function is_rect_visible2(rect_min : ImVec2, rect_max : ImVec2) : Bool {return false;}
+
 	public static function getTime() : Float {return 0;}
 	public static function getFrameCount() : Int {return 0;}
 	public static function getForegroundDrawList() : ImDrawList {return null;}
@@ -1781,19 +1785,6 @@ class ImGui
 	public static function getUserData() : Dynamic {return null;} // UserData
 	public static function getFontAtlas(): ImFontAtlas { return null; }
 
-
-	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
-	@:deprecated("Use getFontAtlas().setTexId()")
-	public static inline function setFontTexture(texture_id : ImTextureID) { getFontAtlas().setTexId(texture_id); }
-	@:deprecated("Use getFontAtlas().addFontDefault()")
-	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return getFontAtlas().addFontDefault(config); }
-	@:deprecated("Use getFontAtlas().addFontFromFileTTF()")
-	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromFileTTF(filename, size, config, glyphRanges); }
-	@:deprecated("Use getFontAtlas().addFontFromMemoryTTF()")
-	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromMemoryTTF(bytes, size, font_size, config, glyphRanges); }
-	@:deprecated("Use getFontAtlas().build()")
-	public static inline function buildFont(): Bool { return getFontAtlas().build(); }
-
 	// internal functions
 	public static function setRenderCallback(render_fn:RenderList->Void) {}
 	
@@ -1821,9 +1812,15 @@ class ImGui
 		fonts.clearTexData();
 		return output;
 	}
+
+	@:deprecated("Use beginPopupContextWindow(id, MouseButtonRight | NoOpenOverItems)") @:noCompletion
+	public static function beginPopupContextWindow2(str_id : String = null, mouse_button : ImGuiMouseButton = 1, also_over_items : Bool = true) : Bool {
+		return beginPopupContextWindow(str_id, mouse_button | (also_over_items ? NoOpenOverItems : 0));
+	}
+
+	// DEPRECATED SECTION
 	
-	
-	@:deprecated("Use getFontAtlas().getTexDataAsRGBA32() + getFontAtlas().clearTexData()")
+	@:deprecated("Use getFontAtlas().getTexDataAsRGBA32() + getFontAtlas().clearTexData()") @:noCompletion
 	public static inline function getTexDataAsRgba32(): ImFontTexData {
 		var atlas = getFontAtlas();
 		var output = new ImFontTexData();
@@ -1831,5 +1828,101 @@ class ImGui
 		atlas.clearTexData();
 		return output;
 	}
+	
+	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
+	@:deprecated("Use getFontAtlas().setTexId()")
+	public static inline function setFontTexture(texture_id : ImTextureID) { getFontAtlas().setTexId(texture_id); }
+	@:deprecated("Use getFontAtlas().addFontDefault()")
+	public static inline function addFontDefault(?config:ImFontConfig) : ImFont { return getFontAtlas().addFontDefault(config); }
+	@:deprecated("Use getFontAtlas().addFontFromFileTTF()")
+	public static inline function addFontFromFileTtf( filename: String, size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromFileTTF(filename, size, config, glyphRanges); }
+	@:deprecated("Use getFontAtlas().addFontFromMemoryTTF()")
+	public static inline function addFontFromMemoryTtf( bytes: hl.Bytes, size: Int, font_size: Single, ?config: ImFontConfig, ?glyphRanges: hl.NativeArray<hl.UI16>) : ImFont { return getFontAtlas().addFontFromMemoryTTF(bytes, size, font_size, config, glyphRanges); }
+	@:deprecated("Use getFontAtlas().build()")
+	public static inline function buildFont(): Bool { return getFontAtlas().build(); }
 
+	@:deprecated("Use beginListBox")
+	public static inline function listBoxHeader(label: String, ?size: ImVec2) : Bool {return beginListBox(label, size);}
+	@:deprecated("Obsolete")
+	public static function listBoxHeader2(label : String, items_count : Int, height_in_items : Int = -1) : Bool {return false;}
+	@:deprecated("Use endListBox")
+	public static inline function listBoxFooter() { endListBox(); }
+
+	@:deprecated("Use inputFloatN")
+	public static inline function inputFloat2(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputFloatN(label, v, format, flags);
+	}
+	@:deprecated("Use inputFloatN")
+	public static inline function inputFloat3(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputFloatN(label, v, format, flags);
+	}
+	@:deprecated("Use inputFloatN")
+	public static inline function inputFloat4(label : String, v : hl.NativeArray<Single>, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputFloatN(label, v, format, flags);
+	}
+	@:deprecated("Use inputIntN")
+	public static inline function inputInt2(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputIntN(label, v, flags);
+	}
+	@:deprecated("Use inputIntN")
+	public static inline function inputInt3(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputIntN(label, v, flags);
+	}
+	@:deprecated("Use inputIntN")
+	public static inline function inputInt4(label : String, v : hl.NativeArray<Int>, flags : ImGuiInputTextFlags = 0) : Bool {
+		return inputIntN(label, v, flags);
+	}
+
+	@:deprecated("Obsolete in latest imgui. Use GetWindowContentRegionMax().x - GetWindowContentRegionMin().x")
+	public static function getWindowContentRegionWidth() : Single {return 0;}
+
+	@:deprecated("use getIDSub") @:noCompletion public static function getID2(str_id : String, begin: Int, end: Int) : Int {return getIDSub(str_id, begin, end);}
+	@:deprecated("use pushIDSub") @:noCompletion public static inline function pushID2(str_id : String, begin : Int, end : Int) { pushIDSub(str_id, begin, end); }
+	@:deprecated("use pushIDInt") @:noCompletion public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
+
+	// Pre-overload support methods.
+	
+	@:deprecated("Use beginChild overload.") @:noCompletion
+	public static inline function beginChild2(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool { return begin_child2(id, size, border, flags); }
+
+	@:deprecated("Use setWindowPos overload.") @:noCompletion
+	public static inline function setWindowPos2(name : String, pos : ImVec2, cond : ImGuiCond = 0) { set_window_pos2(name, pos, cond); }
+	@:deprecated("Use setWindowSize overload.") @:noCompletion
+	public static inline function setWindowSize2(name : String, size : ImVec2, cond : ImGuiCond = 0) { set_window_size2(name, size, cond); }
+	@:deprecated("Use setWindowCollapsed overload.") @:noCompletion
+	public static inline function setWindowCollapsed2(name : String, collapsed : Bool, cond : ImGuiCond = 0) { set_window_collapsed2(name, collapsed, cond); }
+	@:deprecated("Use setWindowFocus overload.") @:noCompletion
+	public static inline function setWindowFocus2(name : String) { set_window_focus2(name); }
+
+	@:deprecated("Use pushStyleColor overload.") @:noCompletion
+	public static inline function pushStyleColor2(idx : ImGuiCol, col : ImVec4) { push_style_color2(idx, col); }
+	@:deprecated("Use pushStyleVar overload.") @:noCompletion
+	public static inline function pushStyleVar2(idx : ImGuiStyleVar, val : ImVec2) { push_style_var2(idx, val); }
+	
+	@:deprecated("Use getColorU32 overload.") @:noCompletion
+	public static inline function getColorU322(col : ImVec4) : ImU32 {return get_color_u322(col);}
+	@:deprecated("Use getColorU32 overload.") @:noCompletion
+	public static inline function getColorU323(col : ImU32) : ImU32 {return get_color_u323(col);}
+
+	@:deprecated("Use radioButton overload.") @:noCompletion
+	public static inline function radioButton2(label : String, v : Ref<Int>, v_button : Int) : Bool {return radio_button2(label, v, v_button);}
+
+	@:deprecated("Use combo overload.") @:noCompletion
+	public static inline function combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return _combo2(label, current_item, items_separated_by_zeros, popup_max_height_in_items);}
+
+	@:deprecated("Use treeNode overload.") @:noCompletion
+	public static inline function treeNode2(str_id : String, label : String) : Bool {return tree_node2(str_id, label);}
+	@:deprecated("Use treeNodeEx overload.") @:noCompletion
+	public static inline function treeNodeEx2(str_id : String, flags : ImGuiTreeNodeFlags, label : String) : Bool {return tree_node_ex2(str_id, flags, label);}
+	@:deprecated("Use collapsingHeader overload.") @:noCompletion
+	public static inline function collapsingHeader2(label : String, p_open : Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return collapsing_header2(label, p_open, flags);}
+
+	@:deprecated("Use selectable overload.") @:noCompletion
+	public static inline function selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return _selectable2(label, p_selected, flags, size);}
+
+	@:deprecated("Use menuItem overload.") @:noCompletion
+	public static inline function menuItem2(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return menu_item2(label, shortcut, p_selected, enabled);}
+
+	@:deprecated("Use isRectVisible overload.") @:noCompletion
+	public static inline function isRectVisible2(rect_min : ImVec2, rect_max : ImVec2) : Bool {return false;}
 }
