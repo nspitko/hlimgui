@@ -29,34 +29,63 @@ To add this library to your project, you need to include these files:
 - `imgui/ImGui.hx`: interface to the native extension.
 - `imgui/ImGuiMacro.hx`: Useful helper macros for wrapping `hl.Ref`.
 - `imgui/NodeEditor.hx`: Wrapper for the imgui-node-editor extension.
+- `imgui/FieldRef.hx`: The macro-helper that emulates missing `$fieldref` opcode for HL that is required for usage of this library.
 
 See `Main.hx` to see how to implement this library.
 
 ## Supported ImGui features
-Most of the ImGui functionalities are supported and binded. Look at  [https://github.com/ocornut/imgui](https://github.com/ocornut/imgui) to get documentation on exposed functions AND how ImGui works.
+Most of the ImGui functionalities are supported and bound. Look at [https://github.com/ocornut/imgui](https://github.com/ocornut/imgui) to get documentation on exposed functions AND how ImGui works.
 
 Here is a list of unsupported features and changes:
 
-- As Haxe doesn't support function overloading, so if two original functions have the same name, the second one in Haxe has a suffix `2` to disguish it. For example:
-```haxe
-public static function treeNode(label : String) : Bool {return false;}
-public static function treeNode2(str_id : String, label : String) : Bool {return false;}
-```
 - ImGui has several functions which take a variable number of parameters in order to format strings. This feature isn't supported in Haxe, so all string formatting must be done in Haxe before passing it to ImGui.
 
 - The function `setIniFilename` doesn't exist in ImGui, it has been added to modify the filename of the default ini file saved by ImGui (pass null to turn off this feature).
 
-- Input functions often take an `hl.Ref`. We have provided some simple macros to wrap these functions if you don't wish to create the ref manually each use.
-```haxe
-import imgui.ImGuiMacro.wref;
+## References
+Input function often take a `Ref<T>` / `imgui.FieldRef<T>` argument.
+Those are equivalent to `hl.Ref` however offer an extra feature of referencing an class instance or static field, not only local variables.
 
-var myString = "Hello!"
-wref( ImGui.inputText( 'Text Input', _), myString );
-trace(myString);
+However the limitation of `Ref` is that it does not work properties (`get_x` / `set_y`), in which case you will have to manually load said values into local variables or use the wrapper function:
+```haxe
+import imgui.ImGuiMacro.*; // Import the `wref` / `wrefv` and `wrefc` macro functions into global scope.
+// In order to denote which values should be converted into a reference,
+// either use `$(path.to.field)` notation or use `_` and insert the value after the initial call.
+// Names are shorthands to:
+// wref - With Reference
+// wrefv - With Reference (Void call)
+// wrefc - With Reference (Conditional assign)
+
+var myString = "Hello!", edited: Boolean;
+
+// Will assign myString regardless of inputText return value.
+// `wref` will assign referenced values back regardless of the returned value.
+// Wrapper return value is equivalent to wrapped function return value. Incompatible with `:Void` methods.
+edited = wref(ImGui.inputText('Text input', $(myString))); // With `$(value)` notation
+edited = wref(ImGui.inputText('Text input', _), myString); // With `_` notation
+
+// same as `wref` - `wrefv` will assign value back regardless, but compatible with `:Void` methods.
+static var show: Boolean = true;
+wrefv(ImGui.showDemoWindow($(edited)));
+// Will result in an error! `wrefv` does not return a value.
+// edited = wrefv(ImGui.inputText('Text input', $(myString)));
+
+// Compared to `wref` - `wrefc` only assigns back the value if wrapped method returns true.
+// Note that it works only with methods that return a boolean.
+// Useful when property does some extra logic when it's changes and you don't want it to trigger every frame.
+edited = wrefc(ImGui.inputText('Text input', $(myString)));
 ```
 
+## Heaps integration
+This library comes with a built-in Heaps support with the following features:
+* `imgui.ImGuiApp` is a quick-start `hxd.App` version that overlays ImGui elements as a separate scene.
+* `imgui.ImGuiDrawable` is a primary renderer for ImGui content and can be used to set up your own ImGui integration if `ImGuiApp` is not viable.
+* `imgui.ImTextureID` is mapped to `h3d.mat.Texture`.
+* A number of methods that take `h2d.Tile` instead of `ImTextureID` for easier image rendering.
+
 ## Bugs
-If you find bugs, please report them on the GitHub project page. Most of the binded functions have been tested, but as it's a new library some bugs might remain.
+If you find bugs, please report them on the GitHub project page. Most of the bound functions have been tested, but as it's a new library some bugs might remain.
 
 ## Thanks
-I would like to thanks [Aidan63](https://github.com/Aidan63/linc_imgui) for their Haxe/cpp binding. I have borrowed all the structure declaration code which remains the same between the two bindings.
+* haddock7: I would like to thanks [Aidan63](https://github.com/Aidan63/linc_imgui) for their Haxe/cpp binding. I have borrowed all the structure declaration code which remains the same between the two bindings.
+* This is a fork of [haddock7's](https://github.com/haddock7/hlimgui) imgui port for HashLink with advanced usage of HL/Haxe specifics accounted for, thanks to him for initial port of the library.
