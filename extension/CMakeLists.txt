@@ -6,6 +6,7 @@ set(TARGET_EXT .hdll)
 project(${TARGET_NAME})
 
 option(NODE_EDITOR "Include imgui-node-editor (required to use NodeEditor.hx)" ON)
+option(NEO_SEQUENCER "Include imgui-neo_sequencer (required to use NeoSequencer.hx)" ON)
 
 file(GLOB SOURCES "*.cpp")
 file(GLOB IMGUI_SOURCES "lib/imgui/*.cpp")
@@ -19,6 +20,14 @@ if( NODE_EDITOR )
 
     list(APPEND SOURCES ${IMGUI_NODE_EDITOR_EXTENSION_SOURCES})
     list(APPEND IMGUI_SOURCES ${IMGUI_NODE_EDITOR_SOURCES})
+endif()
+
+if( NEO_SEQUENCER )
+    file(GLOB IMGUI_NEO_SEQUENCER_EXTENSION_SOURCES "addons/neo_sequencer/*.cpp")
+    file(GLOB IMGUI_NEO_SEQUENCER_SOURCES "lib/neo_sequencer/*.cpp")
+
+    list(APPEND SOURCES ${IMGUI_NEO_SEQUENCER_EXTENSION_SOURCES})
+    list(APPEND IMGUI_SOURCES ${IMGUI_NEO_SEQUENCER_SOURCES})
 endif()
 
 add_library(${TARGET_NAME}${TARGET_EXT} SHARED ${SOURCES} ${IMGUI_SOURCES})
