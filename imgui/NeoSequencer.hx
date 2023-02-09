@@ -25,8 +25,8 @@ import imgui.ImGui.Ref;
 // Flags for ImGui::BeginNeoTimeline()
 @:enum abstract ImGuiNeoTimelineFlags(Int) from Int to Int {
     var None                 = 0;
-    var AllowFrameChanging   = 1;
-    var Group                = 1;
+    var AllowFrameChanging   = 1 << 0;
+    var Group                = 1 << 1;
 }
 
 // Flags for ImGui::IsNeoTimelineSelected()
@@ -119,7 +119,7 @@ class NeoSequencer
 	public static function keyframe( value: Ref<Int> ) {};
 	public static function isKeyframeHovered(): Bool { return false; }
 	public static function isKeyframeSelected(): Bool { return false; }
-	public static function isKeyframeRightClicked(flags: ImGuiNeoTimelineIsSelectedFlags = None): Bool { return false; }
+	public static function isKeyframeRightClicked(): Bool { return false; }
 
 	public static function clearSelection(): Void {}
 	public static function isSelecting(): Bool { return false; }

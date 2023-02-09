@@ -276,6 +276,13 @@ class ImGuiDrawable extends h2d.Drawable {
 		var cursor = ImGuiDrawableBuffers.instance.cursor_map[ImGui.getMouseCursor()];
 		if (cursor != null) @:privateAccess scene.events.defaultCursor = cursor;
 		#end
+
+		// Update modifier states
+		ImGui.addKeyEvent( ImGuiKey.ModShift, Key.isDown( Key.SHIFT ) );
+		ImGui.addKeyEvent( ImGuiKey.ModAlt, Key.isDown( Key.ALT ) );
+		ImGui.addKeyEvent( ImGuiKey.ModCtrl, Key.isDown( Key.CTRL ) );
+		//ImGui.addKeyEvent( ImGuiKey.ModSuper, Key.isDown( Key.SUPER ) ); // Unsupported currently.
+
 	}
 
 	#if hlimgui_cursor

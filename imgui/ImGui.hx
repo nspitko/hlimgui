@@ -246,10 +246,10 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	//
 	var KeyPadEnter : Int = 615;
 	//
-	var ModCtrl : Int = 641;
-	var ModShift : Int = 642;
-	var ModAlt : Int = 643;
-	var ModSuper : Int = 644;
+	var ModCtrl : Int = 1 << 12;
+	var ModShift : Int = 1 << 13;
+	var ModAlt : Int = 1 << 14;
+	var ModSuper : Int = 1 << 15;
 }
 
 @:enum abstract ImGuiInputTextFlags(Int) from Int to Int {
