@@ -8,8 +8,6 @@
 #include "imgui.h"
 #include <vector>
 
-// end patches
-
 typedef int ImGuiNeoSequencerFlags;
 typedef int ImGuiNeoSequencerCol;
 typedef int ImGuiNeoTimelineFlags;
@@ -87,6 +85,8 @@ struct ImGuiNeoSequencerStyle {
     float       CurrentFrameLineWidth   = 1.0f;                 // Width of line showing current frame over timeline
     float       ZoomHeightScale         = 1.0f;                 // Scale of Zoom bar, base height is font size
     float       CollidedKeyframeOffset  = 3.5f;                 // Offset on which colliding keyframes are rendered
+
+    float       MaxSizePerTick          = 4.0f;                 // Maximum amount of pixels per tick on timeline (if less pixels is present, ticks are not rendered)
 
     ImVec4      Colors[ImGuiNeoSequencerCol_COUNT];
 
