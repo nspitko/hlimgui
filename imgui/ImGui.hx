@@ -1147,7 +1147,7 @@ class ImGui
 	public static function isWindowAppearing() : Bool {return false;}
 	public static function isWindowCollapsed() : Bool {return false;}
 	public static function isWindowFocused(flags : ImGuiFocusedFlags = 0) {return false;}
-	public static function isWindowHovered(flags : ImGuiFocusedFlags = 0) {return false;}
+	public static function isWindowHovered(flags : ImGuiHoveredFlags = 0) {return false;}
 	public static function getWindowDrawList() : ImDrawList {return null;}
 	public static function getWindowDpiScale(): Single { return 0; }
 	public static function getWindowPos() : ImVec2 {return null;}
