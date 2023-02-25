@@ -65,6 +65,8 @@ abstract FieldRef<T>(FieldRefPtr<T>) from FieldRefPtr<T> to FieldRefPtr<T> {
       default:
     }
     switch (e.expr) {
+      case EConst(CIdent("null")):
+        return e; // null pass
       case EField(d, field, _):
         return macro imgui.FieldRef.FieldRefNative.$method($d, $v{field});
       case EConst(Constant.CIdent(fname)):
