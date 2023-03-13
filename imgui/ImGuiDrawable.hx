@@ -1,10 +1,10 @@
 package imgui;
 
-import h2d.Tile;
 import imgui.types.Renderer;
 import imgui.types.ImFontAtlas;
 #if heaps
 
+import h2d.Tile;
 import h3d.mat.Texture;
 import imgui.ImGui;
 import hxd.Key;
