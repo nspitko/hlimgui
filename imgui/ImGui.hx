@@ -1322,7 +1322,7 @@ class ImGui
 	// TODO: comboCallback variant
 	
 	@:native("combo") static function _combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
-	@:native("combo2") static function _combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
+	@:native("combo_2") static function _combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	
 	// Widgets: Drag Sliders
 	public static function dragFloat(label : String, v : Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1429,7 +1429,7 @@ class ImGui
 	public static extern inline overload function selectable(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return _selectable2(label, p_selected, flags, size);}
 
 	@:native("selectable") static function _selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
-	@:native("selectable2") static function _selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
+	@:native("selectable_2") static function _selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
 	
 	// Widgets: List Boxes
 	/**
