@@ -94,7 +94,7 @@ HL_PRIM void  HL_NAME(dock_builder_finish)( ImGuiID node_id )
 	ImGui::DockBuilderFinish( node_id );
 }
 
-#define _TDOCKNODE _ABSTRACT(imguidocknode)
+#define _TDOCKNODE _STRUCT //_ABSTRACT(imguidocknode)
 
 DEFINE_PRIM(_VOID, dock_space, _I32 _IMVEC2 _REF(_I32));
 DEFINE_PRIM(_VOID, set_next_window_dock_id, _I32 _REF(_I32));
