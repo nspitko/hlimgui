@@ -635,55 +635,55 @@ typedef ImGuiID = Int;
 @:structInit class ImVec2S {
 	public var x: Single;
 	public var y: Single;
-	
+
 	@:deprecated("Remainder of ExtDynamic")
 	@:noCompletion public var v(get, never): ImVec2;
 	inline function get_v() return this;
 	@:deprecated("Remainder of ExtDynamic")
 	@:noCompletion public inline function to(): ImVec2 return this;
-	
+
 	public inline function new(x: Single = 0.0, y: Single = 0.0) {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public inline function set(x: Single = 0, y: Single = 0): ImVec2
 	{
 		this.x = x;
 		this.y = y;
 		return this;
 	}
-	
+
 	public static inline function get(x: Single = 0, y: Single = 0): ImVec2 { return { x: x, y: y }; };
-	
+
 	@:keep public function toString() {
 		return '{ x: $x, y: $y }';
 	}
-	
+
 	@:noCompletion public inline function addScalar(other: Single) { return get(x + other, y + other); }
 	@:noCompletion public inline function subScalar(other: Single) { return get(x - other, y - other); }
 	@:noCompletion public inline function mulScalar(other: Single) { return get(x * other, y * other); }
 	@:noCompletion public inline function divScalar(other: Single) { return get(x / other, y / other); }
 	@:noCompletion public inline function modScalar(other: Single) { return get(x % other, y % other); }
-	
+
 	@:noCompletion public inline function add(other: ImVec2S) { return get(x + other.x, y + other.y); }
 	@:noCompletion public inline function sub(other: ImVec2S) { return get(x - other.x, y - other.y); }
 	@:noCompletion public inline function mul(other: ImVec2S) { return get(x * other.x, y * other.y); }
 	@:noCompletion public inline function div(other: ImVec2S) { return get(x / other.x, y / other.y); }
 	@:noCompletion public inline function neg() { return get(-x, -y); }
-	
+
 	@:noCompletion public inline function addSelf(other: ImVec2S) { x += other.x; y += other.y; return this; }
 	@:noCompletion public inline function subSelf(other: ImVec2S) { x -= other.x; y -= other.y; return this; }
 	@:noCompletion public inline function mulSelf(other: ImVec2S) { x *= other.x; y *= other.y; return this; }
 	@:noCompletion public inline function divSelf(other: ImVec2S) { x /= other.x; y /= other.y; return this; }
 	@:noCompletion public inline function negSelf() { x = -x; y = -y; return this; }
-	
+
 	@:noCompletion public inline function addSelfScalar(other: Single) { x += other; y += other; return this; }
 	@:noCompletion public inline function subSelfScalar(other: Single) { x -= other; y -= other; return this; }
 	@:noCompletion public inline function mulSelfScalar(other: Single) { x *= other; y *= other; return this; }
 	@:noCompletion public inline function divSelfScalar(other: Single) { x /= other; y /= other; return this; }
 	@:noCompletion public inline function modSelfScalar(other: Single) { x %= other; y %= other; return this; }
-	
+
 	@:noCompletion public inline function compare(other: ImVec2S) { return x == other.x && y == other.y; }
 }
 
@@ -695,7 +695,7 @@ typedef ImGuiID = Int;
 	public var y: Single;
 	public var z: Single;
 	public var w: Single;
-	
+
 	public inline function new(x: Single = 0.0, y: Single = 0.0, z: Single = 0.0, w: Single = 0.0) {
 		this.x = x;
 		this.y = y;
@@ -710,7 +710,7 @@ typedef ImGuiID = Int;
 	public var b(get, set): Single;
 	/** Alias to `w` **/
 	public var a(get, set): Single;
-	
+
 	inline function get_r() return x;
 	inline function set_r(v) return x = v;
 	inline function get_g() return y;
@@ -719,13 +719,13 @@ typedef ImGuiID = Int;
 	inline function set_b(v) return z = v;
 	inline function get_a() return w;
 	inline function set_a(v) return w = v;
-	
+
 	@:deprecated("Remainder of ExtDynamic")
 	@:noCompletion public var v(get, never): ImVec4;
 	inline function get_v() return this;
 	@:deprecated("Remainder of ExtDynamic")
 	@:noCompletion public inline function to(): ImVec4 return this;
-	
+
 	public inline function set(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4
 	{
 		this.x = x;
@@ -734,17 +734,17 @@ typedef ImGuiID = Int;
 		this.w = w;
 		return this;
 	}
-	
+
 	public inline function setColor(colWAlpha: Int): ImVec4
 	{
 		return set(((colWAlpha) & 0xff) / 0xff, ((colWAlpha >> 8) & 0xff) / 0xff, ((colWAlpha >> 16) & 0xff) / 0xff, ((colWAlpha >> 24) & 0xff) / 0xff);
 	}
-	
+
 	public inline function setColorRGB(col: Int, alpha: Float = 1.0): ImVec4
 	{
 		return set(((col) & 0xff) / 0xff, ((col >> 8) & 0xff) / 0xff, ((col >> 16) & 0xff) / 0xff, alpha);
 	}
-	
+
 	public static inline function get(x: Single = 0, y: Single = 0, z: Single = 0, w: Single = 0): ImVec4 { return { x: x, y: y, z: z, w: w }; }
 	public static inline function getColor(colWAlpha: Int): ImVec4
 	{
@@ -764,7 +764,7 @@ typedef ImGuiID = Int;
 			w: alpha
 		};
 	}
-	
+
 	public inline function toColor():Int
 	{
 		return ((Std.int(z * 0xff) & 0xff)      ) +
@@ -772,38 +772,38 @@ typedef ImGuiID = Int;
 		       ((Std.int(x * 0xff) & 0xff) << 16) +
 		       ((Std.int(w * 0xff) & 0xff) << 24);
 	}
-	
+
 	public function xy(): ImVec2 { return ImVec2S.get(x, y); }
 	public function zw(): ImVec2 { return ImVec2S.get(z, w); }
-	
+
 	@:keep public function toString() {
 		return '{ x: $x, y: $y, z: $z, w: $w }';
 	}
-	
+
 	@:noCompletion public inline function addScalar(other: Single) { return get(x + other, y + other, z + other, w + other); }
 	@:noCompletion public inline function subScalar(other: Single) { return get(x - other, y - other, z - other, w - other); }
 	@:noCompletion public inline function mulScalar(other: Single) { return get(x * other, y * other, z * other, w * other); }
 	@:noCompletion public inline function divScalar(other: Single) { return get(x / other, y / other, z / other, w / other); }
 	@:noCompletion public inline function modScalar(other: Single) { return get(x % other, y % other, z % other, w % other); }
-	
+
 	@:noCompletion public inline function add(other: ImVec4S) { return get(x + other.x, y + other.y, z + other.z, w + other.w); }
 	@:noCompletion public inline function sub(other: ImVec4S) { return get(x - other.x, y - other.y, z - other.z, w - other.w); }
 	@:noCompletion public inline function mul(other: ImVec4S) { return get(x * other.x, y * other.y, z * other.z, w * other.w); }
 	@:noCompletion public inline function div(other: ImVec4S) { return get(x / other.x, y / other.y, z / other.z, w / other.w); }
 	@:noCompletion public inline function neg() { return get(-x, -y, -z, -w); }
-	
+
 	@:noCompletion public inline function addSelf(other: ImVec4S) { x += other.x; y += other.y; z += other.z; w += other.w; return this; }
 	@:noCompletion public inline function subSelf(other: ImVec4S) { x -= other.x; y -= other.y; z -= other.z; w -= other.w; return this; }
 	@:noCompletion public inline function mulSelf(other: ImVec4S) { x *= other.x; y *= other.y; z *= other.z; w *= other.w; return this; }
 	@:noCompletion public inline function divSelf(other: ImVec4S) { x /= other.x; y /= other.y; z /= other.z; w /= other.w; return this; }
 	@:noCompletion public inline function negSelf() { x = -x; y = -y; z = -z; w = -w; return this; }
-	
+
 	@:noCompletion public inline function addSelfScalar(other: Single) { x += other; y += other; z += other; w += other; return this; }
 	@:noCompletion public inline function subSelfScalar(other: Single) { x -= other; y -= other; z -= other; w -= other; return this; }
 	@:noCompletion public inline function mulSelfScalar(other: Single) { x *= other; y *= other; z *= other; w *= other; return this; }
 	@:noCompletion public inline function divSelfScalar(other: Single) { x /= other; y /= other; z /= other; w /= other; return this; }
 	@:noCompletion public inline function modSelfScalar(other: Single) { x %= other; y %= other; z %= other; w %= other; return this; }
-	
+
 	@:noCompletion public inline function compare(other: ImVec4S) { return other != null && x == other.x && y == other.y && z == other.z && w == other.w; }
 }
 
@@ -811,64 +811,64 @@ typedef ImGuiID = Int;
 @:forwardStatics
 @:structInit
 abstract ImVec2(ImVec2S) from ImVec2S to ImVec2S {
-	
+
 	public inline function new(x: Single = 0.0, y: Single = 0.0) this = new ImVec2S(x, y);
-	
+
 	@:op(A + B) static inline function _add(a: ImVec2, b: ImVec2) return a.add(b);
 	@:op(A - B) static inline function _sub(a: ImVec2, b: ImVec2) return a.sub(b);
 	@:op(A * B) static inline function _mul(a: ImVec2, b: ImVec2) return a.mul(b);
 	@:op(A / B) static inline function _div(a: ImVec2, b: ImVec2) return a.div(b);
 	@:op(-A) static inline function _neg(a: ImVec2) return a.neg();
-	
+
 	@:op(A + B) static inline function _addScalar(a: ImVec2, b: Single) return a.addScalar(b);
 	@:op(A - B) static inline function _subScalar(a: ImVec2, b: Single) return a.subScalar(b);
 	@:op(A * B) static inline function _mulScalar(a: ImVec2, b: Single) return a.mulScalar(b);
 	@:op(A / B) static inline function _divScalar(a: ImVec2, b: Single) return a.divScalar(b);
 	@:op(A % B) static inline function _modScalar(a: ImVec2, b: Single) return a.modScalar(b);
-	
+
 	@:op(A += B) static inline function _addSelf(a: ImVec2, b: ImVec2) return a.addSelf(b);
 	@:op(A -= B) static inline function _subSelf(a: ImVec2, b: ImVec2) return a.subSelf(b);
 	@:op(A *= B) static inline function _mulSelf(a: ImVec2, b: ImVec2) return a.mulSelf(b);
 	@:op(A /= B) static inline function _divSelf(a: ImVec2, b: ImVec2) return a.divSelf(b);
-	
+
 	@:op(A += B) static inline function _addSelfScalar(a: ImVec2, b: Single) return a.addSelfScalar(b);
 	@:op(A -= B) static inline function _subSelfScalar(a: ImVec2, b: Single) return a.subSelfScalar(b);
 	@:op(A *= B) static inline function _mulSelfScalar(a: ImVec2, b: Single) return a.mulSelfScalar(b);
 	@:op(A /= B) static inline function _divSelfScalar(a: ImVec2, b: Single) return a.divSelfScalar(b);
 	@:op(A %= B) static inline function _modSelfScalar(a: ImVec2, b: Single) return a.modSelfScalar(b);
-	
+
 	@:op(A == B) static inline function _compare(a: ImVec2, b: ImVec2) return a == null ? b == null : a.compare(b);
 }
 @:forward
 @:forwardStatics
 @:structInit
 abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
-	
+
 	public inline function new(x: Single = 0.0, y: Single = 0.0, z: Single = 0.0, w: Single = 0.0) this = new ImVec4S(x, y, z, w);
-	
+
 	@:op(A + B) static inline function _add(a: ImVec4, b: ImVec4) return a.add(b);
 	@:op(A - B) static inline function _sub(a: ImVec4, b: ImVec4) return a.sub(b);
 	@:op(A * B) static inline function _mul(a: ImVec4, b: ImVec4) return a.mul(b);
 	@:op(A / B) static inline function _div(a: ImVec4, b: ImVec4) return a.div(b);
 	@:op(-A) static inline function _neg(a: ImVec4) return a.neg();
-	
+
 	@:op(A + B) static inline function _addScalar(a: ImVec4, b: Single) return a.addScalar(b);
 	@:op(A - B) static inline function _subScalar(a: ImVec4, b: Single) return a.subScalar(b);
 	@:op(A * B) static inline function _mulScalar(a: ImVec4, b: Single) return a.mulScalar(b);
 	@:op(A / B) static inline function _divScalar(a: ImVec4, b: Single) return a.divScalar(b);
 	@:op(A % B) static inline function _modScalar(a: ImVec4, b: Single) return a.modScalar(b);
-	
+
 	@:op(A += B) static inline function _addSelf(a: ImVec4, b: ImVec4) return a.addSelf(b);
 	@:op(A -= B) static inline function _subSelf(a: ImVec4, b: ImVec4) return a.subSelf(b);
 	@:op(A *= B) static inline function _mulSelf(a: ImVec4, b: ImVec4) return a.mulSelf(b);
 	@:op(A /= B) static inline function _divSelf(a: ImVec4, b: ImVec4) return a.divSelf(b);
-	
+
 	@:op(A += B) static inline function _addSelfScalar(a: ImVec4, b: Single) return a.addSelfScalar(b);
 	@:op(A -= B) static inline function _subSelfScalar(a: ImVec4, b: Single) return a.subSelfScalar(b);
 	@:op(A *= B) static inline function _mulSelfScalar(a: ImVec4, b: Single) return a.mulSelfScalar(b);
 	@:op(A /= B) static inline function _divSelfScalar(a: ImVec4, b: Single) return a.divSelfScalar(b);
 	@:op(A %= B) static inline function _modSelfScalar(a: ImVec4, b: Single) return a.modSelfScalar(b);
-	
+
 	@:op(A == B) static inline function _compare(a: ImVec4, b: ImVec4) return a == null ? b == null : a.compare(b);
 }
 
@@ -1140,7 +1140,7 @@ class ImGui
 	public static extern inline overload function beginChild(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool { return begin_child2(id, size, border, flags); }
 	static function begin_child(str_id : String, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
 	static function begin_child2(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool {return false;}
-	
+
 	/** Always call `endChild()` regardless of `beginChild()` return value! **/
 	public static function endChild() {}
 
@@ -1173,7 +1173,7 @@ class ImGui
 	public static extern inline overload function setWindowSize(name : String, size : ImVec2, cond : ImGuiCond = 0) { set_window_size2(name, size, cond); }
 	public static extern inline overload function setWindowCollapsed(name : String, collapsed : Bool, cond : ImGuiCond = 0) { set_window_collapsed2(name, collapsed, cond); }
 	public static extern inline overload function setWindowFocus(name : String) { set_window_focus2(name); }
-	
+
 	static function set_window_pos(pos : ImVec2, cond : ImGuiCond = 0) {}
 	static function set_window_size(size : ImVec2, cond : ImGuiCond = 0) {}
 	static function set_window_collapsed(collapsed : Bool, cond : ImGuiCond = 0) {}
@@ -1219,7 +1219,7 @@ class ImGui
 	static function push_style_color2(idx : ImGuiCol, col : ImVec4) {}
 	static function push_style_var(idx : ImGuiStyleVar, val : Single) {}
 	static function push_style_var2(idx : ImGuiStyleVar, val : ImVec2) {}
-	
+
 	// Parameters stacks (current window)
 	public static function pushItemWidth(item_width : Single) {}
 	public static function popItemWidth() {}
@@ -1240,7 +1240,7 @@ class ImGui
 	static function get_color_u32(idx : ImGuiCol, alpha_mul : Single = 1.0) : ImU32 {return 0;}
 	static function get_color_u322(col : ImVec4) : ImU32 {return 0;}
 	static function get_color_u323(col : ImU32) : ImU32 {return 0;}
-	
+
 	// Cursor / Layout
 	public static function separator() {}
 	public static function sameLine(offset_from_start_x : Single = 0.0, spacing : Single = -1.0) {}
@@ -1285,6 +1285,7 @@ class ImGui
 	public static function textWrapped(text : String) {}
 	public static function labelText(label : String, text : String) {}
 	public static function bulletText(text : String) {}
+	public static function textMarkdown(text : String) {}
 
 	// Widgets: Main
 	public static function button(name : String, ?size : ImVec2) : Bool {return false;}
@@ -1311,7 +1312,7 @@ class ImGui
 
 	static function radio_button(label : String, active : Bool) : Bool {return false;}
 	static function radio_button2(label : String, v : Ref<Int>, v_button : Int) : Bool {return false;}
-	
+
 	// Widgets: Combo Box
 	/** You MUST call `endCombo()` if this method returns `true`! **/
 	public static function beginCombo(label : String, preview_value : String, flags : ImGuiComboFlags = 0) : Bool {return false;}
@@ -1320,10 +1321,10 @@ class ImGui
 	public static extern inline overload function combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return _combo(label, current_item, items, popup_max_height_in_items);}
 	public static extern inline overload function combo(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return _combo2(label, current_item, items_separated_by_zeros, popup_max_height_in_items);}
 	// TODO: comboCallback variant
-	
+
 	@:native("combo") static function _combo(label : String, current_item : Ref<Int>, items : hl.NativeArray<String>, popup_max_height_in_items : Int = -1) : Bool {return false;}
 	@:native("combo_2") static function _combo2(label : String, current_item : Ref<Int>, items_separated_by_zeros : String, popup_max_height_in_items : Int = -1) : Bool {return false;}
-	
+
 	// Widgets: Drag Sliders
 	public static function dragFloat(label : String, v : Ref<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 	public static function dragInt(label : String, v : Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {return false;}
@@ -1362,7 +1363,7 @@ class ImGui
 		return slider_scalar_n(label, ImGuiDataType.Double, v, v_min, v_max, format, flags);
 	}
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<ImGuiScalar>, v_min : ImGuiScalar, v_max : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
-	
+
 	public static function vSliderDouble(label: String, size: ImVec2, v: Ref<Float>, v_min: Float, v_max: Float, ?format: String, flags: Int = 0) {
 		var tmp = ImTypeCache.array(v.get());
 		var ret = v_slider_scalar(label, size, Double, tmp, v_min, v_max, format, flags);
@@ -1397,7 +1398,7 @@ class ImGui
 
 	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<ImGuiScalar>, step : ImGuiScalar, step_fast : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
 
-	// Widgets: Color Editor/Picker
+// Widgets: Color Editor/Picker
 	public static function colorEdit3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
 	public static function colorEdit4(label : String, col : hl.NativeArray<Single>,  flags : ImGuiColorEditFlags = 0) : Bool {return false;}
 	public static function colorPicker3(label : String, col : hl.NativeArray<Single>, flags : ImGuiColorEditFlags = 0) : Bool {return false;}
@@ -1423,14 +1424,14 @@ class ImGui
 	static function tree_node_ex2(str_id : String, flags : ImGuiTreeNodeFlags, label : String) : Bool {return false;}
 	static function collapsing_header(label : String, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
 	static function collapsing_header2(label : String, p_open : Ref<Bool>, flags : ImGuiTreeNodeFlags = 0) : Bool {return false;}
-	
+
 	// Widgets: Selectables
 	public static extern inline overload function selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return _selectable(label, selected, flags, size);}
 	public static extern inline overload function selectable(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return _selectable2(label, p_selected, flags, size);}
 
 	@:native("selectable") static function _selectable(label : String, selected : Bool = false, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
 	@:native("selectable_2") static function _selectable2(label : String, p_selected : Ref<Bool>, flags : ImGuiSelectableFlags = 0, ?size: ImVec2) : Bool {return false;}
-	
+
 	// Widgets: List Boxes
 	/**
 		You MUST call `endListBox()` if this method returns `true`!
@@ -1466,7 +1467,7 @@ class ImGui
 	public static function endMenu() {}
 	public static extern inline overload function menuItem(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return menu_item(label, shortcut, selected, enabled);}
 	public static extern inline overload function menuItem(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return menu_item2(label, shortcut, p_selected, enabled);}
-	
+
 	static function menu_item(label : String, shortcut : String = null, selected : Bool = false, enabled : Bool = true) : Bool {return false;}
 	static function menu_item2(label : String, shortcut : String, p_selected : Ref<Bool>, enabled : Bool = true) : Bool {return false;}
 
@@ -1493,7 +1494,7 @@ class ImGui
 	public static function beginPopupContextItem(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
 	public static function beginPopupContextWindow(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
 	public static function beginPopupContextVoid(str_id : String = null, flags : ImGuiPopupFlags = 1) : Bool {return false;}
-	
+
 	// Popups: query functions
 	public static function isPopupOpen(str_id : String, flags: ImGuiPopupFlags = 0) : Bool {return false;}
 
@@ -1788,7 +1789,7 @@ class ImGui
 
 	// internal functions
 	public static function setRenderCallback(render_fn:RenderList->Void) {}
-	
+
 	/**
 		Mandatory to call before anything else!
 		Provides C side the necessary hl_type references for data constructed on C side such as ImVec2 and ImVec4.
@@ -1798,7 +1799,7 @@ class ImGui
 	}
 	@:hlNative("hlimgui", "initialize")
 	static function _init(vec2: ImVec2, vec4: ImVec4, renderlist: RenderList, renderdata: RenderData, rendercommand: RenderCommand) {};
-	
+
 	/**
 		Bootstrap helper to initialize Imgui.
 	**/
@@ -1820,7 +1821,7 @@ class ImGui
 	}
 
 	// DEPRECATED SECTION
-	
+
 	@:deprecated("Use getFontAtlas().getTexDataAsRGBA32() + getFontAtlas().clearTexData()") @:noCompletion
 	public static inline function getTexDataAsRgba32(): ImFontTexData {
 		var atlas = getFontAtlas();
@@ -1829,7 +1830,7 @@ class ImGui
 		atlas.clearTexData();
 		return output;
 	}
-	
+
 	// ImFontAtlas / ImGui::GetIO().Fonts->... wrappers
 	@:deprecated("Use getFontAtlas().setTexId()")
 	public static inline function setFontTexture(texture_id : ImTextureID) { getFontAtlas().setTexId(texture_id); }
@@ -1882,7 +1883,7 @@ class ImGui
 	@:deprecated("use pushIDInt") @:noCompletion public static inline function pushID3(int_id : Int) { pushIDInt(int_id); }
 
 	// Pre-overload support methods.
-	
+
 	@:deprecated("Use beginChild overload.") @:noCompletion
 	public static inline function beginChild2(id : Int, ?size : ImVec2, border : Bool = false, flags : ImGuiWindowFlags = 0) : Bool { return begin_child2(id, size, border, flags); }
 
@@ -1899,7 +1900,7 @@ class ImGui
 	public static inline function pushStyleColor2(idx : ImGuiCol, col : ImVec4) { push_style_color2(idx, col); }
 	@:deprecated("Use pushStyleVar overload.") @:noCompletion
 	public static inline function pushStyleVar2(idx : ImGuiStyleVar, val : ImVec2) { push_style_var2(idx, val); }
-	
+
 	@:deprecated("Use getColorU32 overload.") @:noCompletion
 	public static inline function getColorU322(col : ImVec4) : ImU32 {return get_color_u322(col);}
 	@:deprecated("Use getColorU32 overload.") @:noCompletion
