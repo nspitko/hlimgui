@@ -220,7 +220,7 @@ HL_PRIM void F_NAME(path_rect)(ImDrawList* drawlist, vimvec2* rect_min, vimvec2*
 // Advanced
 
 HL_PRIM void F_NAME(add_callback)(ImDrawList* drawlist, vclosure* callback, vdynamic* data) {
-	drawlist->AddCallback(callback, callback);
+	drawlist->AddCallback((ImDrawCallback)(void*)callback, data);
 }
 
 HL_PRIM void F_NAME(add_draw_cmd)(ImDrawList* drawlist) {

@@ -227,6 +227,7 @@ ___
 
 
 #include <stdint.h>
+#include "../../utils.h"
 
 namespace ImGui
 {
@@ -315,14 +316,23 @@ namespace ImGui
     struct MarkdownConfig
     {
         static const int        NUMHEADINGS = 3;
+        MarkdownHeadingFormat   headingFormats[ NUMHEADINGS ] = { { NULL, true }, { NULL, true }, { NULL, true } };
+        const char*             linkIcon = "";                      // icon displayd in link tooltip
 
+        vclosure*               linkCallbackClosure = nullptr;
+        vclosure*               tooltipCallbackClosure = nullptr;
+        vclosure*               imageCallbackClosure = nullptr;
+
+        void*                   userData = NULL; 
+        
         MarkdownLinkCallback*   linkCallback = NULL;
         MarkdownTooltipCallback* tooltipCallback = NULL;
         MarkdownImageCallback*  imageCallback = NULL;
-        const char*             linkIcon = "";                      // icon displayd in link tooltip
-        MarkdownHeadingFormat   headingFormats[ NUMHEADINGS ] = { { NULL, true }, { NULL, true }, { NULL, true } };
-        void*                   userData = NULL;        
         MarkdownFormalCallback* formatCallback = defaultMarkdownFormatCallback;
+        
+        
+        
+        
     };
 
     //-----------------------------------------------------------------------------

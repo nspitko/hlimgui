@@ -50,18 +50,6 @@ inline ImGui::MarkdownImageData ImageCallback( ImGui::MarkdownLinkCallbackData d
     return imageData;
 }
 
-void LoadFonts( float fontSize_ = 12.0f )
-{
-    ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->Clear();
-    
-	// @todo
-    H1 = io.Fonts->Fonts[0];
-	H2 = io.Fonts->Fonts[1];
-	H3 = io.Fonts->Fonts[2];
-    
-}
-
 void ExampleMarkdownFormatCallback( const ImGui::MarkdownFormatInfo& markdownFormatInfo_, bool start_ )
 {
     // Call the default first so any settings can be overwritten by our implementation.
