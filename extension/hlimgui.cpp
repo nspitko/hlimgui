@@ -152,7 +152,7 @@ void renderDrawLists(ImDrawData* draw_data)
 			// TODO: Handle ResetRenderState?
 			if (pcmd->UserCallback != nullptr && pcmd->UserCallback != ImDrawCallback_ResetRenderState)
 			{
-				hl_cmd_buffer->callback = (vclosure*)pcmd->UserCallback;
+				hl_cmd_buffer->callback = pcmd->UserCallback;
 				hl_cmd_buffer->callback_data = (vdynamic*)pcmd->UserCallbackData;
 			}
 			else
