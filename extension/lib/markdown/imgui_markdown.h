@@ -1,5 +1,9 @@
 #pragma once
 
+#define hl_call1fixed(ret,cl,t,v)\
+	(cl->hasValue ? ((ret(*)(vdynamic*,t))cl->fun)((vdynamic*)cl->value,v) : ((ret(*)(t))cl->fun)(v))
+
+
 // License: zlib
 // Copyright (c) 2019 Juliette Foucaut & Doug Binks
 // 
@@ -319,17 +323,15 @@ namespace ImGui
         MarkdownHeadingFormat   headingFormats[ NUMHEADINGS ] = { { NULL, true }, { NULL, true }, { NULL, true } };
         const char*             linkIcon = "";                      // icon displayd in link tooltip
 
-        vclosure*               linkCallbackClosure = nullptr;
-        vclosure*               tooltipCallbackClosure = nullptr;
-        vclosure*               imageCallbackClosure = nullptr;
-
         void*                   userData = NULL; 
+
+//        vclosure*               linkCallbackClosure = nullptr;
+//        vclosure*               tooltipCallbackClosure = nullptr;
+        vclosure*               imageCallbackClosure = nullptr;   
         
-        MarkdownLinkCallback*   linkCallback = NULL;
-        MarkdownTooltipCallback* tooltipCallback = NULL;
-        MarkdownImageCallback*  imageCallback = NULL;
-        MarkdownFormalCallback* formatCallback = defaultMarkdownFormatCallback;
-        
+        MarkdownTooltipCallback *tooltipCallback = nullptr;
+        MarkdownLinkCallback *linkCallback = nullptr;
+        MarkdownFormalCallback *formatCallback = defaultMarkdownFormatCallback;
         
         
         
@@ -657,9 +659,26 @@ namespace ImGui
                     {
                         bool drawnImage = false;
                         bool useLinkCallback = false;
-                        if( mdConfig_.imageCallback )
+                        if( mdConfig_.imageCallbackClosure )
                         {
-                            MarkdownImageData imageData = mdConfig_.imageCallback( { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true } );
+                            MarkdownLinkCallbackData data = { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true };
+                            MarkdownImageData imageData = {};
+
+                            // hasValue indicates whether or not this function has a "this". We MUST pass this if it exists, else the whole stack
+                            // explodes in horrifying ways. These should probably be macroed similar to call1fixed @todo chrisk
+                            if (mdConfig_.imageCallbackClosure->hasValue)
+                            {
+                                ((void(*)(vdynamic*,MarkdownLinkCallbackData*,MarkdownImageData*))mdConfig_.imageCallbackClosure->fun)((vdynamic*)mdConfig_.imageCallbackClosure->value,&data,&imageData);
+                            }
+                            else
+                            {
+                                ((void(*)(MarkdownLinkCallbackData*,MarkdownImageData*))mdConfig_.imageCallbackClosure->fun)(&data,&imageData);
+                            }
+
+                        
+
+                            
+
                             useLinkCallback = imageData.useLinkCallback;
                             if( imageData.isValid )
                             {

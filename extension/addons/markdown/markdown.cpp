@@ -8,14 +8,7 @@
 #include "Shellapi.h"
 #include <string>
 
-void LinkCallback( ImGui::MarkdownLinkCallbackData data_ );
-inline ImGui::MarkdownImageData ImageCallback( ImGui::MarkdownLinkCallbackData data_ );
-
-static ImFont* H1 = NULL;
-static ImFont* H2 = NULL;
-static ImFont* H3 = NULL;
-
-static ImGui::MarkdownConfig mdConfig; 
+#define _TMDCONFIG _ABSTRACT(immarkdownconfig)
 
 
 void LinkCallback( ImGui::MarkdownLinkCallbackData data_ )
@@ -50,57 +43,30 @@ inline ImGui::MarkdownImageData ImageCallback( ImGui::MarkdownLinkCallbackData d
     return imageData;
 }
 
-void ExampleMarkdownFormatCallback( const ImGui::MarkdownFormatInfo& markdownFormatInfo_, bool start_ )
+
+
+HL_PRIM void HL_NAME(markdown_text)(vstring* text, ImGui::MarkdownConfig* mdConfig)
 {
-    // Call the default first so any settings can be overwritten by our implementation.
-    // Alternatively could be called or not called in a switch statement on a case by case basis.
-    // See defaultMarkdownFormatCallback definition for furhter examples of how to use it.
-    ImGui::defaultMarkdownFormatCallback( markdownFormatInfo_, start_ );        
-       
-    switch( markdownFormatInfo_.type )
-    {
-    // example: change the colour of heading level 2
-    case ImGui::MarkdownFormatType::HEADING:
-    {
-        if( markdownFormatInfo_.level == 2 )
-        {
-            if( start_ )
-            {
-                ImGui::PushStyleColor( ImGuiCol_Text, ImGui::GetStyle().Colors[ ImGuiCol_TextDisabled ] );
-            }
-            else
-            {
-                ImGui::PopStyleColor();
-            }
-        }
-        break;
-    }
-    default:
-    {
-        break;
-    }
-    }
+    ImGui::Markdown(convertStringNullAsEmpty(text), text->length, *mdConfig );
 }
 
-void Markdown( const std::string& markdown_ )
+HL_PRIM void HL_NAME(markdown_init_config)(ImGui::MarkdownConfig* mdConfig)
 {
-    // You can make your own Markdown function with your prefered string container and markdown config.
-    // > C++14 can use ImGui::MarkdownConfig mdConfig{ LinkCallback, NULL, ImageCallback, ICON_FA_LINK, { { H1, true }, { H2, true }, { H3, false } }, NULL };
-    mdConfig.linkCallback =         LinkCallback;
-    mdConfig.tooltipCallback =      NULL;
-    mdConfig.imageCallback =        ImageCallback;
-    mdConfig.linkIcon =             "*";
-    mdConfig.headingFormats[0] =    { H1, true };
-    mdConfig.headingFormats[1] =    { H2, true };
-    mdConfig.headingFormats[2] =    { H3, false };
-    mdConfig.userData =             NULL;
-    mdConfig.formatCallback =       ExampleMarkdownFormatCallback;
-    ImGui::Markdown( markdown_.c_str(), markdown_.length(), mdConfig );
+	if (mdConfig != nullptr)
+	{
+		new (mdConfig)ImGui::MarkdownConfig();
+	}
 }
 
-HL_PRIM void HL_NAME(text_markdown)(vstring* text)
+
+HL_PRIM void HL_NAME(markdown_init_image_data)(ImGui::MarkdownImageData* mdConfig)
 {
-    ImGui::Markdown(convertStringNullAsEmpty(text), text->length, mdConfig );
+	if (mdConfig != nullptr)
+	{
+		new (mdConfig)ImGui::MarkdownImageData();
+	}
 }
 
-DEFINE_PRIM(_VOID, text_markdown, _STRING);
+DEFINE_PRIM(_VOID, markdown_text, _STRING _STRUCT );
+DEFINE_PRIM(_VOID, markdown_init_config, _STRUCT );
+DEFINE_PRIM(_VOID, markdown_init_image_data, _STRUCT );

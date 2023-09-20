@@ -1285,7 +1285,7 @@ class ImGui
 	public static function textWrapped(text : String) {}
 	public static function labelText(label : String, text : String) {}
 	public static function bulletText(text : String) {}
-	public static function textMarkdown(text : String) {}
+//	public static function textMarkdown(text : String) {}
 
 	// Widgets: Main
 	public static function button(name : String, ?size : ImVec2) : Bool {return false;}
