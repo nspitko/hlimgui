@@ -294,7 +294,7 @@ void* get_obj_field(vdynamic*d, int hfield) {
 				return (void*)((char*)d + d->t->virt->indexes[f->field_index]);
 			}
 		default:
-			hl_error("Invalid field access");
+			throw_error("Invalid field access");
 			break;
 	}
 	return nullptr;
