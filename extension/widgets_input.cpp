@@ -58,7 +58,7 @@ int TextInputCallbackWithResize(ImGuiInputTextCallbackData* data)
 HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring** string, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     if (*string == nullptr) {
-        hl_error("Passing null string to inputText!");
+        throw_error("Passing null string to inputText!");
         return false;
     }
     stringToBuffer(string);
@@ -70,7 +70,7 @@ HL_PRIM bool HL_NAME(input_text)(vstring* label, vstring** string, ImGuiInputTex
 HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring** string, vimvec2* size, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     if (*string == nullptr) {
-        hl_error("Passing null string to inputTextMultiline!");
+        throw_error("Passing null string to inputTextMultiline!");
         return false;
     }
     stringToBuffer(string);
@@ -82,7 +82,7 @@ HL_PRIM bool HL_NAME(input_text_multiline)(vstring* label, vstring** string, vim
 HL_PRIM bool HL_NAME(input_text_with_hint)(vstring* label, vstring* hint, vstring** string, ImGuiInputTextFlags* flags, vclosure* callback)
 {
     if (*string == nullptr) {
-        hl_error("Passing null string to inputTextWithHint!");
+        throw_error("Passing null string to inputTextWithHint!");
         return false;
     }
     stringToBuffer(string);
