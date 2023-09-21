@@ -327,10 +327,10 @@ namespace ImGui
 
 //        vclosure*               linkCallbackClosure = nullptr;
 //        vclosure*               tooltipCallbackClosure = nullptr;
-        vclosure*               imageCallbackClosure = nullptr;   
-        
-        MarkdownTooltipCallback *tooltipCallback = nullptr;
-        MarkdownLinkCallback *linkCallback = nullptr;
+        vclosure*               imageCallbackClosure = nullptr;  
+        vclosure*               linkCallbackClosure = nullptr;
+        vclosure*               tooltipCallbackClosure = nullptr;
+    
         MarkdownFormalCallback *formatCallback = defaultMarkdownFormatCallback;
         
         
@@ -664,20 +664,7 @@ namespace ImGui
                             MarkdownLinkCallbackData data = { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true };
                             MarkdownImageData imageData = {};
 
-                            // hasValue indicates whether or not this function has a "this". We MUST pass this if it exists, else the whole stack
-                            // explodes in horrifying ways. These should probably be macroed similar to call1fixed @todo chrisk
-                            if (mdConfig_.imageCallbackClosure->hasValue)
-                            {
-                                ((void(*)(vdynamic*,MarkdownLinkCallbackData*,MarkdownImageData*))mdConfig_.imageCallbackClosure->fun)((vdynamic*)mdConfig_.imageCallbackClosure->value,&data,&imageData);
-                            }
-                            else
-                            {
-                                ((void(*)(MarkdownLinkCallbackData*,MarkdownImageData*))mdConfig_.imageCallbackClosure->fun)(&data,&imageData);
-                            }
-
-                        
-
-                            
+                            hl_call2(void, mdConfig_.imageCallbackClosure, MarkdownLinkCallbackData*, &data, MarkdownImageData*, &imageData);
 
                             useLinkCallback = imageData.useLinkCallback;
                             if( imageData.isValid )
@@ -692,13 +679,16 @@ namespace ImGui
                         }
                         if( ImGui::IsItemHovered() )
                         {
-                            if( ImGui::IsMouseReleased( 0 ) && mdConfig_.linkCallback && useLinkCallback )
+                            if( ImGui::IsMouseReleased( 0 ) && mdConfig_.linkCallbackClosure && useLinkCallback )
                             {
-                                mdConfig_.linkCallback( { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true } );
+                                MarkdownLinkCallbackData data = { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true };
+                                hl_call1(void,mdConfig_.linkCallbackClosure,MarkdownLinkCallbackData*,&data);
+                            
                             }
-                            if( link.text.size() > 0 && mdConfig_.tooltipCallback )
+                            if( link.text.size() > 0 && mdConfig_.tooltipCallbackClosure )
                             {
-                                mdConfig_.tooltipCallback( { { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true }, mdConfig_.linkIcon } );
+                                MarkdownTooltipCallbackData data = { { markdown_ + link.text.start, link.text.size(), markdown_ + link.url.start, link.url.size(), mdConfig_.userData, true }, mdConfig_.linkIcon };
+                                hl_call1(void,mdConfig_.tooltipCallbackClosure,MarkdownTooltipCallbackData*,&data);                                
                             }
                         }
                     }
@@ -880,13 +870,15 @@ namespace ImGui
 
         if(bHovered)
         {
-            if( ImGui::IsMouseReleased( 0 ) && mdConfig_.linkCallback )
+            if( ImGui::IsMouseReleased( 0 ) && mdConfig_.linkCallbackClosure )
             {
-                mdConfig_.linkCallback( { markdown_ + link_.text.start, link_.text.size(), markdown_ + link_.url.start, link_.url.size(), mdConfig_.userData, false } );
+                MarkdownLinkCallbackData data = { markdown_ + link_.text.start, link_.text.size(), markdown_ + link_.url.start, link_.url.size(), mdConfig_.userData, false };
+                hl_call1(void,mdConfig_.linkCallbackClosure,MarkdownLinkCallbackData*,&data);
             }
-            if( mdConfig_.tooltipCallback )
+            if( mdConfig_.tooltipCallbackClosure )
             {
-                mdConfig_.tooltipCallback( { { markdown_ + link_.text.start, link_.text.size(), markdown_ + link_.url.start, link_.url.size(), mdConfig_.userData, false }, mdConfig_.linkIcon } );
+                MarkdownTooltipCallbackData data = { { markdown_ + link_.text.start, link_.text.size(), markdown_ + link_.url.start, link_.url.size(), mdConfig_.userData, false }, mdConfig_.linkIcon } ;
+                hl_call1(void,mdConfig_.tooltipCallbackClosure,MarkdownTooltipCallbackData*,&data);      
             }
         }
         return bThisItemHovered;

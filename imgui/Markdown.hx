@@ -8,7 +8,6 @@ import imgui.ImGui.ImDrawList;
 import imgui.ImGui.ImFont;
 
 @:keep
-@:hlNative("hlimgui","markdown_")
 @:struct
 class MarkdownLinkCallbackData
 {
@@ -19,10 +18,24 @@ class MarkdownLinkCallbackData
 	public var userData: hl.Bytes; // void*
 	public var isImage: Bool;
 }
+@:keep
+@:struct
+class MarkdownTooltipCallbackData                              // for tooltips
+{
+	// MarkdownLinkCallbackData
+	public var text: hl.Bytes;
+	public var textLength: Int;
+	public var link: hl.Bytes;
+	public var linkLength: Int;
+	public var userData: hl.Bytes; // void*
+	public var isImage: Bool;
+
+	//
+	public var linkIcon: hl.Bytes; // void*
+}
 
 @:struct
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
-@:hlNative("hlimgui","markdown_")
 class MarkdownImageData
 {
 	public var isValid: Bool;
@@ -33,16 +46,11 @@ class MarkdownImageData
 	@:flatten public var uv1: ImVec2S;
 	@:flatten public var tintColor: ImVec4S;
 	@:flatten public var borderColor: ImVec4S;
-
-	public function new()
-	{
-		init_image_data(this);
-	}
-
-	static function init_image_data(data: MarkdownImageData) {}
 }
 
 typedef MarkdownImageCallback = ( MarkdownLinkCallbackData, MarkdownImageData ) -> Void;
+typedef MarkdownLinkCallback = ( MarkdownLinkCallbackData ) -> Void;
+typedef MarkdownTooltipCallback = ( MarkdownTooltipCallbackData ) -> Void;
 
 /**
  * Node editor style.
@@ -68,16 +76,11 @@ class MarkdownConfig
 	public var userData: hl.Bytes; // WARNING: This is a const void*!
 
 	public var imageCallback: MarkdownImageCallback;
+	public var linkCallback: MarkdownLinkCallback;
+	public var tooltipCallback: MarkdownTooltipCallback;
 
 	public var cb1: hl.Bytes;
-	public var cb2: hl.Bytes;
-	public var cb3: hl.Bytes;
 
-
-	var spacer1: Float;
-	var spacer2: Float;
-	var spacer3: Float;
-	var spacer4: Float;
 
 
 	public function new()
