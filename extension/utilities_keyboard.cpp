@@ -5,22 +5,22 @@ HL_PRIM int HL_NAME(get_key_index)(ImGuiKey imgui_key)
     return ImGui::GetKeyIndex(imgui_key);
 }
 
-HL_PRIM bool HL_NAME(is_key_down)(int user_key_index)
+HL_PRIM bool HL_NAME(is_key_down)(ImGuiKey user_key_index)
 {
     return ImGui::IsKeyDown(user_key_index);
 }
 
-HL_PRIM bool HL_NAME(is_key_pressed)(int user_key_index, bool* repeat)
+HL_PRIM bool HL_NAME(is_key_pressed)(ImGuiKey user_key_index, bool* repeat)
 {
     return ImGui::IsKeyPressed(user_key_index, convertPtr(repeat, true));
 }
 
-HL_PRIM bool HL_NAME(is_key_released)(int user_key_index)
+HL_PRIM bool HL_NAME(is_key_released)(ImGuiKey user_key_index)
 {
     return ImGui::IsKeyReleased(user_key_index);
 }
 
-HL_PRIM int HL_NAME(get_key_pressed_amount)(int key_index, float repeat_delay, float rate)
+HL_PRIM int HL_NAME(get_key_pressed_amount)(ImGuiKey key_index, float repeat_delay, float rate)
 {
     return ImGui::GetKeyPressedAmount(key_index, repeat_delay, rate);
 }
