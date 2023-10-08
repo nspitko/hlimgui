@@ -8,5 +8,6 @@
         "xutility": "cpp",
         "bitset": "cpp",
         "type_traits": "cpp"
-    }
+    },
+    "files.trimTrailingWhitespace": false
 }

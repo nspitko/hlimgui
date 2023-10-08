@@ -236,12 +236,12 @@ class ImGuiDrawable extends h2d.Drawable {
 			Key.ENTER => ImGuiKey.Enter,
 			Key.ESCAPE => ImGuiKey.Escape,
 			Key.NUMPAD_ENTER => ImGuiKey.KeyPadEnter,
-			Key.LSHIFT => ImGuiKey.ModShift,
-			Key.RSHIFT => ImGuiKey.ModShift,
-			Key.LALT => ImGuiKey.ModAlt,
-			Key.RALT => ImGuiKey.ModAlt,
-			Key.LCTRL => ImGuiKey.ModCtrl,
-			Key.RCTRL => ImGuiKey.ModCtrl,
+			Key.LSHIFT => ImGuiKey.LeftShift,
+			Key.RSHIFT => ImGuiKey.RightShift,
+			Key.LALT => ImGuiKey.LeftAlt,
+			Key.RALT => ImGuiKey.RightAlt,
+			Key.LCTRL => ImGuiKey.LeftCtrl,
+			Key.RCTRL => ImGuiKey.RightCtrl,
 		];
 
 		// Add letters
@@ -276,6 +276,13 @@ class ImGuiDrawable extends h2d.Drawable {
 		var cursor = ImGuiDrawableBuffers.instance.cursor_map[ImGui.getMouseCursor()];
 		if (cursor != null) @:privateAccess scene.events.defaultCursor = cursor;
 		#end
+
+		// Update modifier states
+		ImGui.addKeyEvent( ImGuiKey.ModShift, Key.isDown( Key.SHIFT ) );
+		ImGui.addKeyEvent( ImGuiKey.ModAlt, Key.isDown( Key.ALT ) );
+		ImGui.addKeyEvent( ImGuiKey.ModCtrl, Key.isDown( Key.CTRL ) );
+		//ImGui.addKeyEvent( ImGuiKey.ModSuper, Key.isDown( Key.SUPER ) ); // Unsupported currently.
+
 	}
 
 	#if hlimgui_cursor

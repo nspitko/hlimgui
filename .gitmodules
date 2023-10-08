@@ -4,6 +4,6 @@
 	branch = docking
 [submodule "extension/lib/imgui-node-editor"]
 	path = extension/lib/imgui-node-editor
-	url = https://github.com/thedmd/imgui-node-editor.git
-	branch = develop
+	url = https://github.com/nspitko/imgui-node-editor.git
+	branch = TypeOverrideFix
 	ignore = dirty

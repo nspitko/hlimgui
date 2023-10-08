@@ -22,13 +22,18 @@ It builds a target `hdll` file, which you can copy to the root of the project.
 
 Another method is to build it inside Visual Studio Code with `CMake Tools` extension installed, so you don't have to deal with the command line.
 
-To add this library to your project, you need to include these files:
+To add this library to your project, there are a few steps.
+1) Copy the previously compiled `hlimgui.hdll` file to your project folder.
+2) Add the library to your project as a haxelib.
+   - With haxelib: `haxelib dev hlimgui path/to/hlimgui`
+   - With lix: See https://github.com/lix-pm/lix.client#local-development
+3) Add `-lib hlimgui` to your `build.hxml`
 
-- The previously compiled `hlimgui.hdll` file.
+Alternatively, you can just copy the files directly into your project instead, though this has some drawbacks and is generally not recommended. At the time of writing it is known to negatively impact the language server and prevent symbol renaming, among other things. If you still want to take this path, you'll need to copy these files:
 - `imgui/ImGuiDrawable.hx`: this class derives from the standard Heaps `Drawable` class and contains/displays all ImGui widgets.
 - `imgui/ImGui.hx`: interface to the native extension.
 - `imgui/ImGuiMacro.hx`: Useful helper macros for wrapping `hl.Ref`.
-- `imgui/NodeEditor.hx`: Wrapper for the imgui-node-editor extension.
+- `imgui/NodeEditor.hx`: Wrapper for the imgui-node-editor extension, if used.
 - `imgui/FieldRef.hx`: The macro-helper that emulates missing `$fieldref` opcode for HL that is required for usage of this library.
 
 See `Main.hx` to see how to implement this library.

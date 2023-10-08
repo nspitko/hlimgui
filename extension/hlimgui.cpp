@@ -180,7 +180,7 @@ HL_PRIM void HL_NAME(add_key_char)(int c)
 	io.AddInputCharacter(c);
 }
 
-HL_PRIM void HL_NAME(add_key_event)(int c, bool down)
+HL_PRIM void HL_NAME(add_key_event)(ImGuiKey c, bool down)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.AddKeyEvent(c, down);
