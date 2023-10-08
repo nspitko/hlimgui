@@ -227,10 +227,6 @@ HL_PRIM void F_NAME(add_draw_cmd)(ImDrawList* drawlist) {
 	drawlist->AddDrawCmd();
 }
 
-// HL_PRIM ImDrawList* CloneOutput() {
-// 	// TODO
-// }
-
 DEFINE_PRIM(_TDRAWLIST, get_window_draw_list, _NO_ARG );
 DEFINE_PRIM(_TDRAWLIST, get_foreground_draw_list, _NO_ARG );
 DEFINE_PRIM(_TDRAWLIST, get_background_draw_list, _NO_ARG );
