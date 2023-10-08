@@ -10,7 +10,7 @@ import haxe.io.Bytes;
 // Cannasse pls add $fieldref
 typedef Ref<T> = imgui.FieldRef<T>;
 
-@:enum abstract ImGuiWindowFlags(Int) from Int to Int {
+enum abstract ImGuiWindowFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var NoTitleBar : Int = 1;
 	var NoResize : Int = 2;
@@ -38,7 +38,7 @@ typedef Ref<T> = imgui.FieldRef<T>;
 	var NoInputs : Int = 786944;
 }
 
-@:enum abstract ImGuiDockNodeFlags(Int) from Int to Int {
+enum abstract ImGuiDockNodeFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var KeepAliveOnly : Int = 1;
 	var NoCentralNode : Int = 2;
@@ -52,7 +52,7 @@ typedef Ref<T> = imgui.FieldRef<T>;
 	var NoDockingSplitMe : Int = 131072;
 }
 
-@:enum abstract ImGuiTreeNodeFlags(Int) from Int to Int {
+enum abstract ImGuiTreeNodeFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var Selected : Int = 1;
 	var Framed : Int = 2;
@@ -71,7 +71,7 @@ typedef Ref<T> = imgui.FieldRef<T>;
 	var CollapsingHeader : Int = 26;
 }
 
-@:enum abstract ImGuiTabItemFlags(Int) from Int to Int {
+enum abstract ImGuiTabItemFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var UnsavedDocument : Int = 1;
 	var SetSelected : Int = 2;
@@ -79,7 +79,7 @@ typedef Ref<T> = imgui.FieldRef<T>;
 	var NoPushId : Int = 8;
 }
 
-@:enum abstract ImGuiTabBarFlags(Int) from Int to Int {
+enum abstract ImGuiTabBarFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var Reorderable : Int = 1;
 	var AutoSelectNewTabs : Int = 2;
@@ -93,7 +93,7 @@ typedef Ref<T> = imgui.FieldRef<T>;
 	var FittingPolicyDefault_ : Int = 64;
 }
 
-@:enum abstract ImGuiStyleVar(Int) from Int to Int {
+enum abstract ImGuiStyleVar(Int) from Int to Int {
 	/** float: use pushStyleVar() **/
 	var Alpha = 0;
 	/** float: use pushStyleVar() **/
@@ -161,7 +161,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	final AnyPopup                = AnyPopupId | AnyPopupLevel;
 }
 
-@:enum abstract ImGuiSelectableFlags(Int) from Int to Int {
+enum abstract ImGuiSelectableFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var DontClosePopups : Int = 1;
 	var SpanAllColumns : Int = 2;
@@ -170,7 +170,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var AllowItemOverlap : Int = 16;
 }
 
-@:enum abstract ImGuiNavInput(Int) from Int to Int {
+enum abstract ImGuiNavInput(Int) from Int to Int {
 	var Activate : Int = 0;
 	var Cancel : Int = 1;
 	var Input : Int = 2;
@@ -196,7 +196,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var InternalStart_ : Int = 16;
 }
 
-@:enum abstract ImGuiMouseCursor(Int) from Int to Int {
+enum abstract ImGuiMouseCursor(Int) from Int to Int {
 	var None : Int = -1;
 	var Arrow : Int = 0;
 	var TextInput : Int = 1;
@@ -210,14 +210,14 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var COUNT : Int = 9;
 }
 
-@:enum abstract ImGuiMouseButton(Int) from Int to Int {
+enum abstract ImGuiMouseButton(Int) from Int to Int {
 	var Left : Int = 0;
 	var Right : Int = 1;
 	var Middle : Int = 2;
 	var COUNT : Int = 5;
 }
 
-@:enum abstract ImGuiKey(Int) from Int to Int {
+enum abstract ImGuiKey(Int) from Int to Int {
 	var Tab : Int = 512;
 	var LeftArrow : Int = 513;
 	var RightArrow : Int = 514;
@@ -252,7 +252,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var ModSuper : Int = 1 << 15;
 }
 
-@:enum abstract ImGuiInputTextFlags(Int) from Int to Int {
+enum abstract ImGuiInputTextFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var CharsDecimal : Int = 1;
 	var CharsHexadecimal : Int = 2;
@@ -277,7 +277,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var NoMarkEdited : Int = 2097152;
 }
 
-@:enum abstract ImGuiHoveredFlags(Int) from Int to Int {
+enum abstract ImGuiHoveredFlags(Int) from Int to Int {
 	var None                          = 0;        // Return true if directly over the item/window; not obstructed by another window; not obstructed by an active popup or modal blocking inputs under them.
 	var ChildWindows                  = 1 << 0;   // IsWindowHovered() only: Return true if any children of the window is hovered
 	var RootWindow                    = 1 << 1;   // IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)
@@ -294,7 +294,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var RootAndChildWindows           = RootWindow | ChildWindows;
 }
 
-@:enum abstract ImGuiFocusedFlags(Int) from Int to Int {
+enum abstract ImGuiFocusedFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var ChildWindows : Int = 1;
 	var RootWindow : Int = 2;
@@ -303,7 +303,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var DockHierarchy : Int = 4;
 }
 
-@:enum abstract ImGuiDragDropFlags(Int) from Int to Int {
+enum abstract ImGuiDragDropFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var SourceNoPreviewTooltip : Int = 1;
 	var SourceNoDisableHover : Int = 2;
@@ -317,7 +317,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var AcceptPeekOnly : Int = 3072;
 }
 
-@:enum abstract ImGuiDir(Int) from Int to Int {
+enum abstract ImGuiDir(Int) from Int to Int {
 	var None : Int = -1;
 	var Left : Int = 0;
 	var Right : Int = 1;
@@ -326,7 +326,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 	var COUNT : Int = 4;
 }
 
-@:enum abstract ImGuiDataType(Int) from Int to Int {
+enum abstract ImGuiDataType(Int) from Int to Int {
 	var S8 : Int = 0;
 	var U8 : Int = 1;
 	var S16 : Int = 2;
@@ -341,7 +341,7 @@ enum abstract ImGuiPopupFlags(Int) from Int to Int {
 }
 abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from Float from hl.I64 {}
 
-@:enum abstract ImGuiConfigFlags(Int) from Int to Int {
+enum abstract ImGuiConfigFlags(Int) from Int to Int {
     var None                   = 0;
     var NavEnableKeyboard      = 1 << 0;   // Master keyboard navigation enable flag. NewFrame() will automatically fill io.NavInputs[] based on io.AddKeyEvent() calls
     var NavEnableGamepad       = 1 << 1;   // Master gamepad navigation enable flag. This is mostly to instruct your imgui backend to fill io.NavInputs[]. Backend also needs to set ImGuiBackendFlags_HasGamepad.
@@ -364,14 +364,14 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
     var IsTouchScreen          = 1 << 21;   // Application is using a touch screen instead of a mouse.
 }
 
-@:enum abstract ImGuiCond(Int) from Int to Int {
+enum abstract ImGuiCond(Int) from Int to Int {
 	var Always : Int = 1;
 	var Once : Int = 2;
 	var FirstUseEver : Int = 4;
 	var Appearing : Int = 8;
 }
 
-@:enum abstract ImGuiComboFlags(Int) from Int to Int {
+enum abstract ImGuiComboFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var PopupAlignLeft : Int = 1;
 	var HeightSmall : Int = 2;
@@ -383,7 +383,7 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
 	var HeightMask_ : Int = 30;
 }
 
-@:enum abstract ImGuiColorEditFlags(Int) from Int to Int {
+enum abstract ImGuiColorEditFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var NoAlpha : Int = 2;
 	var NoPicker : Int = 4;
@@ -414,7 +414,7 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
 	var _InputMask : Int = 402653184;
 }
 
-@:enum abstract ImGuiCol(Int) from Int to Int {
+enum abstract ImGuiCol(Int) from Int to Int {
 	var Text = 0;
 	var TextDisabled;
 	var WindowBg;
@@ -473,7 +473,7 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
 	var COUNT;
 }
 
-@:enum abstract ImGuiBackendFlags(Int) from Int to Int {
+enum abstract ImGuiBackendFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var HasGamepad : Int = 1;
 	var HasMouseCursors : Int = 2;
@@ -481,20 +481,20 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
 	var RendererHasVtxOffset : Int = 8;
 }
 
-@:enum abstract ImFontAtlasFlags(Int) from Int to Int {
+enum abstract ImFontAtlasFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var NoPowerOfTwoHeight : Int = 1;
 	var NoMouseCursors : Int = 2;
 }
 
-@:enum abstract ImDrawListFlags(Int) from Int to Int {
+enum abstract ImDrawListFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var AntiAliasedLines : Int = 1;
 	var AntiAliasedFill : Int = 2;
 	var AllowVtxOffset : Int = 4;
 }
 
-@:enum abstract ImGuiSliderFlags(Int) from Int to Int {
+enum abstract ImGuiSliderFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var AlwaysClamp : Int = 16; // Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.
 	var Logarithmic : Int = 32; // Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
@@ -502,7 +502,7 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
 	var NoInput : Int = 128; // Disable CTRL+Click or Enter key allowing to input text directly into the widget
 }
 
-@:enum abstract ImGuiTableFlags(Int) from Int to Int {
+enum abstract ImGuiTableFlags(Int) from Int to Int {
 	var None                       = 0;
     var Resizable                  = 1 << 0;   // Enable resizing columns.
     var Reorderable                = 1 << 1;   // Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)
@@ -547,19 +547,19 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
     var SortTristate               = 1 << 27;  // Allow no sorting; disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).
 }
 
-@:enum abstract ImGuiTableRowFlags(Int) from Int to Int {
+enum abstract ImGuiTableRowFlags(Int) from Int to Int {
     var None                         = 0;
     var Headers                      = 1 << 0;    // Identify header row (set default background color + width of its contents accounted differently for auto column width)
 }
 
-@:enum abstract ImGuiTableBgTarget(Int) from Int to Int {
+enum abstract ImGuiTableBgTarget(Int) from Int to Int {
     var None                         = 0;
     var RowBg0                       = 1;        // Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)
     var RowBg1                       = 2;        // Set row background color 1 (generally used for selection marking)
     var CellBg                       = 3;        // Set cell background color (top-most color)
 }
 
-@:enum abstract ImGuiTableColumnFlags(Int) from Int to Int {
+enum abstract ImGuiTableColumnFlags(Int) from Int to Int {
     // Input configuration flags
     var None                  = 0;
     var Disabled              = 1 << 0;   // Overriding/master disable flag: hide column; won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)
@@ -591,7 +591,7 @@ abstract ImGuiScalar(Dynamic) from Int from hl.UI8 from hl.UI16 from Single from
 
 // Flags for ImDrawList functions
 // (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)
-@:enum abstract ImDrawFlags(Int) from Int to Int {
+enum abstract ImDrawFlags(Int) from Int to Int {
     var None                        = 0;
     var Closed                      = 1 << 0; // PathStroke(); AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)
     var RoundCornersTopLeft         = 1 << 4; // AddRect(); AddRectFilled(); PathRect(): enable rounding top-left corner only (when rounding > 0.0f; we default to all corners). Was 0x01.

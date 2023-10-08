@@ -8,7 +8,7 @@ import imgui.ImGui.ImDrawList;
 import imgui.ImGui.Ref;
 
 // Flags for ImGui::BeginNeoSequencer()
-@:enum abstract ImGuiNeoSequencerFlags(Int) from Int to Int {
+enum abstract ImGuiNeoSequencerFlags(Int) from Int to Int {
     var None                 = 0;
     var AllowLengthChanging  = 1 << 0; // Allows changing length of sequence
     var EnableSelection      = 1 << 1; // Enables selection of keyframes
@@ -23,14 +23,14 @@ import imgui.ImGui.Ref;
 }
 
 // Flags for ImGui::BeginNeoTimeline()
-@:enum abstract ImGuiNeoTimelineFlags(Int) from Int to Int {
+enum abstract ImGuiNeoTimelineFlags(Int) from Int to Int {
     var None                 = 0;
     var AllowFrameChanging   = 1 << 0;
     var Group                = 1 << 1;
 }
 
 // Flags for ImGui::IsNeoTimelineSelected()
-@:enum abstract ImGuiNeoTimelineIsSelectedFlags(Int) from Int to Int {
+enum abstract ImGuiNeoTimelineIsSelectedFlags(Int) from Int to Int {
     var None: Int            = 0;
     var NewlySelected: Int   = 1 << 0;
 }
@@ -38,7 +38,7 @@ import imgui.ImGui.Ref;
 
 
 
-@:enum abstract NeoStyleColor(Int) from Int to Int {
+enum abstract NeoStyleColor(Int) from Int to Int {
     var Bg = 0;
     var TopBarBg = 1;
     var SelectedTimeline = 2;

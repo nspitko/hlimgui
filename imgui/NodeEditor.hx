@@ -14,7 +14,7 @@ private typedef ImDrawListPtr = hl.Abstract<"imdrawlist">;
 
 typedef EditorContext = hl.Abstract<"imnecontext">;
 
-@:enum abstract StyleColor(Int) from Int to Int {
+enum abstract StyleColor(Int) from Int to Int {
     var Bg = 0;
     var Grid = 1;
     var NodeBg = 2;
@@ -37,7 +37,7 @@ typedef EditorContext = hl.Abstract<"imnecontext">;
     var Count = 18;
 }
 
-@:enum abstract StyleVar(Int) from Int to Int {
+enum abstract StyleVar(Int) from Int to Int {
     var NodePadding = 0;
     var NodeRounding = 1;
     var NodeBorderWidth = 2;
@@ -110,12 +110,12 @@ class Style
 }
 
 
-@:enum abstract PinKind(Int) from Int to Int {
+enum abstract PinKind(Int) from Int to Int {
 	var Input : Int = 0;
 	var Output : Int = 1;
 }
 
-@:enum abstract FlowDirection(Int) from Int to Int {
+enum abstract FlowDirection(Int) from Int to Int {
 	var Forward : Int = 0;
 	var Backward : Int = 1;
 }
