@@ -121,12 +121,20 @@ class ImGuiDrawableBuffers {
 			
 			// create or reuse vertex buffer
 			if (i == this.vertex_buffers.length) {
+				#if hlimgui_heaps_old_buffer_alloc
 				this.vertex_buffers[i] = new h3d.Buffer(vertexCount, vertexStride, [RawFormat, Dynamic]);
+				#else
+				this.vertex_buffers[i] = new h3d.Buffer(vertexCount, hxd.BufferFormat.H2D, [Dynamic]);
+				#end
 				this.index_buffers[i] = new h3d.Indexes(indexCount, true);
 			} else {
 				if (this.vertex_buffers[i].vertices < vertexCount) {
 					this.vertex_buffers[i].dispose();
+					#if hlimgui_heaps_old_buffer_alloc
 					this.vertex_buffers[i] = new h3d.Buffer(vertexCount, vertexStride, [RawFormat, Dynamic]);
+					#else
+					this.vertex_buffers[i] = new h3d.Buffer(vertexCount, hxd.BufferFormat.H2D, [Dynamic]);
+					#end
 				}
 				if (this.index_buffers[i].count < indexCount) {
 					this.index_buffers[i].dispose();

@@ -1096,6 +1096,7 @@ abstract ImDragDropPayload(ImDragDropPayloadPtr) from ImDragDropPayloadPtr to Im
 class ImGui
 {
 	public static inline var FLT_MAX = 3.402823466e+38;
+	public static inline var FLT_MIN = 1.175494e-38;
 
 	// Context
 	public static function createContext() : ImContextPtr {return null;}
