@@ -5,5 +5,5 @@
 [submodule "extension/lib/imgui-node-editor"]
 	path = extension/lib/imgui-node-editor
 	url = https://github.com/nspitko/imgui-node-editor.git
-	branch = TypeOverrideFix
+	branch = master
 	ignore = dirty
