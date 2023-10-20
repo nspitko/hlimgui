@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "Public",
   "releasenote": "initial release",
+  "main" : "Run",
   "contributors": [
     "haddock7",
     "austineast"
