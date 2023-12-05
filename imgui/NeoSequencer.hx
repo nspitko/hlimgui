@@ -114,7 +114,7 @@ class NeoSequencer
 	public static function beginTimeline( label: String, ?open: Ref<Bool>, flags: ImGuiNeoTimelineFlags = None): Bool { return false; }
 	public static function endTimeline() {};
 	public static function setSelectedTimeline( timelineLabel: String ): Void {}
-	public static function isTimelineSelected( timelineLabel: String ): Void {}
+	public static function isTimelineSelected( flags: ImGuiNeoTimelineIsSelectedFlags = None ): Bool { return false; }
 
 	public static function keyframe( value: Ref<Int> ) {};
 	public static function isKeyframeHovered(): Bool { return false; }

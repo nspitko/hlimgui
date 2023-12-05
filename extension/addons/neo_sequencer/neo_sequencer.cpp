@@ -95,7 +95,7 @@ HL_PRIM bool HL_NAME(ns_has_selection)()
 	return ImGui::NeoHasSelection();
 }
 
-HL_PRIM bool HL_NAME(ns_is_draggingSelection)()
+HL_PRIM bool HL_NAME(ns_is_dragging_selection)()
 {
 	return ImGui::NeoIsDraggingSelection();
 }
@@ -162,11 +162,11 @@ DEFINE_PRIM(_BOOL, ns_is_keyframe_right_clicked, _NO_ARG );
 DEFINE_PRIM(_VOID, ns_clear_selection, _NO_ARG );
 DEFINE_PRIM(_BOOL, ns_is_selecting, _NO_ARG );
 DEFINE_PRIM(_BOOL, ns_has_selection, _NO_ARG );
-DEFINE_PRIM(_BOOL, ns_is_draggingSelection, _NO_ARG );
+DEFINE_PRIM(_BOOL, ns_is_dragging_selection, _NO_ARG );
 DEFINE_PRIM(_BOOL, ns_can_delete_selection, _NO_ARG );
 DEFINE_PRIM(_BOOL, ns_is_keyframe_selection_right_clicked, _NO_ARG );
 DEFINE_PRIM( _I32, ns_get_keyframe_selection_size, _NO_ARG );
-DEFINE_PRIM( _ARR, ns_get_keyframe_selection, _VOID );
+DEFINE_PRIM( _ARR, ns_get_keyframe_selection, _NO_ARG );
 DEFINE_PRIM(_VOID, ns_set_selected_timeline, _STRING );
 DEFINE_PRIM(_BOOL, ns_is_timeline_selected, _REF(_I32) );
 //DEFINE_PRIM(_BOOL, ns_begin_create_keyframe, _REF(_I32) );
