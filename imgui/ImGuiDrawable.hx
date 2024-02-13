@@ -28,7 +28,7 @@ class ImGuiDrawableBuffers {
 	public var cursor_map: Map<ImGuiMouseCursor, hxd.Cursor> = [];
 	#end
 
-	public function initialize() {
+	public function initialize( addDefaultFont: Bool = true) {
 		if (this.initialized) {
 			return;
 		}
@@ -37,21 +37,26 @@ class ImGuiDrawableBuffers {
 		ImGui.createContext();
 		ImGui.setRenderCallback(renderDrawList);
 
-		var fonts = ImGui.getFontAtlas();
-		var font_info = new ImFontTexData();
-		fonts.addFontDefault();
-		fonts.getTexDataAsRGBA32(font_info);
-		fonts.clearTexData();
+		var io = ImGui.getIO();
+		var fonts = io.Fonts;
 
-		// create font texture
-		var texture_size = font_info.width * font_info.height * 4;
-		var font_pixels = new hxd.Pixels(font_info.width,
-			font_info.height,
-			font_info.buffer.toBytes(texture_size),
-			hxd.PixelFormat.RGBA
-		);
-		font_texture = Texture.fromPixels(font_pixels);
-		fonts.setTexId(font_texture);
+		if( addDefaultFont )
+		{
+			var font_info = new ImFontTexData();
+			fonts.addFontDefault();
+			fonts.getTexDataAsRGBA32(font_info);
+			fonts.clearTexData();
+
+			// create font texture
+			var texture_size = font_info.width * font_info.height * 4;
+			var font_pixels = new hxd.Pixels(font_info.width,
+				font_info.height,
+				font_info.buffer.toBytes(texture_size),
+				hxd.PixelFormat.RGBA
+			);
+			font_texture = Texture.fromPixels(font_pixels);
+			fonts.setTexId(font_texture);
+		}
 
 		#if hlimgui_cursor
 		var cur = new ImCursorData();
@@ -214,12 +219,14 @@ class ImGuiDrawable extends h2d.Drawable {
 	#end
 	private var scene_size : {width: Int, height:Int};
 
-	public function new(?parent) {
+	public function new(?parent, ?addDefaultFont = true) {
 		super(parent);
-		ImGuiDrawableBuffers.instance.initialize();
+		ImGuiDrawableBuffers.instance.initialize( addDefaultFont );
 
 		var scene = getScene();
-		ImGui.setDisplaySize(scene.width, scene.height);
+		var io = ImGui.getIO();
+		io.DisplaySize.x = scene.width;
+		io.DisplaySize.y = scene.height;
 		this.scene_size = {width: scene.width, height:scene.height};
 
 		this.keycode_map = [
@@ -282,9 +289,9 @@ class ImGuiDrawable extends h2d.Drawable {
 		#end
 
 		// Update modifier states
-		ImGui.addKeyEvent( ImGuiKey.ModShift, Key.isDown( Key.SHIFT ) );
-		ImGui.addKeyEvent( ImGuiKey.ModAlt, Key.isDown( Key.ALT ) );
-		ImGui.addKeyEvent( ImGuiKey.ModCtrl, Key.isDown( Key.CTRL ) );
+		io.addKeyEvent( ImGuiKey.ModShift, Key.isDown( Key.SHIFT ) );
+		io.addKeyEvent( ImGuiKey.ModAlt, Key.isDown( Key.ALT ) );
+		io.addKeyEvent( ImGuiKey.ModCtrl, Key.isDown( Key.CTRL ) );
 		//ImGui.addKeyEvent( ImGuiKey.ModSuper, Key.isDown( Key.SUPER ) ); // Unsupported currently.
 
 	}

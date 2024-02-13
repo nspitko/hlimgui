@@ -1946,7 +1946,7 @@ class ImGui
 		provideTypes();
 		createContext();
 		setRenderCallback(render_fn);
-		var fonts = getFontAtlas();
+		var fonts = getIO().Fonts;
 		fonts.addFontDefault();
 		var output = new ImFontTexData();
 		fonts.getTexDataAsRGBA32(output);
