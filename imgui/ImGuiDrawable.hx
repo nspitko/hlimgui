@@ -19,9 +19,9 @@ class ImGuiDrawableBuffers {
 	public var bufferCount: Int;
 
 	var noTexture: Texture;
-	
+
 	var commandData: RenderCommandCallbackData = @:privateAccess new RenderCommandCallbackData();
-	
+
 	private var initialized : Bool;
 	public var font_texture : Texture;
 	#if hlimgui_cursor
@@ -32,11 +32,11 @@ class ImGuiDrawableBuffers {
 		if (this.initialized) {
 			return;
 		}
-		
+
 		ImGui.provideTypes();
 		ImGui.createContext();
 		ImGui.setRenderCallback(renderDrawList);
-		
+
 		var fonts = ImGui.getFontAtlas();
 		var font_info = new ImFontTexData();
 		fonts.addFontDefault();
@@ -113,12 +113,12 @@ class ImGuiDrawableBuffers {
 
 		for (i in 0...renderList.size) {
 			var data = renderList.lists[i];
-			
+
 			final vertexStride = 8;
 			var vertexCount = Std.int(data.vertexBufferSize / (vertexStride * 4)); // data.vertexBufferSize>>5;
 			var indexCount = data.indexBufferSize>>2;
 			// if (vertexCount == 0) continue;
-			
+
 			// create or reuse vertex buffer
 			if (i == this.vertex_buffers.length) {
 				#if hlimgui_heaps_old_buffer_alloc
@@ -147,7 +147,7 @@ class ImGuiDrawableBuffers {
 			bufferCount++;
 		}
 	}
-	
+
 	public function draw(ctx: h2d.RenderContext, obj: h2d.Drawable) {
 		var e = ctx.engine;
 		commandData.ctx = ctx;
@@ -168,10 +168,10 @@ class ImGuiDrawableBuffers {
 		}
 		e.setRenderZone();
 	}
-	
+
 	/**
 		A helper method to set the `smooth` flag to `true` and render subsequent contents using bilinear filtering.
-		
+
 		Usage:
 		```haxe
 		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
@@ -180,10 +180,10 @@ class ImGuiDrawableBuffers {
 	public static function setSmoothCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
 		data.obj.smooth = true;
 	}
-	
+
 	/**
 		A helper method to reset the `smooth` flag to use the default smooth value.
-		
+
 		Usage:
 		```haxe
 		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
@@ -192,10 +192,10 @@ class ImGuiDrawableBuffers {
 	public static function resetSmoothCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
 		data.obj.smooth = null;
 	}
-	
+
 	/**
 		A helper method to reset the `smooth` flag to `false` and render subsequent contents using nearest neighbor filtering.
-		
+
 		Usage:
 		```haxe
 		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
@@ -207,11 +207,6 @@ class ImGuiDrawableBuffers {
 }
 
 class ImGuiDrawable extends h2d.Drawable {
-
-	var mouse_down = [false, false];
-	var mouse_x : Float;
-	var mouse_y : Float;
-	var mouse_delta : Float;
 	var keycode_map : Map<Int,Int>;
 	var wheel_inverted : Bool;
 	#if hlimgui_cursor
@@ -261,8 +256,6 @@ class ImGuiDrawable extends h2d.Drawable {
 		hxd.System.setCursor = updateCursor;
 		#end
 
-		this.mouse_x = scene.mouseX;
-		this.mouse_y = scene.mouseY;
 		this.wheel_inverted = false;
 	}
 
@@ -271,12 +264,15 @@ class ImGuiDrawable extends h2d.Drawable {
 	}
 
 	public function update(dt:Float) {
-		ImGui.setEvents(dt, this.mouse_x, this.mouse_y, this.mouse_delta, mouse_down[0], mouse_down[1]);
-		this.mouse_delta = 0;
+		var io = ImGui.getIO();
+
+		io.DeltaTime = dt;
 
 		var scene = getScene();
 		if (scene.width != this.scene_size.width || scene.height != this.scene_size.height) {
-			ImGui.setDisplaySize(scene.width, scene.height);
+			io.DisplaySize.x = scene.width;
+			io.DisplaySize.y = scene.height;
+
 			this.scene_size = {width: scene.width, height:scene.width};
 		}
 		#if hlimgui_cursor
@@ -315,49 +311,47 @@ class ImGuiDrawable extends h2d.Drawable {
 	#end
 
 	private function onEvent(event: hxd.Event) {
+		var io = ImGui.getIO();
 		switch (event.kind) {
 			case EMove:
-				this.mouse_x = event.relX;
-				this.mouse_y = event.relY;
+				io.addMousePosEvent( event.relX, event.relY );
 			case EPush:
-				if (event.button < 2) {
-					this.mouse_down[event.button] = true;
-					if (ImGui.wantCaptureMouse()) {
-						event.propagate = false;
-					}
+				io.addMouseButtonEvent(event.button, true);
+
+				if (io.WantCaptureMouse) {
+					event.propagate = false;
 				}
 			case ERelease:
-				if (event.button < 2) {
-					this.mouse_down[event.button] = false;
-					if (ImGui.wantCaptureMouse()) {
-						event.propagate = false;
-					}
+				io.addMouseButtonEvent(event.button, false);
+
+				if (io.WantCaptureMouse) {
+					event.propagate = false;
 				}
+
 			case EWheel:
-				this.mouse_delta = event.wheelDelta;
-				if (!this.wheel_inverted) {
-					this.mouse_delta = -this.mouse_delta;
-					if (ImGui.wantCaptureMouse()) {
-						event.propagate = false;
-					}
+				io.addMouseWheelEvent( 0, this.wheel_inverted ? event.wheelDelta : -event.wheelDelta );
+
+				if (io.WantCaptureMouse) {
+					event.propagate = false;
 				}
+
 			case EKeyDown:
 				if (this.keycode_map.exists(event.keyCode)) {
-					ImGui.addKeyEvent(this.keycode_map[event.keyCode], true);
-					if (ImGui.wantCaptureKeyboard()) {
+					io.addKeyEvent(this.keycode_map[event.keyCode], true);
+					if (io.WantCaptureKeyboard) {
 						event.propagate = false;
 					}
 				}
 			case EKeyUp:
 				if (this.keycode_map.exists(event.keyCode)) {
-					ImGui.addKeyEvent(this.keycode_map[event.keyCode], false);
-					if (ImGui.wantCaptureKeyboard()) {
+					io.addKeyEvent(this.keycode_map[event.keyCode], false);
+					if (io.WantCaptureKeyboard) {
 						event.propagate = false;
 					}
 				}
 			case ETextInput:
-				ImGui.addKeyChar(event.charCode);
-				if (ImGui.wantCaptureKeyboard()) {
+				io.addInputCharacter(event.charCode);
+				if (io.WantCaptureKeyboard) {
 					event.propagate = false;
 				}
 			default:

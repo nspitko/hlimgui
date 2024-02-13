@@ -119,3 +119,4 @@ namespace ImGui
 }
 */
 
+#define IMGUI_DISABLE_OBSOLETE_KEYIO 1

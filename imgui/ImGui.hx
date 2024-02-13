@@ -36,6 +36,9 @@ enum abstract ImGuiWindowFlags(Int) from Int to Int {
 	var NoNav : Int = 786432;
 	var NoDecoration : Int = 43;
 	var NoInputs : Int = 786944;
+
+	@:noCompletion var ChildWindow: Int = 16777216;
+	@:noCompletion var Tooltip: Int = 33554432;
 }
 
 enum abstract ImGuiDockNodeFlags(Int) from Int to Int {
@@ -929,6 +932,141 @@ abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
 	static function style_scale_all_sizes(style: ImGuiStyle, scaleFactor: Single): Void {}
 }
 
+
+@:keep
+@:build(imgui._ImGuiInternalMacro.buildFlatStruct())
+@:hlNative("hlimgui")
+@:struct class ImGuiIO {
+	var ConfigFlags: ImGuiConfigFlags;
+	var BackendFlags: ImGuiBackendFlags;
+	@:flatten var DisplaySize: ImVec2S;
+	var DeltaTime: Single;
+	var IniSavingRate: Single;
+	var IniFilemame: hl.Bytes;
+	var LogFilename: hl.Bytes;
+	var MouseDoubleClickTime: Single;
+	var MouseDoubleClickMaxDist: Single;
+	var MouseDragThreshold: Single;
+	var KeyRepeatDelay: Single;
+	var KeyRepeatRate: Single;
+	var HoverDelayNormal: Single;
+	var HoverDelayShort: Single;
+	var UserData: hl.Bytes;
+
+	var Fonts: ImFontAtlas;
+	var FontGlobalScale: Single;
+	var FontAllowUserScaling: Bool;
+	var FontDefault: ImFont;
+	@:flatten var DisplayFramebufferScale: ImVec2S;
+
+	// Docking options (when ImGuiConfigFlags_DockingEnable is set)
+	var ConfigDockingNoSplit: Bool;
+	var ConfigDockingWithShift: Bool;
+	var ConfigDockingAlwaysTabBar: Bool;
+	var ConfigDockingTransparentPayload: Bool;
+
+	// Viewport options (when ImGuiConfigFlags_ViewportsEnable is set; which it's not in hlimgui)
+	var ConfigViewportNoAutoMerge: Bool;
+	var ConfigViewportsNoTaskBarIcon: Bool;
+	var ConfigViewportsNoDecoration: Bool;
+	var ConfigViewportsNoDefaultParent: Bool;
+
+	// Miscellaneous options
+	var MouseDrawCursor: Bool;
+	var ConfigMacOSXBehaviors: Bool;
+	var ConfigInputTrickleEventQueue: Bool;
+	var ConfigInputTextCursorBlink: Bool;
+	var ConfigInputTextEnterKeepActive: Bool;
+	var ConfigDragClickToInputText: Bool;
+	var ConfigWindowsResizeFromEdges: Bool;
+	var ConfigWindowsMoveFromTitleBarOnly: Bool;
+	var ConfigMemoryCompactTimer: Single;
+
+	//------------------------------------------------------------------
+    // Platform Functions
+    // (the imgui_impl_xxxx backend files are setting those up for you)
+    //------------------------------------------------------------------
+	var BackendPlatformName: hl.Bytes;
+	var BackendRendererName: hl.Bytes;
+	var BackendPlatformUserData: hl.Bytes;
+	var BackendRendererUserData: hl.Bytes;
+	var BackendLanguageUserData: hl.Bytes;
+
+	// Optional: Access OS clipboard
+    // (default to use native Win32 clipboard on Windows, otherwise uses a private clipboard. Override to access OS clipboard on other architectures)
+    @:noCompletion var GetClipboardTextFn: hl.Bytes;
+    @:noCompletion var SetClipboardTextFn: hl.Bytes;
+    var ClipboardUserData: hl.Bytes;
+
+	// Optional: Notify OS Input Method Editor of the screen position of your cursor for text input position (e.g. when using Japanese/Chinese IME on Windows)
+    // (default to use native imm32 api on Windows)
+	@:noCompletion var SetPlatformImeDataFn: hl.Bytes;
+	@:noCompletion var _UnusedPadding: hl.Bytes;
+
+    //------------------------------------------------------------------
+    // Input - Call before calling NewFrame()
+    //------------------------------------------------------------------
+
+	public function addKeyEvent( key: ImGuiKey, down: Bool ) { io_add_key_event(this, key, down); } 								// Queue a new key down/up event. Key should be "translated" (as in, generally ImGuiKey_A matches the key end-user would use to emit an 'A' character)
+	public function addKeyAnalogEvent( key: ImGuiKey, down: Bool, v: Single ) { io_add_key_analog_event(this, key, down, v); }		// Queue a new key down/up event for analog values (e.g. ImGuiKey_Gamepad_ values). Dead-zones should be handled by the backend.
+	public function addMousePosEvent( x: Single, y: Single ) { io_add_mouse_pos_event(this, x, y); }							// Queue a mouse position update. Use -FLT_MAX,-FLT_MAX to signify no mouse (e.g. app not focused and not hovered)
+	public function addMouseButtonEvent( button: Int, down: Bool ) { io_add_mouse_button_event(this, button, down); }				// Queue a mouse button change
+	public function addMouseWheelEvent( wheel_x: Single, wheel_y: Single ) { io_add_mouse_wheel_event(this, wheel_x, wheel_y); }					// Queue a mouse wheel update. wheel_y<0: scroll down, wheel_y>0: scroll up, wheel_x<0: scroll right, wheel_x>0: scroll left.
+	public function addMouseViewportEvent( id: ImGuiID ) { io_add_mouse_viewport_event(this, id ); }								// Queue a mouse hovered viewport. Requires backend to set ImGuiBackendFlags_HasMouseHoveredViewport to call this (for multi-viewport support).
+	public function addFocusEvent( focused: Bool ) { io_add_focus_event(this, focused ); }											// Queue a gain/loss of focus for the application (generally based on OS/platform focus of your window)
+	public function addInputCharacter( c: Int ) { io_add_input_character(this, c ); }												// Queue a new character input
+	public function addInputCharacterUTF16( c: Int ) { io_add_input_character_utf16(this, c ); }									// Queue a new character input from a UTF-16 character, it can be a surrogate
+	public function addInputCharactersUTF8( chars: String ) { io_add_input_characters_utf8(this, chars ); }							// Queue a new characters input from a UTF-8 string
+	// No, I have no idea why the utf8 variant accepts multiple characters...
+
+	// [Optional] Specify index for legacy <1.87 IsKeyXXX() functions with native indices + specify native keycode, scancode.
+	public function setKeyEventNativeData( key: ImGuiKey, native_keycode: Int, native_scancode: Int, native_legacy: Int = -1 ) {
+		io_set_key_event_native_data(this, key, native_keycode, native_scancode, native_legacy );
+	}
+	public function setAppAcceptingEvents( accepting_events: Bool ) { io_set_app_accepting_events( this, accepting_events ); }		// Set master flag for accepting key/mouse/text events (default to true). Useful if you have native dialog boxes that are interrupting your application loop/refresh, and you want to disable events being queued while your app is frozen.
+	public function clearInputCharacters() { io_clear_input_characters( this ); }													// Set master flag for accepting key/mouse/text events (default to true). Useful if you have native dialog boxes that are interrupting your application loop/refresh, and you want to disable events being queued while your app is frozen.
+	public function clearInputKeys() { io_clear_input_keys( this ); }																// Set master flag for accepting key/mouse/text events (default to true). Useful if you have native dialog boxes that are interrupting your application loop/refresh, and you want to disable events being queued while your app is frozen.
+
+	static function io_add_key_event(io: ImGuiIO, key: ImGuiKey, down: Bool) {}
+	static function io_add_key_analog_event(io: ImGuiIO, key: ImGuiKey, down: Bool, v: Single) {}
+	static function io_add_mouse_pos_event(io: ImGuiIO, x: Single, y: Single) {}
+	static function io_add_mouse_button_event(io: ImGuiIO, button: Int, down: Bool) {}
+	static function io_add_mouse_wheel_event(io: ImGuiIO, wheel_x: Single, wheel_y: Single) {}
+	static function io_add_mouse_viewport_event(io: ImGuiIO, id: ImGuiID ) {}
+	static function io_add_focus_event(io: ImGuiIO, focused: Bool ) {}
+	static function io_add_input_character(io: ImGuiIO, c: Int ) {}
+	static function io_add_input_character_utf16(io: ImGuiIO, c: Int ) {}
+	static function io_add_input_characters_utf8(io: ImGuiIO, chars: String ) {}
+
+	static function io_set_key_event_native_data(io: ImGuiIO, key: ImGuiKey, native_keycode: Int, native_scancode: Int, native_legacy: Int ) {}
+	static function io_set_app_accepting_events( io: ImGuiIO, accepting_events: Bool ) {}
+	static function io_clear_input_characters( io: ImGuiIO ) {}
+	static function io_clear_input_keys( io: ImGuiIO ) {}
+
+	//------------------------------------------------------------------
+    // Output - Updated by NewFrame() or EndFrame()/Render()
+    // (when reading from the io.WantCaptureMouse, io.WantCaptureKeyboard flags to dispatch your inputs, it is
+    //  generally easier and more correct to use their state BEFORE calling NewFrame(). See FAQ for details!)
+    //------------------------------------------------------------------
+
+	var WantCaptureMouse: Bool;                   // Set when Dear ImGui will use mouse inputs, in this case do not dispatch them to your main game/application (either way, always pass on mouse inputs to imgui). (e.g. unclicked mouse is hovering over an imgui window, widget is active, mouse was clicked over an imgui window, etc.).
+    var WantCaptureKeyboard: Bool;                // Set when Dear ImGui will use keyboard inputs, in this case do not dispatch them to your main game/application (either way, always pass keyboard inputs to imgui). (e.g. InputText active, or an imgui window is focused and navigation is enabled, etc.).
+    var WantTextInput: Bool;                      // Mobile/console: when set, you may display an on-screen keyboard. This is set by Dear ImGui when it wants textual keyboard input to happen (e.g. when a InputText widget is active).
+    var WantSetMousePos: Bool;                    // MousePos has been altered, backend should reposition mouse on next frame. Rarely used! Set only when ImGuiConfigFlags_NavEnableSetMousePos flag is enabled.
+    var WantSaveIniSettings: Bool;                // When manual .ini load/save is active (io.IniFilename == NULL), this will be set to notify your application that you can call SaveIniSettingsToMemory() and save yourself. Important: clear io.WantSaveIniSettings yourself after saving!
+    var NavActive: Bool;                          // Keyboard/Gamepad navigation is currently allowed (will handle ImGuiKey_NavXXX events) = a window is focused and it doesn't use the ImGuiWindowFlags_NoNavInputs flag.
+    var NavVisible: Bool;                         // Keyboard/Gamepad navigation is visible and allowed (will handle ImGuiKey_NavXXX events).
+    var Framerate: Single;                        // Estimate of application framerate (rolling average over 60 frames, based on io.DeltaTime), in frame per second. Solely for convenience. Slow applications may not want to use a moving average or may want to reset underlying buffers occasionally.
+    var MetricsRenderVertices: Int;               // Vertices output during last call to Render()
+    var MetricsRenderIndices: Int;                // Indices output during last call to Render() = number of triangles * 3
+    var MetricsRenderWindows: Int;                // Number of visible windows
+    var MetricsActiveWindows: Int;                // Number of active windows
+    var MetricsActiveAllocations: Int;            // Number of active allocations, updated by MemAlloc/MemFree based on current context. May be off if you have multiple imgui contexts.
+    @:flatten var MouseDelta: ImVec2S;            // Mouse delta. Note that this is zero if either current or previous position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing mouse won't have a huge delta.
+
+
+}
+
 typedef ImFontConfig = imgui.types.ImFontAtlas.ImFontConfig;
 
 // Callbacks
@@ -1105,7 +1243,7 @@ class ImGui
 	public static function setCurrentContext(ctx : ImContextPtr) {}
 
 	// Main
-	// TODO: GetIO()
+	public static function getIO() : ImGuiIO {return null;}
 	public static function getStyle() : ImGuiStyle {return null;}
 	public static function setStyle(style : ImGuiStyle) {}
 	public static function newFrame() {}
@@ -1774,19 +1912,19 @@ class ImGui
 	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
 
 	// GetIO()->... wrappers
-	public static function setIniFilename(filename : String) {} // IniFilename
-	public static function addKeyChar(c : Int) {} // AddInputCharacter
-	public static function addKeyEvent(c : Int, down: Bool) {} // AddKeyEvent
+	@:deprecated public static function setIniFilename(filename : String) {} // IniFilename
+	@:deprecated public static function addKeyChar(c : Int) {} // AddInputCharacter
+	@:deprecated public static function addKeyEvent(c : Int, down: Bool) {} // AddKeyEvent
 	// Shortcut to set MousePos, MouseWheel, MouseDown[0] and MouseDown[1]
-	public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
-	public static function setDisplaySize(display_width:Int, display_height:Int) {} // DisplaySize
-	public static function wantCaptureMouse() : Bool {return false;} // WantCaptureMouse
-	public static function wantCaptureKeyboard() : Bool {return false;} // WantCaptureKeyboard
-	public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {} // ConfigFlags
-	public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
-	public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
-	public static function getUserData() : Dynamic {return null;} // UserData
-	public static function getFontAtlas(): ImFontAtlas { return null; }
+	@:deprecated public static function setEvents(dt : Single, mouse_x : Single, mouse_y : Single, wheel : Single, left_click : Bool, right_click : Bool) {}
+	@:deprecated public static function setDisplaySize(display_width:Int, display_height:Int) {} // DisplaySize
+	@:deprecated public static function wantCaptureMouse() : Bool {return false;} // WantCaptureMouse
+	@:deprecated public static function wantCaptureKeyboard() : Bool {return false;} // WantCaptureKeyboard
+	@:deprecated public static function setConfigFlags(flags:ImGuiConfigFlags = 0) : Void {} // ConfigFlags
+	@:deprecated public static function getConfigFlags() : ImGuiConfigFlags {return 0;} // ConfigFlags
+	@:deprecated public static function setUserData(data : Dynamic) {} // UserData; Should be safe to store anything and not be GCd.
+	@:deprecated public static function getUserData() : Dynamic {return null;} // UserData
+	@:deprecated public static function getFontAtlas(): ImFontAtlas { return null; }
 
 	// internal functions
 	public static function setRenderCallback(render_fn:RenderList->Void) {}
