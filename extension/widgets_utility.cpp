@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "lib/imgui/imgui_internal.h"
 
 HL_PRIM bool HL_NAME(is_item_hovered)(ImGuiHoveredFlags* flags)
 {
@@ -85,6 +86,16 @@ HL_PRIM void HL_NAME(set_item_allow_overlap)()
     ImGui::SetItemAllowOverlap();
 }
 
+HL_PRIM void HL_NAME(set_key_owner)( ImGuiKey key, ImGuiID owner_id, ImGuiInputFlags* flags )
+{
+    ImGui::SetKeyOwner( key, owner_id, convertPtr(flags,0) );
+}
+
+HL_PRIM void HL_NAME(set_item_key_owner)( ImGuiKey key, ImGuiInputFlags* flags )
+{
+    ImGui::SetItemKeyOwner( key, convertPtr(flags,0) );
+}
+
 DEFINE_PRIM(_BOOL, is_item_hovered, _REF(_I32));
 DEFINE_PRIM(_BOOL, is_item_active, _NO_ARG);
 DEFINE_PRIM(_BOOL, is_item_focused, _NO_ARG);
@@ -102,3 +113,5 @@ DEFINE_PRIM(_IMVEC2, get_item_rect_min, _NO_ARG);
 DEFINE_PRIM(_IMVEC2, get_item_rect_max, _NO_ARG);
 DEFINE_PRIM(_IMVEC2, get_item_rect_size, _NO_ARG);
 DEFINE_PRIM(_VOID, set_item_allow_overlap, _NO_ARG);
+DEFINE_PRIM(_VOID, set_key_owner, _I32 _I32 _REF(_I32) );
+DEFINE_PRIM(_VOID, set_item_key_owner, _I32 _REF(_I32) );

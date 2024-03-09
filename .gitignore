@@ -10,3 +10,4 @@ Release/
 .DS_Store
 .vscode/
 *.log
+*.bat

@@ -249,6 +249,16 @@ enum abstract ImGuiKey(Int) from Int to Int {
 	//
 	var KeyPadEnter : Int = 615;
 	//
+	// Aliases: Mouse Buttons (auto-submitted from AddMouseButtonEvent() calls)
+    // - This is mirroring the data also written to io.MouseDown[], io.MouseWheel, in a format allowing them to be accessed via standard key API.
+	var MouseLeft: Int = 641;
+	var MouseRight;
+	var MouseMiddle;
+	var MouseX1;
+	var MouseX2;
+	var MouseWheelX;
+	var MouseWheelY;
+	//
 	var ModCtrl : Int = 1 << 12;
 	var ModShift : Int = 1 << 13;
 	var ModAlt : Int = 1 << 14;
@@ -592,6 +602,51 @@ enum abstract ImGuiTableColumnFlags(Int) from Int to Int {
 
 }
 
+enum abstract ImGuiInputFlags(Int) from Int to Int {
+	// Flags for IsKeyPressed(), IsMouseClicked(), Shortcut()
+    var None                = 0;
+    var Repeat              = 1 << 0;   // Return true on successive repeats. Default for legacy IsKeyPressed(). NOT Default for legacy IsMouseClicked(). MUST BE == 1.
+    var RepeatRateDefault   = 1 << 1;   // Repeat rate: Regular (default)
+    var RepeatRateNavMove   = 1 << 2;   // Repeat rate: Fast
+    var RepeatRateNavTweak  = 1 << 3;   // Repeat rate: Faster
+    var RepeatRateMask_     = RepeatRateDefault | RepeatRateNavMove | RepeatRateNavTweak;
+
+    // Flags for SetItemKeyOwner()
+    var CondHovered         = 1 << 4;   // Only set if item is hovered (default to both)
+    var CondActive          = 1 << 5;   // Only set if item is active (default to both)
+    var CondDefault_        = CondHovered | CondActive;
+    var CondMask_           = CondHovered | CondActive;
+
+    // Flags for SetKeyOwner(), SetItemKeyOwner()
+    var LockThisFrame       = 1 << 6;   // Access to key data will require EXPLICIT owner ID (ImGuiKeyOwner_Any/0 will NOT accepted for polling). Cleared at end of frame. This is useful to make input-owner-aware code steal keys from non-input-owner-aware code.
+    var LockUntilRelease    = 1 << 7;   // Access to key data will require EXPLICIT owner ID (ImGuiKeyOwner_Any/0 will NOT accepted for polling). Cleared when the key is released or at end of each frame if key is released. This is useful to make input-owner-aware code steal keys from non-input-owner-aware code.
+
+    // Routing policies for Shortcut() + low-level SetShortcutRouting()
+    // - The general idea is that several callers register interest in a shortcut, and only one owner gets it.
+    // - When a policy (other than _RouteAlways) is set, Shortcut() will register itself with SetShortcutRouting(),
+    //   allowing the system to decide where to route the input among other route-aware calls.
+    // - Shortcut() uses RouteFocused by default: meaning that a simple Shortcut() poll
+    //   will register a route and only succeed when parent window is in the focus stack and if no-one
+    //   with a higher priority is claiming the shortcut.
+    // - Using RouteAlways is roughly equivalent to doing e.g. IsKeyPressed(key) + testing mods.
+    // - Priorities: GlobalHigh > Focused (when owner is active item) > Global > Focused (when focused window) > GlobalLow.
+    // - Can select only 1 policy among all available.
+    var RouteFocused        = 1 << 8;   // (Default) Register focused route: Accept inputs if window is in focus stack. Deep-most focused window takes inputs. ActiveId takes inputs over deep-most focused window.
+    var RouteGlobalLow      = 1 << 9;   // Register route globally (lowest priority: unless a focused window or active item registered the route) -> recommended Global priority.
+    var RouteGlobal         = 1 << 10;  // Register route globally (medium priority: unless an active item registered the route, e.g. CTRL+A registered by InputText).
+    var RouteGlobalHigh     = 1 << 11;  // Register route globally (highest priority: unlikely you need to use that: will interfere with every active items)
+    var RouteMask_          = RouteFocused | RouteGlobal | RouteGlobalLow | RouteGlobalHigh; // _Always not part of this!
+    var RouteAlways         = 1 << 12;  // Do not register route, poll keys directly.
+    var RouteUnlessBgFocused= 1 << 13;  // Global routes will not be applied if underlying background/void is focused (== no Dear ImGui windows are focused). Useful for overlay applications.
+    var RouteExtraMask_     = RouteAlways | RouteUnlessBgFocused;
+
+    // [Internal] Mask of which function support which flags
+	var SupportedByIsKeyPressed     = Repeat | RepeatRateMask_;
+    var SupportedByShortcut         = Repeat | RepeatRateMask_ | RouteMask_ | RouteExtraMask_;
+    var SupportedBySetKeyOwner      = LockThisFrame | LockUntilRelease;
+    var SupportedBySetItemKeyOwner  = SupportedBySetKeyOwner | CondMask_;
+}
+
 // Flags for ImDrawList functions
 // (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)
 enum abstract ImDrawFlags(Int) from Int to Int {
@@ -932,6 +987,23 @@ abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
 	static function style_scale_all_sizes(style: ImGuiStyle, scaleFactor: Single): Void {}
 }
 
+enum abstract ImGuiKeyChord(Int) from Int to Int {
+	var None;
+	var Ctrl = ImGuiKey.ModCtrl;
+	var Shift = ImGuiKey.ModShift;
+	var Alt = ImGuiKey.ModAlt;
+	var Super = ImGuiKey.ModSuper;
+}
+
+@:keep
+@:structInit class ImGuiKeyData
+{
+	public var Down: Bool;
+	public var DownDuration: Single;
+	public var DownDurationPrev: Single;
+	public var AnalogValue: Single;
+}
+
 
 @:keep
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
@@ -1064,7 +1136,32 @@ abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
     var MetricsActiveAllocations: Int;            // Number of active allocations, updated by MemAlloc/MemFree based on current context. May be off if you have multiple imgui contexts.
     @:flatten var MouseDelta: ImVec2S;            // Mouse delta. Note that this is zero if either current or previous position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing mouse won't have a huge delta.
 
+	//------------------------------------------------------------------
+    // [Internal] Dear ImGui will maintain those fields. Forward compatibility not guaranteed!
+    //------------------------------------------------------------------
+	// Main Input State
+    // (this block used to be written by backend, since 1.87 it is best to NOT write to those directly, call the AddXXX functions above instead)
+    // (reading from those variables is fair game, as they are extremely unlikely to be moving anywhere)
+	@:flatten var MousePos: ImVec2S;
+	// @todo: This is broken
+	//@:flattenMap(ImGuiMouseButton) var MouseDown: Bool;
+	// gross hack instead
+	var MouseDown_Left: Bool;
+	var MouseDown_Right: Bool;
+	var MouseDown_Middle: Bool;
+	var MouseDown_AltA: Bool;
+	var MouseDown_AltB: Bool;
+	// end hack
+	var MouseWheel: Single;
+	var MouseWheelH: Single;
+	var MouseHoveredViewport: ImGuiID;
+	var KeyCtrl: Bool;
+	var KeyShift: Bool;
+	var KeyAlt: Bool;
+	var KeySuper: Bool;
 
+	var KeyMods: ImGuiKeyChord;
+	// @todo: We need a way to expose the key map here to go any further.
 }
 
 typedef ImFontConfig = imgui.types.ImFontAtlas.ImFontConfig;
@@ -1806,6 +1903,10 @@ class ImGui
 	public static function getItemRectMax() : ImVec2 {return null;}
 	public static function getItemRectSize() : ImVec2 {return null;}
 	public static function setItemAllowOverlap() {}
+
+	// Key owner [EXPERIMENTAL API]
+	public static function setKeyOwner( key: ImGuiKey, owner_id: ImGuiID, flags: ImGuiInputFlags = ImGuiInputFlags.None ) : Void {}
+	public static function setItemKeyOwner( key: ImGuiKey, flags: ImGuiInputFlags = ImGuiInputFlags.None ) : Void {}
 
 	// Viewports
 	// public static function getMainViewport(): IMViewport
