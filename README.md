@@ -1,7 +1,22 @@
 # Heaps/HashLink native binding for [Dear ImGui](https://github.com/ocornut/imgui)
 
 ## Build & Install
-First, make sure that HashLink, CMake and a C/C++ compiler are installed on your system. This version of hlimgui uses submodules. Get them prepared like this:
+First, make sure that HashLink, CMake and a C/C++ compiler are installed on your system.
+
+### Building extension automatically
+1. Install the library to haxelib.
+  - With haxelib directly: `haxelib git hlimgui https://github.com/nspitko/hlimgui.git`
+  - By cloning it to another directory and using `haxelib dev hlimgui path/to/hlimgui`
+  - With lix: See https://github.com/lix-pm/lix.client#local-development
+2. Make sure your `hl.exe` is in the `PATH` or one of the following environment variables point at the directory where it's located.
+3. Run `haxelib run hlimgui build -u` to update submodules (`-u` flag) and compile the .hdll file.
+4. Add `-lib hlimgui` to your `build.hxml`
+5. When shipping, make sure to copy the `hlimgui.hdll` from hashlink directory or run `haxelib run hlimgui install path/to/output/dir`
+
+Note: by default `build` command compiles in debug mode, use `-r` flag to compile in release mode.
+
+### Building extension manually
+This version of hlimgui uses submodules. Get them prepared like this:
 
 ```
 git submodule init
@@ -48,10 +63,10 @@ Here is a list of unsupported features and changes:
 - The function `setIniFilename` doesn't exist in ImGui, it has been added to modify the filename of the default ini file saved by ImGui (pass null to turn off this feature).
 
 ## References
-Input function often take a `Ref<T>` / `imgui.FieldRef<T>` argument.
-Those are equivalent to `hl.Ref` however offer an extra feature of referencing an class instance or static field, not only local variables.
+Input functions often take a `Ref<T>` / `imgui.FieldRef<T>` argument.
+Those are equivalent to `hl.Ref` however offer an extra feature of referencing a class instance or static field, not only local variables.
 
-However the limitation of `Ref` is that it does not work properties (`get_x` / `set_y`), in which case you will have to manually load said values into local variables or use the wrapper function:
+However the limitation of `Ref` is that it does not work on properties (`get_x` / `set_y`), in which case you will have to manually load said values into local variables or use the wrapper function:
 ```haxe
 import imgui.ImGuiMacro.*; // Import the `wref` / `wrefv` and `wrefc` macro functions into global scope.
 // In order to denote which values should be converted into a reference,
