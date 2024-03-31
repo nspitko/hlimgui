@@ -492,6 +492,11 @@ enum abstract ImGuiBackendFlags(Int) from Int to Int {
 	var HasMouseCursors : Int = 2;
 	var HasSetMousePos : Int = 4;
 	var RendererHasVtxOffset : Int = 8;
+
+	    // [BETA] Viewports
+	var PlatformHasViewports  = 1 << 10;  // Backend Platform supports multiple viewports.
+	var HasMouseHoveredViewport=1 << 11;  // Backend Platform supports calling io.AddMouseViewportEvent() with the viewport under the mouse. IF POSSIBLE, ignore viewports with the ImGuiViewportFlags_NoInputs flag (Win32 backend, GLFW 3.30+ backend can do this, SDL backend cannot). If this cannot be done, Dear ImGui needs to use a flawed heuristic to find the viewport under.
+	var RendererHasViewports  = 1 << 12;  // Backend Renderer supports multiple viewports.
 }
 
 enum abstract ImFontAtlasFlags(Int) from Int to Int {
@@ -664,6 +669,24 @@ enum abstract ImDrawFlags(Int) from Int to Int {
     var RoundCornersAll             = RoundCornersTopLeft | RoundCornersTopRight | RoundCornersBottomLeft | RoundCornersBottomRight;
     var RoundCornersDefault_        = (1 << 4 | 1 << 5 | 1 << 6 | 1 << 7); // Default to ALL corners if none of the _RoundCornersXX flags are specified.
     var RoundCornersMask_           = RoundCornersAll | RoundCornersNone;
+}
+
+enum abstract ImGuiViewportFlags(Int) from Int to Int
+{
+   var None                     = 0;
+   var IsPlatformWindow         = 1 << 0;   // Represent a Platform Window
+   var IsPlatformMonitor        = 1 << 1;   // Represent a Platform Monitor (unused yet)
+   var OwnedByApp               = 1 << 2;   // Platform Window: is created/managed by the application (rather than a dear imgui backend)
+   var NoDecoration             = 1 << 3;   // Platform Window: Disable platform decorations: title bar, borders, etc. (generally set all windows, but if ImGuiConfigFlags_ViewportsDecoration is set we only set this on popups/tooltips)
+   var NoTaskBarIcon            = 1 << 4;   // Platform Window: Disable platform task bar icon (generally set on popups/tooltips, or all windows if ImGuiConfigFlags_ViewportsNoTaskBarIcon is set)
+   var NoFocusOnAppearing       = 1 << 5;   // Platform Window: Don't take focus when created.
+   var NoFocusOnClick           = 1 << 6;   // Platform Window: Don't take focus when clicked on.
+   var NoInputs                 = 1 << 7;   // Platform Window: Make mouse pass through so we can drag this window while peaking behind it.
+   var NoRendererClear          = 1 << 8;   // Platform Window: Renderer doesn't need to clear the framebuffer ahead (because we will fill it entirely).
+   var TopMost                  = 1 << 9;   // Platform Window: Display on top (for tooltips only).
+   var Minimized                = 1 << 10;  // Platform Window: Window is minimized, can skip render. When minimized we tend to avoid using the viewport pos/size for clipping window or testing if they are contained in the viewport.
+   var NoAutoMerge              = 1 << 11;  // Platform Window: Avoid merging this window into another host window. This can only be set via ImGuiWindowClass viewport flags override (because we need to now ahead if we are going to create a viewport in the first place!).
+   var CanHostOtherWindows      = 1 << 12;  // Main viewport: can host multiple imgui windows (secondary viewports are associated to a single window).
 }
 
 typedef ImEvents = {
@@ -1267,6 +1290,32 @@ typedef ImFont = imgui.types.ImFont;
 typedef ImFontAtlas = imgui.types.ImFontAtlas;
 typedef ImGuiListClipper = imgui.types.ImGuiListClipper;
 typedef ImGuiDockNode = imgui.types.ImGuiDockNode;
+
+@:keep
+@:struct @:hlNative("hlimgui")
+class ImGuiViewport
+{
+	public var ID: ImGuiID;
+	public var Flags: ImGuiViewportFlags;
+	@:flatten public var Pos: ImVec2S;
+	@:flatten public var Size: ImVec2S;
+	@:flatten public var WorkPos: ImVec2S;
+	@:flatten public var WorkSize: ImVec2S;
+	public var DpiScale: Single;
+	public var ParentViewportId: ImGuiID;
+	public var DrawData: hl.Bytes; // ImDrawData*
+
+	public var RendererUserData: hl.Bytes; // void*
+	public var PlatformUserData: h3d.Engine; // void*
+	public var PlatformHandle: hxd.Window; // void*
+	public var PlatformHandleRaw: hl.Bytes; // void*
+
+	public var PlatformWindowCreated: Bool; // Platform window has been created (Platform_CreateWindow() has been called). This is false during the first frame where a viewport is being created.
+	public var PlatformRequestMove: Bool; // Platform window requested move (e.g. window was moved by the OS / host window manager, authoritative position will be OS window position)
+	public var PlatformRequestResize: Bool; // Platform window requested resize (e.g. window was resized by the OS / host window manager, authoritative size will be OS window size)
+	public var PlatformRequestClose: Bool; // Platform window requested closure (e.g. window was moved by the OS / host window manager, e.g. pressing ALT-F4)
+
+}
 
 @:hlNative("hlimgui")
 abstract ImStateStorage(ImStateStoragePtr) from ImStateStoragePtr to ImStateStoragePtr
@@ -1993,6 +2042,30 @@ class ImGui
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
 	}
 
+	// viewport testing NOT READY FOR MERGE
+	// These should be moved to a struct even if we're just faking it for now, to prevent shitty porting issues
+	// later when it's done right.
+	public static function viewportSetPlatformCreateWindow( func: ImGuiViewport -> Void ) {};
+	public static function viewportSetPlatformDestroyWindow( func: ImGuiViewport -> Void ) {};
+	public static function viewportSetPlatformShowWindow( func: ImGuiViewport -> Void ) {};
+	public static function viewportSetPlatformSetWindowPos( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
+	public static function viewportSetPlatformGetWindowPos( func: ImGuiViewport -> ImVec2 ) {};
+	public static function viewportSetPlatformSetWindowSize( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
+	public static function viewportSetPlatformGetWindowSize( func: ImGuiViewport -> ImVec2 ) {};
+	public static function viewportSetPlatformSetWindowFocus( func: ImGuiViewport -> Void ) {};
+	public static function viewportSetPlatformGetWindowFocus( func: ImGuiViewport -> Bool ) {};
+	public static function viewportSetPlatformGetWindowMinimized( func: ImGuiViewport -> Bool ) {};
+	public static function viewportSetPlatformSetWindowTitle( func: (ImGuiViewport, hl.Bytes) -> Void ) {};
+	public static function viewportSetRendererRenderWindow( func: (ImGuiViewport, Dynamic) -> Void ) {};
+	public static function viewportAddMonitor( size: ImVec2S ) {};
+	public static function viewportSetMainViewport( w: Dynamic ) {};
+
+	// Viewport
+	public static function updatePlatformWindows() {};
+	public static function renderPlatformWindowsDefault( platform_arg: Dynamic = null, render_arg: Dynamic = null) {};
+
+
+
 	// Debug Utilities
 	//debugCheckVersionAndDataLayout
 
@@ -2007,7 +2080,7 @@ class ImGui
 	// Note: You may use GetWindowViewport() to get the current viewport of the current window.
 	// GetPlatformIO(): ImGuiPlatformIO
 	// UpdatePlatformWindows();                                        // call in main loop. will call CreateWindow/ResizeWindow/etc. platform functions for each secondary viewport, and DestroyWindow for each inactive viewport.
-	// RenderPlatformWindowsDefault(void* platform_render_arg = NULL, void* renderer_render_arg = NULL); // call in main loop. will call RenderWindow/SwapBuffers platform functions for each secondary viewport which doesn't have the ImGuiViewportFlags_Minimized flag set. May be reimplemented by user for custom rendering needs.
+	// RenderPlatformWindowsDefault(void* platform_render_arg = NULL, void* renderer_render_arg = NULL); // call in main loop. will call RenderWindow/SwapBuffers platform functions for each secondary viewport which doesn't have thevar Minimized flag set. May be reimplemented by user for custom rendering needs.
 	// DestroyPlatformWindows();                                       // call DestroyWindow platform functions for all viewports. call from backend Shutdown() if you need to close platform windows before imgui shutdown. otherwise will be called by DestroyContext().
 	// FindViewportByID(ImGuiID id): ImGuiViewport;                                   // this is a helper for backends.
 	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)

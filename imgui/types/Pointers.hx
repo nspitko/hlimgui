@@ -11,3 +11,4 @@ typedef ImDragDropPayloadPtr = hl.Abstract<"imdnd">;
 // typedef ImVector = hl.Abstract<"imvector">;
 typedef HLFinalizer = hl.Abstract<"finalizer">; // Used for ImGui constructs that require finalizer being called when GCd.
 typedef ImGuiTabBar = hl.Abstract<"imtabbar">;
+typedef ImGuiViewportPtr = hl.Abstract<"imguiviewport">;
