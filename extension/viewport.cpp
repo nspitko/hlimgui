@@ -24,9 +24,7 @@ struct HLImGuiPlatformClosures
 HLImGuiPlatformClosures HlClosures;
 extern ImGuiContext*   GImGui;
 
-void HlPlatform_CreateWindow(ImGuiViewport* vp) {
-	hl_call1( void, HlClosures.Platform_CreateWindow, ImGuiViewport*, vp );
-}
+void HlPlatform_CreateWindow(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_CreateWindow, ImGuiViewport*, vp ); }
 void HlPlatform_DestroyWindow(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_DestroyWindow, ImGuiViewport*, vp ); }
 void HlPlatform_ShowWindow(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_ShowWindow, ImGuiViewport*, vp ); }
 void HlPlatform_SetWindowPos(ImGuiViewport* vp, ImVec2 pos) {
@@ -67,6 +65,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_create_window)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_CreateWindow = p;
 	pio.Platform_CreateWindow = HlPlatform_CreateWindow;
+	hl_add_root( &HlClosures.Platform_CreateWindow );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_destroy_window)(vclosure *p)
@@ -74,6 +73,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_destroy_window)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_DestroyWindow = p;
 	pio.Platform_DestroyWindow = HlPlatform_DestroyWindow;
+	hl_add_root( &HlClosures.Platform_DestroyWindow );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_show_window)(vclosure *p)
@@ -81,6 +81,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_show_window)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_ShowWindow = p;
 	pio.Platform_ShowWindow = HlPlatform_ShowWindow;
+	hl_add_root( &HlClosures.Platform_ShowWindow );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_set_window_pos)(vclosure *p)
@@ -88,6 +89,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_set_window_pos)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_SetWindowPos = p;
 	pio.Platform_SetWindowPos = HlPlatform_SetWindowPos;
+	hl_add_root( &HlClosures.Platform_SetWindowPos );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_get_window_pos)(vclosure *p)
@@ -95,6 +97,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_get_window_pos)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_GetWindowPos = p;
 	pio.Platform_GetWindowPos = HlPlatform_GetWindowPos;
+	hl_add_root( &HlClosures.Platform_GetWindowPos );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_set_window_size)(vclosure *p)
@@ -102,6 +105,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_set_window_size)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_SetWindowSize = p;
 	pio.Platform_SetWindowSize = HlPlatform_SetWindowSize;
+	hl_add_root( &HlClosures.Platform_SetWindowSize );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_get_window_size)(vclosure *p)
@@ -109,6 +113,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_get_window_size)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_GetWindowSize = p;
 	pio.Platform_GetWindowSize = HlPlatform_GetWindowSize;
+	hl_add_root( &HlClosures.Platform_GetWindowSize );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_set_window_focus)(vclosure *p)
@@ -116,6 +121,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_set_window_focus)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_SetWindowFocus = p;
 	pio.Platform_SetWindowFocus = HlPlatform_SetWindowFocus;
+	hl_add_root( &HlClosures.Platform_SetWindowFocus );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_get_window_focus)(vclosure *p)
@@ -123,6 +129,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_get_window_focus)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_GetWindowFocus = p;
 	pio.Platform_GetWindowFocus = HlPlatform_GetWindowFocus;
+	hl_add_root( &HlClosures.Platform_GetWindowFocus );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_get_window_minimized)(vclosure *p)
@@ -130,6 +137,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_get_window_minimized)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_GetWindowMinimized = p;
 	pio.Platform_GetWindowMinimized = HlPlatform_GetWindowMinimized;
+	hl_add_root( &HlClosures.Platform_GetWindowMinimized );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_set_window_title)(vclosure *p)
@@ -137,6 +145,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_set_window_title)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_SetWindowTitle = p;
 	pio.Platform_SetWindowTitle = HlPlatform_SetWindowTitle;
+	hl_add_root( &HlClosures.Platform_SetWindowTitle );
 }
 
 HL_PRIM void HL_NAME(viewport_set_platform_set_window_alpha)(vclosure *p)
@@ -144,6 +153,7 @@ HL_PRIM void HL_NAME(viewport_set_platform_set_window_alpha)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Platform_SetWindowAlpha = p;
 	pio.Platform_SetWindowAlpha = HlPlatform_SetWindowAlpha;
+	hl_add_root( &HlClosures.Platform_SetWindowAlpha );
 }
 
 HL_PRIM void HL_NAME(viewport_set_renderer_render_window)(vclosure *p)
@@ -151,6 +161,7 @@ HL_PRIM void HL_NAME(viewport_set_renderer_render_window)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Renderer_RenderWindow = p;
 	pio.Renderer_RenderWindow = HlRenderer_RenderWindow;
+	hl_add_root( &HlClosures.Renderer_RenderWindow );
 }
 
 HL_PRIM void HL_NAME(viewport_set_renderer_swap_buffers)(vclosure *p)
@@ -158,6 +169,7 @@ HL_PRIM void HL_NAME(viewport_set_renderer_swap_buffers)(vclosure *p)
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
     HlClosures.Renderer_SwapBuffers = p;
 	pio.Renderer_SwapBuffers = HlRenderer_SwapBuffers;
+	hl_add_root( &HlClosures.Renderer_SwapBuffers );
 }
 
 // Actual viewport functions
