@@ -2071,7 +2071,7 @@ class ImGui
 	public static function viewportSetRendererRenderWindow( func: (ImGuiViewport, Dynamic) -> Void ) {};
 	public static function viewportSetRendererSwapBuffers( func: (ImGuiViewport, Dynamic) -> Void ) {};
 	public static function viewportAddMonitor( size: ImVec2S, pos: ImVec2S ) {};
-	public static function viewportSetMainViewport( w: Dynamic ) {};
+	public static function viewportSetMainViewport( w: Dynamic ): ImGuiViewport { return  null; };
 
 	// Viewport
 	public static function updatePlatformWindows() {};

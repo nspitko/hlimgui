@@ -43,7 +43,6 @@ ImVec2 HlPlatform_GetWindowSize(ImGuiViewport* vp) {
 	ImVec2 size;
 	// @todo: returning through hl_call doesn't appear to work?
 	hl_call2(void, HlClosures.Platform_GetWindowSize, ImGuiViewport*, vp, ImVec2 *, &size );
-	printf("x=%f, y=%f", size.x, size.y);
 	return size;
 }
 void HlPlatform_SetWindowFocus(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_SetWindowFocus, ImGuiViewport*, vp); }
@@ -201,10 +200,11 @@ HL_PRIM void HL_NAME(viewport_add_monitor)( vimvec2 *size, vimvec2 *pos )
 	pio.Monitors.push_back( m );
 }
 
-HL_PRIM void HL_NAME(viewport_set_main_viewport)( vdynamic* HWND )
+HL_PRIM ImGuiViewport* HL_NAME(viewport_set_main_viewport)( vdynamic* HWND )
 {
 	ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
 	pio.Viewports[0]->PlatformHandle = HWND;
+	return pio.Viewports[0];
 }
 
 DEFINE_PRIM(_VOID, viewport_set_platform_create_window, _FUN(_VOID, _STRUCT) );
@@ -223,7 +223,7 @@ DEFINE_PRIM(_VOID, viewport_set_renderer_render_window, _FUN(_VOID, _STRUCT _DYN
 DEFINE_PRIM(_VOID, viewport_set_renderer_swap_buffers, _FUN(_VOID, _STRUCT _DYN) );
 
 DEFINE_PRIM(_VOID, viewport_add_monitor, _IMVEC2 _IMVEC2 );
-DEFINE_PRIM(_VOID, viewport_set_main_viewport, _DYN );
+DEFINE_PRIM(_STRUCT, viewport_set_main_viewport, _DYN );
 ///
 
 DEFINE_PRIM(_VOID, update_platform_windows, _NO_ARG );

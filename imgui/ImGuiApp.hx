@@ -48,7 +48,29 @@ class ImGuiApp extends hxd.App {
 		io.BackendFlags |= ImGuiBackendFlags.HasMouseHoveredViewport;
 
 
-		ImGui.viewportSetMainViewport( hxd.Window.getInstance() );
+    // Set up the main window hooks.
+    var v = ImGui.viewportSetMainViewport( hxd.Window.getInstance() );
+		if( v != null )
+		{
+			var w= hxd.Window.getInstance();
+
+			w.onMove = () -> {
+				v.PlatformRequestMove = true;
+			}
+
+			@:privateAccess
+			{
+				var d = imguiDrawable;
+				w.addEventTarget( ( e: hxd.Event ) -> { d.onMultiWindowEvent( w, e, v ); } );
+			}
+
+
+			w.addResizeEvent(() -> {
+				v.PlatformRequestResize = true;
+			});
+
+		}
+
 		#if hlsdl
 		// This hint allows a focus click to also send events. Without this, you have to click a window
 		// once before you can interact with it, which feels really bad.
@@ -57,7 +79,6 @@ class ImGuiApp extends hxd.App {
 
 		for( d in sdl.Sdl.getDisplays() )
 		{
-			trace(d);
 			ImGui.viewportAddMonitor( {
 				x: d.right - d.left,
 				y: d.bottom - d.top
@@ -77,7 +98,6 @@ class ImGuiApp extends hxd.App {
 
 
 		ImGui.viewportSetPlatformCreateWindow( ( v: ImGuiViewport ) -> {
-      sdl.Sdl.setHint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1");
 			@:privateAccess
 			{
 				#if hldx
