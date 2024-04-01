@@ -1292,8 +1292,19 @@ typedef ImGuiListClipper = imgui.types.ImGuiListClipper;
 typedef ImGuiDockNode = imgui.types.ImGuiDockNode;
 
 @:keep
-@:struct @:hlNative("hlimgui")
-class ImGuiViewport
+@:build(imgui._ImGuiInternalMacro.buildFlatStruct())
+@:hlNative("hlimgui")
+@:struct class ImGuiVec2Struct
+{
+	public var x: Single;
+	public var y: Single;
+}
+
+
+@:keep
+@:build(imgui._ImGuiInternalMacro.buildFlatStruct())
+@:hlNative("hlimgui")
+@:struct class ImGuiViewport
 {
 	public var ID: ImGuiID;
 	public var Flags: ImGuiViewportFlags;
@@ -1303,12 +1314,12 @@ class ImGuiViewport
 	@:flatten public var WorkSize: ImVec2S;
 	public var DpiScale: Single;
 	public var ParentViewportId: ImGuiID;
-	public var DrawData: hl.Bytes; // ImDrawData*
+	@:noCompletion public var DrawData: hl.Bytes; // ImDrawData*
 
-	public var RendererUserData: hl.Bytes; // void*
+	@:noCompletion public var RendererUserData: hl.Bytes; // void*
 	public var PlatformUserData: h3d.Engine; // void*
 	public var PlatformHandle: hxd.Window; // void*
-	public var PlatformHandleRaw: hl.Bytes; // void*
+	@:noCompletion public var PlatformHandleRaw: Dynamic; // void*
 
 	public var PlatformWindowCreated: Bool; // Platform window has been created (Platform_CreateWindow() has been called). This is false during the first frame where a viewport is being created.
 	public var PlatformRequestMove: Bool; // Platform window requested move (e.g. window was moved by the OS / host window manager, authoritative position will be OS window position)
@@ -2042,22 +2053,24 @@ class ImGui
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
 	}
 
-	// viewport testing NOT READY FOR MERGE
+	// viewport testing, NOT SHIPPABLE
 	// These should be moved to a struct even if we're just faking it for now, to prevent shitty porting issues
 	// later when it's done right.
 	public static function viewportSetPlatformCreateWindow( func: ImGuiViewport -> Void ) {};
 	public static function viewportSetPlatformDestroyWindow( func: ImGuiViewport -> Void ) {};
 	public static function viewportSetPlatformShowWindow( func: ImGuiViewport -> Void ) {};
 	public static function viewportSetPlatformSetWindowPos( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
-	public static function viewportSetPlatformGetWindowPos( func: ImGuiViewport -> ImVec2 ) {};
+	public static function viewportSetPlatformGetWindowPos( func: ( ImGuiViewport, ImGuiVec2Struct ) -> Void ) {};
 	public static function viewportSetPlatformSetWindowSize( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
-	public static function viewportSetPlatformGetWindowSize( func: ImGuiViewport -> ImVec2 ) {};
+	public static function viewportSetPlatformGetWindowSize( func: ( ImGuiViewport, ImGuiVec2Struct )  -> Void ) {};
 	public static function viewportSetPlatformSetWindowFocus( func: ImGuiViewport -> Void ) {};
 	public static function viewportSetPlatformGetWindowFocus( func: ImGuiViewport -> Bool ) {};
 	public static function viewportSetPlatformGetWindowMinimized( func: ImGuiViewport -> Bool ) {};
 	public static function viewportSetPlatformSetWindowTitle( func: (ImGuiViewport, hl.Bytes) -> Void ) {};
+	public static function viewportSetPlatformSetWindowAlpha( func: (ImGuiViewport, Single) -> Void ) {};
 	public static function viewportSetRendererRenderWindow( func: (ImGuiViewport, Dynamic) -> Void ) {};
-	public static function viewportAddMonitor( size: ImVec2S ) {};
+	public static function viewportSetRendererSwapBuffers( func: (ImGuiViewport, Dynamic) -> Void ) {};
+	public static function viewportAddMonitor( size: ImVec2S, pos: ImVec2S ) {};
 	public static function viewportSetMainViewport( w: Dynamic ) {};
 
 	// Viewport
