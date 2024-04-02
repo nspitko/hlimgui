@@ -265,6 +265,15 @@ enum abstract ImGuiKey(Int) from Int to Int {
 	var ModSuper : Int = 1 << 15;
 }
 
+class ImGuiKeyStringExtender {
+	static inline public function imKey(s:String): Int {
+		//var v: Int = imgui.ImGuiMacro.toImGuiKey(s);
+		var v = 546 + (s.charCodeAt(0) - 'A'.code);
+	  return v;
+	}
+  }
+
+
 enum abstract ImGuiInputTextFlags(Int) from Int to Int {
 	var None : Int = 0;
 	var CharsDecimal : Int = 1;
@@ -1290,6 +1299,7 @@ typedef ImFont = imgui.types.ImFont;
 typedef ImFontAtlas = imgui.types.ImFontAtlas;
 typedef ImGuiListClipper = imgui.types.ImGuiListClipper;
 typedef ImGuiDockNode = imgui.types.ImGuiDockNode;
+
 
 @:keep
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())

@@ -24,8 +24,16 @@ struct HLImGuiPlatformClosures
 HLImGuiPlatformClosures HlClosures;
 extern ImGuiContext*   GImGui;
 
-void HlPlatform_CreateWindow(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_CreateWindow, ImGuiViewport*, vp ); }
-void HlPlatform_DestroyWindow(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_DestroyWindow, ImGuiViewport*, vp ); }
+void HlPlatform_CreateWindow(ImGuiViewport* vp) {
+	hl_call1( void, HlClosures.Platform_CreateWindow, ImGuiViewport*, vp );
+	hl_add_root( &vp->PlatformHandle );
+	hl_add_root( &vp->PlatformHandleRaw );
+}
+void HlPlatform_DestroyWindow(ImGuiViewport* vp) {
+	hl_call1( void, HlClosures.Platform_DestroyWindow, ImGuiViewport*, vp );
+	hl_remove_root( &vp->PlatformHandle );
+	hl_remove_root( &vp->PlatformHandleRaw );
+}
 void HlPlatform_ShowWindow(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_ShowWindow, ImGuiViewport*, vp ); }
 void HlPlatform_SetWindowPos(ImGuiViewport* vp, ImVec2 pos) {
 	hl_call2( void, HlClosures.Platform_SetWindowPos, ImGuiViewport*, vp, vimvec2 *, (vimvec2 *)pos );
