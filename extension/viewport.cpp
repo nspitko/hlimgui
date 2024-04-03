@@ -215,6 +215,12 @@ HL_PRIM ImGuiViewport* HL_NAME(viewport_set_main_viewport)( vdynamic* HWND )
 	return pio.Viewports[0];
 }
 
+HL_PRIM ImGuiViewport* HL_NAME(viewport_get_current_viewport)()
+{
+	ImGuiContext& g = *GImGui;
+	return g.CurrentViewport;
+}
+
 DEFINE_PRIM(_VOID, viewport_set_platform_create_window, _FUN(_VOID, _STRUCT) );
 DEFINE_PRIM(_VOID, viewport_set_platform_destroy_window, _FUN(_VOID, _STRUCT) );
 DEFINE_PRIM(_VOID, viewport_set_platform_show_window, _FUN(_VOID, _STRUCT) );
@@ -232,6 +238,7 @@ DEFINE_PRIM(_VOID, viewport_set_renderer_swap_buffers, _FUN(_VOID, _STRUCT _DYN)
 
 DEFINE_PRIM(_VOID, viewport_add_monitor, _IMVEC2 _IMVEC2 );
 DEFINE_PRIM(_STRUCT, viewport_set_main_viewport, _DYN );
+DEFINE_PRIM(_STRUCT, viewport_get_current_viewport, _NO_ARG );
 ///
 
 DEFINE_PRIM(_VOID, update_platform_windows, _NO_ARG );

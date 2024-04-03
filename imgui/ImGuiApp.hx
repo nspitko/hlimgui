@@ -147,7 +147,14 @@ class ImGuiApp extends hxd.App {
 				@:privateAccess
 				{
 					var d = imguiDrawable;
-					w.addEventTarget( ( e: hxd.Event ) -> { d.onMultiWindowEvent( w, e, v ); } );
+					w.addEventTarget( ( e: hxd.Event ) -> {
+						d.onMultiWindowEvent( w, e, v );
+						// Window events should NEVER propagate down; heaps isn't listening for them so we need to
+						// do this to prevent the OS chime from playing on key press.
+						// There is an argument for leaving this up to the implementer to decide (this behavior
+						// may be desirable at times) but this is less annoying for now.
+						e.propagate = false; }
+					);
 				}
 
         w.addResizeEvent(() -> {
