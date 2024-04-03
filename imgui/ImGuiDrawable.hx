@@ -408,7 +408,7 @@ class ImGuiDrawable extends h2d.Drawable {
 					}
 
 					#if multidriver
-					updateModifiers(event.keyCode, true);
+					updateModifiers(event.keyCode, false);
 					#end
 				}
 			case ETextInput:
