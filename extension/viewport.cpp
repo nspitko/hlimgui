@@ -56,8 +56,8 @@ ImVec2 HlPlatform_GetWindowSize(ImGuiViewport* vp) {
 void HlPlatform_SetWindowFocus(ImGuiViewport* vp) { hl_call1( void, HlClosures.Platform_SetWindowFocus, ImGuiViewport*, vp); }
 bool HlPlatform_GetWindowFocus(ImGuiViewport* vp) { return hl_call1( bool, HlClosures.Platform_GetWindowFocus, ImGuiViewport*, vp); }
 bool HlPlatform_GetWindowMinimized(ImGuiViewport* vp) { return hl_call1( bool, HlClosures.Platform_GetWindowMinimized, ImGuiViewport*, vp); }
-void HlPlatform_SetWindowTitle(ImGuiViewport* vp, const char* title) { hl_call2( bool, HlClosures.Platform_SetWindowTitle, ImGuiViewport*, vp, const char*, title); }
-void HlPlatform_SetWindowAlpha(ImGuiViewport* vp, float alpha) { hl_call2( bool, HlClosures.Platform_SetWindowTitle, ImGuiViewport*, vp, float, alpha); }
+void HlPlatform_SetWindowTitle(ImGuiViewport* vp, const char* title) { hl_call2( bool, HlClosures.Platform_SetWindowTitle, ImGuiViewport*, vp, vbyte*, getVByteFromCStr( title ) ); }
+void HlPlatform_SetWindowAlpha(ImGuiViewport* vp, float alpha) { hl_call2( bool, HlClosures.Platform_SetWindowAlpha, ImGuiViewport*, vp, float, alpha); }
 void HlRenderer_RenderWindow(ImGuiViewport* vp, void* render_arg) {
 	renderDrawLists( vp->DrawData );
 	hl_call2( bool, HlClosures.Renderer_RenderWindow, ImGuiViewport*, vp, void*, render_arg);
