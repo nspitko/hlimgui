@@ -242,9 +242,8 @@ class ImGuiApp extends hxd.App {
 		});
 
 		ImGui.viewportSetPlatformSetWindowAlpha( ( v: ImGuiViewport, alpha: Single ) -> {
-      // @todo: Nothing seems to call this, may be inverted.
 			#if hlsdl
-			@:privateAccess v.PlatformHandle.window.opacity = 1-alpha;
+			@:privateAccess v.PlatformHandle.window.opacity = alpha;
 			#end
 		});
 
