@@ -157,9 +157,9 @@ class ImGuiApp extends hxd.App {
 					);
 				}
 
-        w.addResizeEvent(() -> {
-          v.PlatformRequestResize = true;
-        });
+				w.addResizeEvent(() -> {
+				v.PlatformRequestResize = true;
+				});
 
 				v.PlatformHandle = w;
 			}
@@ -167,20 +167,32 @@ class ImGuiApp extends hxd.App {
 
 		ImGui.viewportSetPlatformDestroyWindow( ( v: ImGuiViewport ) -> {
 
-      #if hlsdl
-      // !! HACK !!
-      // We stored off glctx so we could restore it here and destroy it when the window
-      // is destroyed. We need to do this so we don't accidentally destoy our main
-      // ctx, these are just junk contexts we created because heaps does it automatically
-			@:privateAccess v.PlatformHandle.window.glctx = cast v.PlatformHandleRaw;
-      #end
+			@:privateAccess
+			{
+				#if hlsdl
+				// !! HACK !!
+				// We stored off glctx so we could restore it here and destroy it when the window
+				// is destroyed. We need to do this so we don't accidentally destoy our main
+				// ctx, these are just junk contexts we created because heaps does it automatically
+				v.PlatformHandle.window.glctx = cast v.PlatformHandleRaw;
+				#end
 
-			if( v.PlatformHandle != null )
-				v.PlatformHandle.close();
+				var w = v.PlatformHandle;
+				if( w != null )
+					w.close();
 
-			v.RendererUserData = null;
-			v.PlatformUserData = null;
-			v.PlatformHandle = null;
+				// !! HACK !!
+				// Add the window back to the list and pump events. This lets us
+				// catch the close-specific events SDL sends that will do bookkeeping
+				// on key release/etc.
+				hxd.Window.WINDOWS.push(w);
+				sdl.Sdl.processEvents(@:privateAccess hxd.Window.dispatchEvent);
+				hxd.Window.WINDOWS.remove(w);
+
+				v.RendererUserData = null;
+				v.PlatformUserData = null;
+				v.PlatformHandle = null;
+			}
 
 		});
 
