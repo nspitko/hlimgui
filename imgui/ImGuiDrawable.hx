@@ -1,6 +1,5 @@
 package imgui;
 
-import cerastes.Utils;
 import imgui.types.Renderer;
 import imgui.types.ImFontAtlas;
 #if heaps
@@ -336,7 +335,12 @@ class ImGuiDrawable extends h2d.Drawable {
 	// Adjust the event accordingly
 	public function onMultiWindowEvent( window: hxd.Window, originalEvent: hxd.Event, viewport: ImGuiViewport )
 	{
-		var event: hxd.Event = cast Utils.clone(originalEvent);
+		var event = new hxd.Event( originalEvent.kind, originalEvent.relX, originalEvent.relY );
+		event.button = originalEvent.button;
+		event.wheelDelta = originalEvent.wheelDelta;
+		event.keyCode = originalEvent.keyCode;
+		event.charCode = originalEvent.charCode;
+
 		@:privateAccess
 		{
 			var x = 0;

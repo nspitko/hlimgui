@@ -40,16 +40,17 @@ class ImGuiApp extends hxd.App {
     // Drawable have to be initialized after scene was added to the scene events.
     imguiDrawable = s.init();
 
-    #if multidriver
-    var io = ImGui.getIO();
+		#if multidriver
+		var pio = ImGui.getPlatformIO();
+		var io = ImGui.getIO();
 		io.ConfigFlags |= ViewportsEnable;
 		io.BackendFlags |= ImGuiBackendFlags.PlatformHasViewports;
 		io.BackendFlags |= ImGuiBackendFlags.RendererHasViewports;
 		io.BackendFlags |= ImGuiBackendFlags.HasMouseHoveredViewport;
 
 
-    // Set up the main window hooks.
-    var v = ImGui.viewportSetMainViewport( hxd.Window.getInstance() );
+		// Set up the main window hooks.
+		var v = pio.setMainViewport ( hxd.Window.getInstance() );
 		if( v != null )
 		{
 			var w= hxd.Window.getInstance();
@@ -79,7 +80,7 @@ class ImGuiApp extends hxd.App {
 
 		for( d in sdl.Sdl.getDisplays() )
 		{
-			ImGui.viewportAddMonitor( {
+			pio.addMonitor( {
 				x: d.right - d.left,
 				y: d.bottom - d.top
 			}, {
@@ -92,12 +93,12 @@ class ImGuiApp extends hxd.App {
 		// @todo: need to pass position in.
 		for( m in hxd.Window.getMonitors() )
 		{
-			ImGui.viewportAddMonitor( { x: m.width, y: m.height }, { x: 0, y: 0 } );
+			pio.addMonitor( { x: m.width, y: m.height }, { x: 0, y: 0 } );
 		}
 		#end
 
 
-		ImGui.viewportSetPlatformCreateWindow( ( v: ImGuiViewport ) -> {
+		pio.Platform_CreateWindow = ( v: ImGuiViewport ) -> {
 			@:privateAccess
 			{
 				#if hldx
@@ -163,9 +164,9 @@ class ImGuiApp extends hxd.App {
 
 				v.PlatformHandle = w;
 			}
-		});
+		};
 
-		ImGui.viewportSetPlatformDestroyWindow( ( v: ImGuiViewport ) -> {
+		pio.Platform_DestroyWindow = ( v: ImGuiViewport ) -> {
 
 			@:privateAccess
 			{
@@ -194,24 +195,24 @@ class ImGuiApp extends hxd.App {
 				v.PlatformHandle = null;
 			}
 
-		});
+		};
 
-		ImGui.viewportSetPlatformShowWindow( ( v: ImGuiViewport ) -> {
+		pio.Platform_ShowWindow = ( v: ImGuiViewport ) -> {
 			#if hlsdl
 			@:privateAccess v.PlatformHandle.window.visible = true;
 			#end
-		});
+		};
 
-		ImGui.viewportSetPlatformSetWindowPos( ( v: ImGuiViewport, size: ImVec2 ) -> {
+		pio.Platform_SetWindowPos =  ( v: ImGuiViewport, size: ImVec2 ) -> {
 			#if hldx
 			var w: dx.Window = @:privateAccess v.PlatformHandle.window;
 			w.setPosition( cast size.x, cast size.y );
 			#elseif hlsdl
 			@:privateAccess v.PlatformHandle.window.setPosition( cast size.x, cast size.y );
 			#end
-		});
+		};
 
-		ImGui.viewportSetPlatformGetWindowPos( ( v: ImGuiViewport, pos: ImGuiVec2Struct ) -> {
+		pio.Platform_GetWindowPos = ( v: ImGuiViewport, pos: ImGuiVec2Struct ) -> {
 			#if hlsdl
 			@:privateAccess
 			{
@@ -225,48 +226,48 @@ class ImGuiApp extends hxd.App {
 			pos.x = 0;
 			pos.y = 0;
 			#end
-		});
+		};
 
-		ImGui.viewportSetPlatformSetWindowSize( ( v: ImGuiViewport, size: ImVec2 ) -> {
+		pio.Platform_SetWindowSize = ( v: ImGuiViewport, size: ImVec2 ) -> {
 			if( v.PlatformHandle.width == size.x && v.PlatformHandle.height == size.y )
 				return;
 
 			v.PlatformHandle.resize( cast size.x, cast size.y );
-		});
+		};
 
-		ImGui.viewportSetPlatformGetWindowSize( ( v: ImGuiViewport, size: ImGuiVec2Struct ) -> {
+		pio.Platform_GetWindowSize = ( v: ImGuiViewport, size: ImGuiVec2Struct ) -> {
 			var window: hxd.Window = v.PlatformHandle;
 			if( window != null )
 			{
 				size.x = window.width;
 				size.y = window.height;
 			}
-		});
+		};
 
-		ImGui.viewportSetPlatformSetWindowFocus( ( v: ImGuiViewport ) -> {
+		pio.Platform_SetWindowFocus = ( v: ImGuiViewport ) -> {
 			// @todo
-		});
+		};
 
-		ImGui.viewportSetPlatformGetWindowFocus( ( v: ImGuiViewport ) -> {
+		pio.Platform_GetWindowFocus = ( v: ImGuiViewport ) -> {
 			return v.PlatformHandle.isFocused;
-		});
+		};
 
-		ImGui.viewportSetPlatformGetWindowMinimized( ( v: ImGuiViewport ) -> {
+		pio.Platform_GetWindowMinimized = ( v: ImGuiViewport ) -> {
 			return false; // @todo
-		});
+		};
 
-		ImGui.viewportSetPlatformSetWindowTitle( ( v: ImGuiViewport, title: hl.Bytes ) -> {
+		pio.Platform_SetWindowTitle = ( v: ImGuiViewport, title: hl.Bytes ) -> {
 			var str = @:privateAccess String.fromUTF8( title );
 			v.PlatformHandle.title = str;
-		});
+		};
 
-		ImGui.viewportSetPlatformSetWindowAlpha( ( v: ImGuiViewport, alpha: Single ) -> {
+		pio.Platform_SetWindowAlpha = ( v: ImGuiViewport, alpha: Single ) -> {
 			#if hlsdl
 			@:privateAccess v.PlatformHandle.window.opacity = alpha;
 			#end
-		});
+		};
 
-		ImGui.viewportSetRendererRenderWindow( ( v: ImGuiViewport, arg: Dynamic ) -> {
+		pio.Renderer_RenderWindow = ( v: ImGuiViewport, arg: Dynamic ) -> {
 
 			if( !v.PlatformWindowCreated || v.PlatformHandle == null )
 				return;
@@ -278,7 +279,7 @@ class ImGuiApp extends hxd.App {
 
 			w.setCurrent();
 
-      var s2d = imguiDrawable.getScene();
+     		var s2d = imguiDrawable.getScene();
 
 
 			@:privateAccess
@@ -310,16 +311,16 @@ class ImGuiApp extends hxd.App {
 
 			oldWin.setCurrent();
 
-		});
+		};
 
 
-		ImGui.viewportSetRendererSwapBuffers( ( v: ImGuiViewport, arg: Dynamic ) -> {
+		pio.Renderer_SwapBuffers =  ( v: ImGuiViewport, arg: Dynamic ) -> {
 			var oldWin = hxd.Window.getInstance();
 			var w = v.PlatformHandle;
 			w.setCurrent();
 			@:privateAccess w.window.present();
 			oldWin.setCurrent();
-		});
+		};
 
 		#end
   }

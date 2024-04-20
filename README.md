@@ -62,11 +62,22 @@ Here is a list of unsupported features and changes:
 
 - The function `setIniFilename` doesn't exist in ImGui, it has been added to modify the filename of the default ini file saved by ImGui (pass null to turn off this feature).
 
+## Viewports
+ImGui viewports are implemented with a mostly identical API, with a few minor exceptions. If you wish to use this feature with heaps, you'll want to add `-D multidriver` to your build hxml.
+
 ## References
 Input functions often take a `Ref<T>` / `imgui.FieldRef<T>` argument.
 Those are equivalent to `hl.Ref` however offer an extra feature of referencing a class instance or static field, not only local variables.
 
+```haxe
+var myString = "Hello!", edited: Boolean;
+
+// myString is automatically converted into a ref, imgui will update it when the user changes the value.
+edited = ImGui.inputText('Text input', myString );
+```
+
 However the limitation of `Ref` is that it does not work on properties (`get_x` / `set_y`), in which case you will have to manually load said values into local variables or use the wrapper function:
+
 ```haxe
 import imgui.ImGuiMacro.*; // Import the `wref` / `wrefv` and `wrefc` macro functions into global scope.
 // In order to denote which values should be converted into a reference,

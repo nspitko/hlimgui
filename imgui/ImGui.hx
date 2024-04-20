@@ -1196,6 +1196,85 @@ enum abstract ImGuiKeyChord(Int) from Int to Int {
 	// @todo: We need a way to expose the key map here to go any further.
 }
 
+@:keep
+@:build(imgui._ImGuiInternalMacro.buildFlatStruct())
+@:hlNative("hlimgui")
+@:struct class ImGuiPlatformIO {
+
+	// Internal functions. We don't bother passing the ptr here since we can only ever
+	// have one PlatformIO instance.
+	static function platformioSetPlatformCreateWindow( func: ImGuiViewport -> Void ) {};
+	static function platformioSetPlatformDestroyWindow( func: ImGuiViewport -> Void ) {};
+	static function platformioSetPlatformShowWindow( func: ImGuiViewport -> Void ) {};
+
+	static function platformioSetPlatformSetWindowPos( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
+	static function platformioSetPlatformGetWindowPos( func: ( ImGuiViewport, ImGuiVec2Struct ) -> Void ) {};
+
+	static function platformioSetPlatformSetWindowSize( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
+	static function platformioSetPlatformGetWindowSize( func: ( ImGuiViewport, ImGuiVec2Struct )  -> Void ) {};
+
+	static function platformioSetPlatformSetWindowFocus( func: ImGuiViewport -> Void ) {};
+	static function platformioSetPlatformGetWindowFocus( func: ImGuiViewport -> Bool ) {};
+
+	static function platformioSetPlatformGetWindowMinimized( func: ImGuiViewport -> Bool ) {};
+	static function platformioSetPlatformSetWindowTitle( func: (ImGuiViewport, hl.Bytes) -> Void ) {};
+	static function platformioSetPlatformSetWindowAlpha( func: (ImGuiViewport, Single) -> Void ) {};
+
+	static function platformioSetRendererRenderWindow( func: (ImGuiViewport, Dynamic) -> Void ) {};
+	static function platformioSetRendererSwapBuffers( func: (ImGuiViewport, Dynamic) -> Void ) {};
+
+	// Utils
+	static function platformioAddMonitor( size: ImVec2S, pos: ImVec2S ) {};
+	static function platformioSetMainViewport( w: Dynamic ): ImGuiViewport { return  null; };
+
+	// haxe setters
+	public var Platform_CreateWindow(never, set): ImGuiViewport -> Void;
+	public var Platform_DestroyWindow(never, set): ImGuiViewport -> Void;
+	public var Platform_ShowWindow(never, set): ImGuiViewport -> Void;
+
+	public var Platform_SetWindowPos(never, set): ( ImGuiViewport, ImVec2 ) -> Void;
+	public var Platform_GetWindowPos(never, set): ( ImGuiViewport, ImGuiVec2Struct ) -> Void;
+
+	public var Platform_SetWindowSize(never, set): ( ImGuiViewport, ImVec2 ) -> Void;
+	public var Platform_GetWindowSize(never, set): ( ImGuiViewport, ImGuiVec2Struct ) -> Void;
+
+	public var Platform_SetWindowFocus(never, set): ImGuiViewport -> Void;
+	public var Platform_GetWindowFocus(never, set): ImGuiViewport -> Bool;
+
+	public var Platform_GetWindowMinimized(never, set): ImGuiViewport -> Bool;
+	public var Platform_SetWindowTitle(never, set): (ImGuiViewport, hl.Bytes) -> Void;
+	public var Platform_SetWindowAlpha(never, set): (ImGuiViewport, Single) -> Void;
+
+	public var Renderer_RenderWindow(never, set): (ImGuiViewport, Dynamic) -> Void;
+	public var Renderer_SwapBuffers(never, set): (ImGuiViewport, Dynamic) -> Void;
+
+
+	inline function set_Platform_CreateWindow( func: ImGuiViewport -> Void ):ImGuiViewport -> Void { platformioSetPlatformCreateWindow( func ); return func; };
+	inline function set_Platform_DestroyWindow( func: ImGuiViewport -> Void ):ImGuiViewport -> Void { platformioSetPlatformDestroyWindow( func ); return func; }
+	inline function set_Platform_ShowWindow( func: ImGuiViewport -> Void ):ImGuiViewport -> Void { platformioSetPlatformShowWindow( func ); return func; }
+
+	inline function set_Platform_SetWindowPos( func: ( ImGuiViewport, ImVec2 ) -> Void ):( ImGuiViewport, ImVec2 ) -> Void { platformioSetPlatformSetWindowPos( func ); return func; }
+	inline function set_Platform_GetWindowPos( func: ( ImGuiViewport, ImGuiVec2Struct ) -> Void ):( ImGuiViewport, ImGuiVec2Struct ) -> Void { platformioSetPlatformGetWindowPos( func ); return func; }
+
+	inline function set_Platform_SetWindowSize( func: ( ImGuiViewport, ImVec2 ) -> Void ):( ImGuiViewport, ImVec2 ) -> Void { platformioSetPlatformSetWindowSize( func ); return func; }
+	inline function set_Platform_GetWindowSize( func: ( ImGuiViewport, ImGuiVec2Struct ) -> Void ):( ImGuiViewport, ImGuiVec2Struct ) -> Void { platformioSetPlatformGetWindowSize( func ); return func; }
+
+	inline function set_Platform_SetWindowFocus( func: ImGuiViewport -> Void ):ImGuiViewport -> Void { platformioSetPlatformSetWindowFocus( func ); return func; }
+	inline function set_Platform_GetWindowFocus( func: ImGuiViewport -> Bool ): ImGuiViewport -> Bool { platformioSetPlatformGetWindowFocus( func ); return func; }
+
+	inline function set_Platform_GetWindowMinimized( func: ImGuiViewport -> Bool ): ImGuiViewport -> Bool { platformioSetPlatformGetWindowMinimized( func ); return func; }
+	inline function set_Platform_SetWindowTitle( func: (ImGuiViewport, hl.Bytes) -> Void ):(ImGuiViewport, hl.Bytes) -> Void { platformioSetPlatformSetWindowTitle( func ); return func; }
+	inline function set_Platform_SetWindowAlpha( func: (ImGuiViewport, Single) -> Void ):(ImGuiViewport, Single) -> Void { platformioSetPlatformSetWindowAlpha( func ); return func; }
+
+	inline function set_Renderer_RenderWindow( func: (ImGuiViewport, Dynamic) -> Void ):(ImGuiViewport, Dynamic) -> Void{ platformioSetRendererRenderWindow( func ); return func; }
+	inline function set_Renderer_SwapBuffers( func: (ImGuiViewport, Dynamic) -> Void ):(ImGuiViewport, Dynamic) -> Void { platformioSetRendererSwapBuffers( func ); return func; }
+
+	// Utils
+	public function addMonitor( size: ImVec2S, pos: ImVec2S ): Void platformioAddMonitor(size, pos );
+	public function setMainViewport( window: Dynamic ): ImGuiViewport return platformioSetMainViewport( window );
+
+}
+
 typedef ImFontConfig = imgui.types.ImFontAtlas.ImFontConfig;
 
 // Callbacks
@@ -1411,6 +1490,7 @@ class ImGui
 
 	// Main
 	public static function getIO() : ImGuiIO {return null;}
+	public static function getPlatformIO() : ImGuiPlatformIO {return null;}
 	public static function getStyle() : ImGuiStyle {return null;}
 	public static function setStyle(style : ImGuiStyle) {}
 	public static function newFrame() {}
@@ -1978,8 +2058,8 @@ class ImGui
 	public static function setKeyOwner( key: ImGuiKey, owner_id: ImGuiID, flags: ImGuiInputFlags = ImGuiInputFlags.None ) : Void {}
 	public static function setItemKeyOwner( key: ImGuiKey, flags: ImGuiInputFlags = ImGuiInputFlags.None ) : Void {}
 
-	// Viewports
-	// public static function getMainViewport(): IMViewport
+	// Context accessors
+	public static function contextGetCurrentViewport(): ImGuiViewport { return  null; };
 
 	// Miscellaneous Utilities
 	public static inline extern overload function isRectVisible(size : ImVec2) : Bool { return is_rect_visible(size); }
@@ -2063,26 +2143,7 @@ class ImGui
 		return @:privateAccess String.fromUTF8(save_ini_settings_to_memory(out_ini_size));
 	}
 
-	// viewport testing, NOT SHIPPABLE
-	// These should be moved to a struct even if we're just faking it for now, to prevent shitty porting issues
-	// later when it's done right.
-	public static function viewportSetPlatformCreateWindow( func: ImGuiViewport -> Void ) {};
-	public static function viewportSetPlatformDestroyWindow( func: ImGuiViewport -> Void ) {};
-	public static function viewportSetPlatformShowWindow( func: ImGuiViewport -> Void ) {};
-	public static function viewportSetPlatformSetWindowPos( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
-	public static function viewportSetPlatformGetWindowPos( func: ( ImGuiViewport, ImGuiVec2Struct ) -> Void ) {};
-	public static function viewportSetPlatformSetWindowSize( func: ( ImGuiViewport, ImVec2 ) -> Void ) {};
-	public static function viewportSetPlatformGetWindowSize( func: ( ImGuiViewport, ImGuiVec2Struct )  -> Void ) {};
-	public static function viewportSetPlatformSetWindowFocus( func: ImGuiViewport -> Void ) {};
-	public static function viewportSetPlatformGetWindowFocus( func: ImGuiViewport -> Bool ) {};
-	public static function viewportSetPlatformGetWindowMinimized( func: ImGuiViewport -> Bool ) {};
-	public static function viewportSetPlatformSetWindowTitle( func: (ImGuiViewport, hl.Bytes) -> Void ) {};
-	public static function viewportSetPlatformSetWindowAlpha( func: (ImGuiViewport, Single) -> Void ) {};
-	public static function viewportSetRendererRenderWindow( func: (ImGuiViewport, Dynamic) -> Void ) {};
-	public static function viewportSetRendererSwapBuffers( func: (ImGuiViewport, Dynamic) -> Void ) {};
-	public static function viewportAddMonitor( size: ImVec2S, pos: ImVec2S ) {};
-	public static function viewportSetMainViewport( w: Dynamic ): ImGuiViewport { return  null; };
-	public static function viewportGetCurrentViewport(): ImGuiViewport { return  null; };
+
 
 	// Viewport
 	public static function updatePlatformWindows() {};
