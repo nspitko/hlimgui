@@ -267,11 +267,10 @@ enum abstract ImGuiKey(Int) from Int to Int {
 
 class ImGuiKeyStringExtender {
 	static inline public function imKey(s:String): Int {
-		//var v: Int = imgui.ImGuiMacro.toImGuiKey(s);
 		var v = 546 + (s.charCodeAt(0) - 'A'.code);
-	  return v;
+		return v;
 	}
-  }
+}
 
 
 enum abstract ImGuiInputTextFlags(Int) from Int to Int {
@@ -2165,7 +2164,7 @@ class ImGui
 	// Note: You may use GetWindowViewport() to get the current viewport of the current window.
 	// GetPlatformIO(): ImGuiPlatformIO
 	// UpdatePlatformWindows();                                        // call in main loop. will call CreateWindow/ResizeWindow/etc. platform functions for each secondary viewport, and DestroyWindow for each inactive viewport.
-	// RenderPlatformWindowsDefault(void* platform_render_arg = NULL, void* renderer_render_arg = NULL); // call in main loop. will call RenderWindow/SwapBuffers platform functions for each secondary viewport which doesn't have thevar Minimized flag set. May be reimplemented by user for custom rendering needs.
+	// RenderPlatformWindowsDefault(void* platform_render_arg = NULL, void* renderer_render_arg = NULL); // call in main loop. will call RenderWindow/SwapBuffers platform functions for each secondary viewport which doesn't have the ImGuiViewportFlags_Minimized flag set. May be reimplemented by user for custom rendering needs.
 	// DestroyPlatformWindows();                                       // call DestroyWindow platform functions for all viewports. call from backend Shutdown() if you need to close platform windows before imgui shutdown. otherwise will be called by DestroyContext().
 	// FindViewportByID(ImGuiID id): ImGuiViewport;                                   // this is a helper for backends.
 	// FindViewportByPlatformHandle(void* platform_handle): ImGuiViewport;            // this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
