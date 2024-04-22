@@ -65,3 +65,6 @@ void setStructArrayImVec4(vdynamic* dyn, const char* name, const ImVec4* values,
 
 inline void assertArraySize(varray* arr, int size) {if (arr->size != size) throw_error("Invalid array size");}
 inline void assertArraySizeRange(varray* arr, int size_min, int size_max) {if (arr->size < size_min && arr->size > size_max) throw_error("Invalid array size");}
+
+// Drawing
+void renderDrawLists(ImDrawData* draw_data);

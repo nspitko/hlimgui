@@ -171,6 +171,7 @@ class ImGuiDrawableBuffers {
 				}
 			}
 		}
+
 		e.setRenderZone();
 	}
 
@@ -258,7 +259,10 @@ class ImGuiDrawable extends h2d.Drawable {
 		for( ko in 0...26)
 			keycode_map[Key.A + ko] = ImGuiKey.A + ko;
 
+		#if !multidriver
 		scene.addEventListener(onEvent);
+		#end
+
 		#if hlimgui_cursor
 		hxd.System.setCursor = updateCursor;
 		#end
@@ -289,10 +293,20 @@ class ImGuiDrawable extends h2d.Drawable {
 		#end
 
 		// Update modifier states
+		#if !multidriver
 		io.addKeyEvent( ImGuiKey.ModShift, Key.isDown( Key.SHIFT ) );
 		io.addKeyEvent( ImGuiKey.ModAlt, Key.isDown( Key.ALT ) );
 		io.addKeyEvent( ImGuiKey.ModCtrl, Key.isDown( Key.CTRL ) );
 		//ImGui.addKeyEvent( ImGuiKey.ModSuper, Key.isDown( Key.SUPER ) ); // Unsupported currently.
+		#end
+
+
+		#if ( multidriver && hlsdl && globalmouse )
+		var x=0;
+		var y=0;
+		sdl.Sdl.getGlobalMouseState(x, y);
+		io.addMousePosEvent( x, y );
+		#end
 
 	}
 
@@ -317,11 +331,47 @@ class ImGuiDrawable extends h2d.Drawable {
 	}
 	#end
 
+	// When in multidriver mode, mouse cooridnates operate in absoluate space instead of relative.
+	// Adjust the event accordingly
+	public function onMultiWindowEvent( window: hxd.Window, originalEvent: hxd.Event, viewport: ImGuiViewport )
+	{
+		var event = new hxd.Event( originalEvent.kind, originalEvent.relX, originalEvent.relY );
+		event.button = originalEvent.button;
+		event.wheelDelta = originalEvent.wheelDelta;
+		event.keyCode = originalEvent.keyCode;
+		event.charCode = originalEvent.charCode;
+
+		@:privateAccess
+		{
+			var x = 0;
+			var y = 0;
+			sdl.Window.winGetPosition( window.window.win, x, y );
+			event.relX += x;
+			event.relY += y;
+		}
+		onEvent( event );
+
+		if( viewport != null )
+		{
+			switch( event.kind )
+			{
+				case EMove:
+					var io = ImGui.getIO();
+					if ( ( io.BackendFlags & ImGuiBackendFlags.HasMouseHoveredViewport ) != 0 )
+						io.addMouseViewportEvent( viewport.ID );
+				default:
+			}
+		}
+	}
+
 	private function onEvent(event: hxd.Event) {
 		var io = ImGui.getIO();
 		switch (event.kind) {
+			#if !( multidriver && hlsdl && globalmouse )
 			case EMove:
 				io.addMousePosEvent( event.relX, event.relY );
+			#end
+
 			case EPush:
 				io.addMouseButtonEvent(event.button, true);
 
@@ -348,6 +398,11 @@ class ImGuiDrawable extends h2d.Drawable {
 					if (io.WantCaptureKeyboard) {
 						event.propagate = false;
 					}
+
+					// In multidriver, we don't use heaps' input system so we need to manage key mods ourself
+					#if multidriver
+					updateModifiers(event.keyCode, true);
+					#end
 				}
 			case EKeyUp:
 				if (this.keycode_map.exists(event.keyCode)) {
@@ -355,14 +410,42 @@ class ImGuiDrawable extends h2d.Drawable {
 					if (io.WantCaptureKeyboard) {
 						event.propagate = false;
 					}
+
+					#if multidriver
+					updateModifiers(event.keyCode, false);
+					#end
 				}
 			case ETextInput:
 				io.addInputCharacter(event.charCode);
 				if (io.WantCaptureKeyboard) {
 					event.propagate = false;
 				}
+			#if multidriver
+			// It looks goofy to hide these behind multidriver, but the normal model listens for heaps
+			// stack events, not window events. Focus events mean something completely different in
+			// that context. That said, I don't know if it actually does anything.
+			case EFocus:
+				io.addFocusEvent( true );
+			case EFocusLost:
+				io.addFocusEvent( false );
+			#end
 			default:
 		}
+	}
+
+	function updateModifiers( code: Int, down: Bool )
+	{
+		var io = ImGui.getIO();
+		switch( code )
+		{
+			case Key.LCTRL | Key.RCTRL:
+				io.addKeyEvent( ImGuiKey.ModCtrl, down );
+			case Key.LALT | Key.RALT:
+				io.addKeyEvent( ImGuiKey.ModAlt, down );
+			case Key.LSHIFT | Key.RSHIFT:
+				io.addKeyEvent( ImGuiKey.ModShift, down );
+		}
+
 	}
 
 	override function draw(ctx:h2d.RenderContext) {
