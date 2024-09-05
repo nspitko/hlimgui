@@ -997,6 +997,9 @@ abstract ImVec4(ImVec4S) from ImVec4S to ImVec4S {
 	var ColorButtonPosition: ImGuiDir;        // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
 	@:flatten var ButtonTextAlign: ImVec2S;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
 	@:flatten var SelectableTextAlign: ImVec2S;        // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.
+	var SeparatorTextBorderSize: Single;				// Alignment of button text when button is larger than text.
+	@:flatten var SeparatorTextAlign: ImVec2S;// Alignment of text within the separator. Defaults to (0.0f, 0.5f) (left aligned, center).
+    @:flatten var SeparatorTextPadding: ImVec2S;// Horizontal offset of text from each edge of the separator + spacing on other axis. Generally small values. .y is recommended to be == FramePadding.y.
 	@:flatten var DisplayWindowPadding: ImVec2S;       // Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.
 	@:flatten var DisplaySafeAreaPadding: ImVec2S;     // If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!
 	var MouseCursorScale: Single;           // Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). We apply per-monitor DPI scaling over this scale. May be removed later.
