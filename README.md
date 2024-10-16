@@ -8,6 +8,7 @@ First, make sure that HashLink, CMake and a C/C++ compiler are installed on your
   - With haxelib directly: `haxelib git hlimgui https://github.com/nspitko/hlimgui.git`
   - By cloning it to another directory and using `haxelib dev hlimgui path/to/hlimgui`
   - With lix: See https://github.com/lix-pm/lix.client#local-development
+  - With [gsm](https://github.com/tobil4sk/haxe-git-submodule-manager): `haxelib --global run gsm add hlimgui https://github.com/nspitko/hlimgui`
 2. Make sure your `hl.exe` is in the `PATH` or one of the following environment variables point at the directory where it's located.
 3. Run `haxelib run hlimgui build -u` to update submodules (`-u` flag) and compile the .hdll file.
 4. Add `-lib hlimgui` to your `build.hxml`
@@ -42,6 +43,7 @@ To add this library to your project, there are a few steps.
 2) Add the library to your project as a haxelib.
    - With haxelib: `haxelib dev hlimgui path/to/hlimgui`
    - With lix: See https://github.com/lix-pm/lix.client#local-development
+   - With [gsm](https://github.com/tobil4sk/haxe-git-submodule-manager): `haxelib --global run gsm add hlimgui https://github.com/nspitko/hlimgui`
 3) Add `-lib hlimgui` to your `build.hxml`
 
 Alternatively, you can just copy the files directly into your project instead, though this has some drawbacks and is generally not recommended. At the time of writing it is known to negatively impact the language server and prevent symbol renaming, among other things. If you still want to take this path, you'll need to copy these files:
@@ -63,7 +65,7 @@ Here is a list of unsupported features and changes:
 - The function `setIniFilename` doesn't exist in ImGui, it has been added to modify the filename of the default ini file saved by ImGui (pass null to turn off this feature).
 
 ## Viewports
-ImGui viewports are implemented with a mostly identical API, with a few minor exceptions. If you wish to use this feature with heaps, you'll want to add `-D multidriver` to your build hxml.
+ImGui viewports are implemented with a mostly identical API, with a few minor exceptions. The default heaps base includes built-in support when using `-D multidriver`, else it can be used as a reference implementation.
 
 ## References
 Input functions often take a `Ref<T>` / `imgui.FieldRef<T>` argument.
@@ -113,6 +115,8 @@ This library comes with a built-in Heaps support with the following features:
 * `imgui.ImGuiDrawable` is a primary renderer for ImGui content and can be used to set up your own ImGui integration if `ImGuiApp` is not viable.
 * `imgui.ImTextureID` is mapped to `h3d.mat.Texture`.
 * A number of methods that take `h2d.Tile` instead of `ImTextureID` for easier image rendering.
+
+Mulit-window viewport support can be added with `-D multidriver`
 
 ## Bugs
 If you find bugs, please report them on the GitHub project page. Most of the bound functions have been tested, but as it's a new library some bugs might remain.
