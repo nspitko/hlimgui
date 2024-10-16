@@ -1,13 +1,6 @@
 #include "../../utils.h"
 #include "../../lib/markdown/imgui_markdown.h"
 
-
-// Following includes for Windows LinkCallback
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include "Shellapi.h"
-#include <string>
-
 #define _TMDCONFIG _ABSTRACT(immarkdownconfig)
 
 HL_PRIM void HL_NAME(markdown_text)(vstring* text, ImGui::MarkdownConfig* mdConfig)
