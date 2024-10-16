@@ -301,7 +301,7 @@ class ImGuiDrawable extends h2d.Drawable {
 		#end
 
 
-		#if ( multidriver && hlsdl && globalmouse )
+		#if multidriver
 		var x=0;
 		var y=0;
 		sdl.Sdl.getGlobalMouseState(x, y);
@@ -369,7 +369,7 @@ class ImGuiDrawable extends h2d.Drawable {
 	private function onEvent(event: hxd.Event) {
 		var io = ImGui.getIO();
 		switch (event.kind) {
-			#if !( multidriver && hlsdl && globalmouse )
+			#if !multidriver
 			case EMove:
 				io.addMousePosEvent( event.relX, event.relY );
 			#end
