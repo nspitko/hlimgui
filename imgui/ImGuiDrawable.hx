@@ -331,6 +331,7 @@ class ImGuiDrawable extends h2d.Drawable {
 	}
 	#end
 
+	#if multidriver
 	// When in multidriver mode, mouse cooridnates operate in absoluate space instead of relative.
 	// Adjust the event accordingly
 	public function onMultiWindowEvent( window: hxd.Window, originalEvent: hxd.Event, viewport: ImGuiViewport )
@@ -363,6 +364,7 @@ class ImGuiDrawable extends h2d.Drawable {
 			}
 		}
 	}
+	#end
 
 	private function onEvent(event: hxd.Event) {
 		var io = ImGui.getIO();
