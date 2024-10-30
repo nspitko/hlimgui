@@ -253,6 +253,18 @@ class ImGuiDrawable extends h2d.Drawable {
 			Key.RALT => ImGuiKey.RightAlt,
 			Key.LCTRL => ImGuiKey.LeftCtrl,
 			Key.RCTRL => ImGuiKey.RightCtrl,
+			Key.F1 => ImGuiKey.F1,
+			Key.F2 => ImGuiKey.F2,
+			Key.F3 => ImGuiKey.F3,
+			Key.F4 => ImGuiKey.F4,
+			Key.F5 => ImGuiKey.F5,
+			Key.F6 => ImGuiKey.F6,
+			Key.F7 => ImGuiKey.F7,
+			Key.F8 => ImGuiKey.F8,
+			Key.F9 => ImGuiKey.F9,
+			Key.F10 => ImGuiKey.F10,
+			Key.F11 => ImGuiKey.F11,
+			Key.F12 => ImGuiKey.F12,
 		];
 
 		// Add letters

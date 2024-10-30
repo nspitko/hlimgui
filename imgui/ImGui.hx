@@ -244,6 +244,18 @@ enum abstract ImGuiKey(Int) from Int to Int {
 	var RightShift : Int = 532;
 	var RightAlt : Int = 533;
 	var RightSuper : Int = 534;
+	var F1 : Int = 572;
+	var F2 : Int = 573;
+	var F3 : Int = 574;
+	var F4 : Int = 575;
+	var F5 : Int = 576;
+	var F6 : Int = 577;
+	var F7 : Int = 578;
+	var F8 : Int = 579;
+	var F9 : Int = 580;
+	var F10 : Int = 581;
+	var F11 : Int = 582;
+	var F12 : Int = 583;
 	//
 	var A: Int = 546;
 	//
