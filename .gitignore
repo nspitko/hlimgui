@@ -7,7 +7,11 @@ Release/
 /imgui.hl
 /imgui.ini
 /extension/build/
+/extension/CMakeFiles/
 .DS_Store
 .vscode/
 *.log
 *.bat
+*.hdll
+cmake_install.cmake
+Makefile

@@ -6,7 +6,7 @@ set(TARGET_EXT .hdll)
 project(${TARGET_NAME})
 
 option(NODE_EDITOR "Include imgui-node-editor (required to use NodeEditor.hx)" ON)
-option(NEO_SEQUENCER "Include imgui-neo_sequencer (required to use NeoSequencer.hx)" ON)
+option(NEO_SEQUENCER "Include imgui-neo_sequencer (required to use NeoSequencer.hx). DEPRECATED." OFF)
 option(MARKDOWN "Include markdown support (required to use Imgui.TextMarkdown)" ON)
 
 file(GLOB SOURCES "*.cpp")
@@ -58,7 +58,7 @@ target_include_directories(${TARGET_NAME}${TARGET_EXT} PUBLIC ${HLPATH}/include 
 target_link_libraries(${TARGET_NAME}${TARGET_EXT} ${HLPATH}/lib/libhl.dylib ${APPLICATION_SERVICES_FRAMEWORK})
 ELSE()
 target_include_directories(${TARGET_NAME}${TARGET_EXT} PUBLIC $ENV{HASHLINKPATH}/include lib/imgui/ )
-target_link_libraries(${TARGET_NAME}${TARGET_EXT} hl)
+target_link_libraries(${TARGET_NAME}${TARGET_EXT} $ENV{HASHLINKPATH}/libhl.so)
 ENDIF()
 
 add_custom_command(TARGET ${TARGET_NAME}${TARGET_EXT} POST_BUILD
