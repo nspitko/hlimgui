@@ -1214,6 +1214,8 @@ enum abstract ImGuiKeyChord(Int) from Int to Int {
 @:build(imgui._ImGuiInternalMacro.buildFlatStruct())
 @:hlNative("hlimgui")
 @:struct class ImGuiPlatformIO {
+	// MSVC throws errors on empty structures
+	var __placeholder:Int;
 
 	// Internal functions. We don't bother passing the ptr here since we can only ever
 	// have one PlatformIO instance.
