@@ -314,8 +314,8 @@ class ImGuiDrawable extends h2d.Drawable {
 
 
 		#if multidriver
-		var x=0;
-		var y=0;
+		var x: Single=0;
+		var y: Single=0;
 		sdl.Sdl.getGlobalMouseState(x, y);
 		io.addMousePosEvent( x, y );
 		#end

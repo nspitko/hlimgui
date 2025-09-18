@@ -148,8 +148,8 @@ class NodeEditor
 	public static function endNode() : Void { }
 
 	public static function beginPin(pinId : PinId, kind : PinKind) : Void { }
-	public static function pinRect(a : ImVec2, a : ImVec2) : Void { }
-	public static function pinPivotRect(a : ImVec2, a : ImVec2) : Void { }
+	public static function pinRect(a : ImVec2, b : ImVec2) : Void { }
+	public static function pinPivotRect(a : ImVec2, b : ImVec2) : Void { }
 	public static function pinPivotSize(size : ImVec2 ) : Void { }
 	public static function pinPivotScale(scale : ImVec2 ) : Void { }
 	public static function pinPivotAlignment(alignment : ImVec2 ) : Void { }
