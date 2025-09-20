@@ -1734,13 +1734,13 @@ class ImGui
 	public static function dragIntRange2(label : String, v_current_min : Ref<Int>, v_current_max : Ref<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%.d", format_max : String = null, flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static inline function dragFloatN(label : String, v : hl.NativeArray<Single>, v_speed : Single = 1.0, v_min : Single = 0.0, v_max : Single = 0.0, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
-		return drag_scalar_n(label, ImGuiDataType.Float, v, v_speed, v_min, v_max, format, flags);
+		return drag_scalar_n(label, ImGuiDataType.Float, cast v, v_speed, v_min, v_max, format, flags);
 	}
 	public static inline function dragIntN(label : String, v : hl.NativeArray<Int>, v_speed : Single = 1.0, v_min : Int = 0, v_max : Int = 0, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {
-		return drag_scalar_n(label, ImGuiDataType.S32, v, v_speed, v_min, v_max, format, flags);
+		return drag_scalar_n(label, ImGuiDataType.S32, cast v, v_speed, v_min, v_max, format, flags);
 	}
 	public static inline function dragDoubleN(label : String, v : hl.NativeArray<Float>, v_speed : Single = 1.0, v_min : Float = 0.0, v_max : Float = 0.0, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {
-		return drag_scalar_n(label, ImGuiDataType.Double, v, v_speed, v_min, v_max, format, flags);
+		return drag_scalar_n(label, ImGuiDataType.Double, cast v, v_speed, v_min, v_max, format, flags);
 	}
 	static function drag_scalar_n(label : String, type : Int, v : hl.NativeArray<Dynamic>, v_speed : Single, v_min : Dynamic, v_max : Dynamic, format : String, flags : Int) : Bool {return false;}
 
@@ -1754,19 +1754,19 @@ class ImGui
 	public static function sliderAngle(label : String, v_rad : Ref<Single>, v_degrees_min : Single = -360.0, v_degrees_max : Single = 360.0, format : String = "%.0f deg", flags : ImGuiSliderFlags = 0) : Bool {return false;}
 
 	public static inline function sliderFloatN(label : String, v : hl.NativeArray<Single>, v_min : Single, v_max : Single, format : String = "%.3f", flags : ImGuiSliderFlags = 0) : Bool {
-		return slider_scalar_n(label, ImGuiDataType.Float, v, v_min, v_max, format, flags);
+		return slider_scalar_n(label, ImGuiDataType.Float, cast v, v_min, v_max, format, flags);
 	}
 	public static inline function sliderIntN(label : String, v : hl.NativeArray<Int>, v_min : Int, v_max : Int, format : String = "%d", flags : ImGuiSliderFlags = 0) : Bool {
-		return slider_scalar_n(label, ImGuiDataType.S32, v, v_min, v_max, format, flags);
+		return slider_scalar_n(label, ImGuiDataType.S32, cast v, v_min, v_max, format, flags);
 	}
 	public static inline function sliderDoubleN(label : String, v : hl.NativeArray<Float>, v_min : Float, v_max : Float, format : String = "%.3lf", flags : ImGuiSliderFlags = 0) : Bool {
-		return slider_scalar_n(label, ImGuiDataType.Double, v, v_min, v_max, format, flags);
+		return slider_scalar_n(label, ImGuiDataType.Double, cast v, v_min, v_max, format, flags);
 	}
 	static function slider_scalar_n(label : String, type: Int, v : hl.NativeArray<ImGuiScalar>, v_min : ImGuiScalar, v_max : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
 
 	public static function vSliderDouble(label: String, size: ImVec2, v: Ref<Float>, v_min: Float, v_max: Float, ?format: String, flags: Int = 0) {
 		var tmp = ImTypeCache.array(v.get());
-		var ret = v_slider_scalar(label, size, Double, tmp, v_min, v_max, format, flags);
+		var ret = v_slider_scalar(label, size, Double, cast tmp, v_min, v_max, format, flags);
 		if (isItemEdited()) v.set(tmp[0]);
 		return ret;
 	}
@@ -1787,13 +1787,13 @@ class ImGui
 	public static function inputDouble(label : String, v : Ref<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {return false;}
 
 	public static inline function inputFloatN(label : String, v : hl.NativeArray<Single>, step : Single = 0.0, step_fast : Single = 0.0, format : String = "%.3f", flags : ImGuiInputTextFlags = 0) : Bool {
-		return input_scalar_n(label, ImGuiDataType.Float, v, step, step_fast, format, flags);
+		return input_scalar_n(label, ImGuiDataType.Float, cast v, step, step_fast, format, flags);
 	}
 	public static inline function inputIntN(label : String, v : hl.NativeArray<Int>, step : Int = 0, step_fast : Int = 0, flags : ImGuiInputTextFlags = 0): Bool {
-		return input_scalar_n(label, ImGuiDataType.S32, v, step, step_fast, "%d", flags);
+		return input_scalar_n(label, ImGuiDataType.S32, cast v, step, step_fast, "%d", flags);
 	}
 	public static inline function inputDoubleN(label : String, v : hl.NativeArray<Float>, step : Float = 0.0, step_fast : Float = 0.0, format : String = "%.6f", flags : ImGuiInputTextFlags = 0) : Bool {
-		return input_scalar_n(label, ImGuiDataType.Double, v, step, step_fast, format, flags);
+		return input_scalar_n(label, ImGuiDataType.Double, cast v, step, step_fast, format, flags);
 	}
 
 	static function input_scalar_n(label : String, type : Int, v : hl.NativeArray<ImGuiScalar>, step : ImGuiScalar, step_fast : ImGuiScalar, format : String, flags : Int) : Bool {return false;}
