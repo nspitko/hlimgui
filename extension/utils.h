@@ -24,7 +24,7 @@
 #define convertArray(arr,type) arr != nullptr ? hl_aptr(arr,type) : nullptr
 #define convertVec(ptr,default_value) ptr != nullptr ? ImVec2(ptr) : ImVec2(default_value)
 
-#ifdef __APPLE__
+#ifndef _WIN32
 #define throw_error(err) hl_throw(hl_alloc_strbytes((const uchar*)(USTR(err))))
 #else
 #define throw_error(err) hl_error(err)
