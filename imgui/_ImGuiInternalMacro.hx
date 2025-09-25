@@ -84,7 +84,7 @@ class _ImGuiInternalMacro {
         }
       }
       if (!flattened) {
-        if (!field.access.contains(APublic) && !field.access.contains(AStatic)) field.access.push(APublic);
+        if (!field.access.contains(APublic) && !field.access.contains(APrivate) && !field.access.contains(AStatic)) field.access.push(APublic);
         nfields.push(field);
       }
     }
