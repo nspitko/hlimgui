@@ -183,8 +183,8 @@ class ImGuiDrawableBuffers {
 		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
 		```
 	**/
-	public static function setSmoothCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
-		data.obj.smooth = true;
+	public static function setSmoothCommand(data: RenderData, command: RenderCommand, cbData: RenderCommandCallbackData) {
+		cbData.obj.smooth = true;
 	}
 
 	/**
@@ -195,8 +195,8 @@ class ImGuiDrawableBuffers {
 		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
 		```
 	**/
-	public static function resetSmoothCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
-		data.obj.smooth = null;
+	public static function resetSmoothCommand(data: RenderData, command: RenderCommand, cbData: RenderCommandCallbackData) {
+		cbData.obj.smooth = null;
 	}
 
 	/**
@@ -207,8 +207,8 @@ class ImGuiDrawableBuffers {
 		imDrawList.addCallback(ImGuiDrawableBuffers.setSmoothCommand);
 		```
 	**/
-	public static function setNearestCommand(data: RenderData, command: RenderCommand, data: RenderCommandCallbackData) {
-		data.obj.smooth = false;
+	public static function setNearestCommand(data: RenderData, command: RenderCommand, cbData: RenderCommandCallbackData) {
+		cbData.obj.smooth = false;
 	}
 }
 
