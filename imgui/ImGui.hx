@@ -325,6 +325,9 @@ enum abstract ImGuiHoveredFlags(Int) from Int to Int {
 	var NoNavOverride                 = 1 << 10;  // Disable using gamepad/keyboard navigation state when active; always query mouse.
 	var RectOnly                      = AllowWhenBlockedByPopup | AllowWhenBlockedByActiveItem | AllowWhenOverlapped;
 	var RootAndChildWindows           = RootWindow | ChildWindows;
+	var DelayNormal                   = 1 << 11;  // Return true after io.HoverDelayNormal elapsed (~0.30 sec)
+    var DelayShort                    = 1 << 12;  // Return true after io.HoverDelayShort elapsed (~0.10 sec)
+    var NoSharedDelay                 = 1 << 13;  // Disable shared delay system where moving from one item t
 }
 
 enum abstract ImGuiFocusedFlags(Int) from Int to Int {
