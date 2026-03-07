@@ -72,6 +72,7 @@
 // #include "../utils.h"
 
 #include <hl.h>
+#undef _GUID
 #include "types.h"
 
 #define IM_VEC2_CLASS_EXTRA                                                 \
